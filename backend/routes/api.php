@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 
-Route::post('login', function (Request $request) {
-    echo 1232;
+Route::controller(AuthController::class)->group(function(){
+    Route::post('login', 'login');
 });

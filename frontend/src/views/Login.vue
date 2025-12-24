@@ -6,7 +6,7 @@ import Checkbox from '@/components/form/CheckBox.vue'
 import Button from '@/components/form/Button.vue'
 import authValidation from '@/composables/validations/auth'
 import { reactive, ref } from 'vue'
-import api from '@/api/axios'
+import api from '@/services/api'
 
 type YesNo = 'yes' | 'no'
 
@@ -32,9 +32,9 @@ const loading = ref<boolean>(false)
 const handleSubmit = async() => {
 	try {
 		loading.value = true
-		const response = await api.post('login', LoginData);
-	} catch (e) {
-		console.log(e)
+		const response = await api.post('login', LoginData)
+	} catch (err) {
+		console.log(err)
 	} finally {
 		loading.value =false
 	}
