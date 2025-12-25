@@ -22,6 +22,29 @@ api.interceptors.response.use(
 		// Safely check the status code using Optional Chaining
 		const status = error.response?.status
 
+		const originalRequest = error.config;
+		
+		if(error.response.status === 419 && !originalRequest._retry ){
+			originalRequest._retry = true
+				
+		/**
+         * Handle 419 (CSRF Token Mismatch/Expired)
+         * Only retry once using the custom '_retry' flag
+         */
+			try{
+				// Refresh the CSRF cookie from Laravel Sanctum
+				await getCsrfCookie()
+
+				// Retry the original request with the new cookie
+				return api(originalRequest)
+			}catch(retryError){
+				// If fetching the token itself fails, stop and reject
+				return Promise.reject(retryError)
+			}
+
+			
+		}
+
 		// Redirect to login page if the session has expired
 		if( status === 401 || status === 419){
 			router.push({name:'login', query: {redirect: router.currentRoute.value.fullPath}})
