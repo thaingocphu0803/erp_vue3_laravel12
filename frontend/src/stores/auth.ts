@@ -1,7 +1,6 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import api, { getCsrfCookie } from '@/services/api'
-import type { st } from 'vue-router/dist/router-CWoNjPRp.mjs'
 
 export const useAuthStore = defineStore('auth', () => {
   interface User {
@@ -15,7 +14,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isLoggedin = computed<boolean>(() => !!user.value)
 
-  const initFetchUser = async () => {
+  const authFetch = async () => {
     try {
       if (isInitialized.value) return
 
@@ -24,6 +23,7 @@ export const useAuthStore = defineStore('auth', () => {
       const response = await api.get('user/me')
       user.value = response.data.data?.user
     } catch (error: any) {
+      console.log('etch user api error', error)
       clearAuth()
     } finally {
       isInitialized.value = true
@@ -37,7 +37,8 @@ export const useAuthStore = defineStore('auth', () => {
       isInitialized.value = true
 
       return response
-    } catch (error) {
+    } catch (error: any) {
+      console.log('Login api error', error)
       clearAuth()
       throw error
     }
@@ -47,9 +48,11 @@ export const useAuthStore = defineStore('auth', () => {
 		try {
 			const response = await api.get('auth/logout')
 			return response
-		} catch (error) {
-			clearAuth()
-	  }
+		} catch (error :any) {
+      console.log('Logout api error', error)
+	  }finally{
+      clearAuth();
+    }
   }
 
   const clearAuth = () => {
@@ -57,5 +60,5 @@ export const useAuthStore = defineStore('auth', () => {
     isInitialized.value = false
   }
 
-  return { user, isInitialized, isLoggedin, initFetchUser, authLogin, authLogout, clearAuth }
+  return { user, isInitialized, isLoggedin, authFetch, authLogin, authLogout, clearAuth }
 })

@@ -29,7 +29,7 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
 	const authStore = useAuthStore()
 
-  if (!authStore.isInitialized) await authStore.initFetchUser()
+  if (!authStore.isInitialized) await authStore.authFetch()
 
   if (to.meta.requiresAuth && !authStore.isLoggedin) {
     return { name: 'login', query: {redirect: to.fullPath} }
