@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AuthBar from '@/components/auth/AuthBar.vue'
-import Form from '@/components/form/Form.vue'
+import Form from '@/components/Form.vue'
 import Input from '@/components/form/Input.vue'
 import Checkbox from '@/components/form/CheckBox.vue'
 import Button from '@/components/form/Button.vue'

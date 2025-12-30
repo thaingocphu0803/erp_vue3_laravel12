@@ -34,10 +34,12 @@ watch(defaultTheme, (newTheme) => {
 	v-bind="$attrs"
     class="d-none d-sm-block"
     color="blue-grey-darken-4"
+	base-color="blue-grey-darken-4"
     false-icon="mdi-white-balance-sunny"
     hide-details
     density="comfortable"
     true-icon="mdi-weather-night"
     inset
-  ></v-switch>
+  >
+  </v-switch>
 </template>

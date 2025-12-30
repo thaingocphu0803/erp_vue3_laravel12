@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ThemeSwitch from '../ThemeSwitch.vue';
+import systemConfig from '@/config/system';
 
 interface Props {
   nextRoute: string
@@ -11,7 +12,7 @@ const props = defineProps<Props>()
 
 <template>
   <v-app-bar>
-    <v-app-bar-title>REZE CRM</v-app-bar-title>
+    <v-app-bar-title>{{ systemConfig.appName }}</v-app-bar-title>
 
     <div class="d-flex align-center justify-center ga-5 mr-5">
       <theme-switch/>

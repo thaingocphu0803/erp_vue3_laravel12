@@ -6,6 +6,7 @@ export const useAuthStore = defineStore('auth', () => {
   interface User {
     name: string
     email: string
+    avatar: string
   }
 
   const user = ref<User | null>(null)
@@ -18,7 +19,7 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       if (isInitialized.value) return
 
-		const response = await api.get('user/me')
+      const response = await api.get('user/me')
       user.value = response.data.data?.user
     } catch (error: any) {
       console.log('etch user api error', error)
