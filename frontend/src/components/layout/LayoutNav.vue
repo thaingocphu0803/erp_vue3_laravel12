@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 import { useAuthStore } from '@/stores/auth'
-import { defaultAvatar } from '@/config/default'
+import defaultConfig from '@/config/default'
 import { navMenu } from '@/config/menu'
 
 const { sm } = useDisplay()
 const authStore = useAuthStore()
 const user = authStore.user
-const avatar = user?.avatar ?? defaultAvatar
+const avatar = user?.avatar ?? defaultConfig.avatar
 </script>
 <template>
-  <v-navigation-drawer mobile-breakpoint="sm" :rail="sm">
+  <v-navigation-drawer mobile-breakpoint="sm" :rail="sm" v-bind="$attrs">
     <v-list>
       <v-list-item
         :prepend-avatar="avatar"

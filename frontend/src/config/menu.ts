@@ -1,4 +1,4 @@
-export const navMenu = [
+const navMenu = [
 		{
 		title: "Home",
 		value: "home",
@@ -30,3 +30,16 @@ export const navMenu = [
 		routeName:"dashboard.setting"
 	},
 ]
+
+const languageMenu = [
+	{
+		title: 'English',
+		value: 'en'
+	},
+	{
+		title: 'Vietnamese',
+		value: 'vi'
+	}
+]
+
+export {navMenu, languageMenu}

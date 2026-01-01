@@ -96,7 +96,7 @@ const handleLogin = async () => {
           :false-value="checkboxData.falseValue"
           :true-value="checkboxData.trueValue"
         />
-        <base-btn title="login" :loading="loading" type="submit" block />
+        <base-btn title="login" :loading="loading" type="submit" block/>
       </Form>
     </v-main>
   </v-layout>

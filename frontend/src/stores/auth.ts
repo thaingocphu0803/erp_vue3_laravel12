@@ -1,6 +1,7 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import api from '@/services/api'
+import router from '@/router'
 
 export const useAuthStore = defineStore('auth', () => {
   interface User {
@@ -46,7 +47,9 @@ export const useAuthStore = defineStore('auth', () => {
   const authLogout = async () => {
     try {
       const response = await api.get('auth/logout')
-      return response
+      if (response.status === 200) {
+        router.push({ name: 'login' })
+      }
     } catch (error: any) {
       console.log('Logout api error', error)
     } finally {
