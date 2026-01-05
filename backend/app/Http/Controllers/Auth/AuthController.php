@@ -37,6 +37,16 @@ class AuthController extends Controller
         return  $this->jsonResponse($message, JsonResponse::HTTP_UNAUTHORIZED);
     }
 
+    public function me()
+    {
+        $user = Auth::user();
+
+        $user = Auth::user()->only(['name', 'email']);
+        $data['user'] = $user;
+        $message = 'auth.alert.success.me';
+        return $this->jsonResponse($message, JsonResponse::HTTP_OK, $data);
+    }
+
     public function logout(Request $request)
     {
         Auth::guard('web')->logout();

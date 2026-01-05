@@ -13,7 +13,7 @@ const tooltip: string = 'common.button.language'
 
 		<v-list>
 			<v-list-item v-for="item in languageMenu" :key="item.value" :value="item.value" :title="$t(item.title)"
-				color="blue-gray-draken-4" @click="changeLanguage(item.value)">
+				@click="changeLanguage(item.value)">
 			</v-list-item>
 		</v-list>
 	</v-menu>
