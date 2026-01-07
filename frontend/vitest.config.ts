@@ -11,7 +11,7 @@ export default mergeConfig(
 			environment: 'jsdom',
 			server: {
 				deps: {
-					inline: ['vuetify'],
+					inline: ['vuetify', 'jsdom'],
 				},
 			},
 			exclude: [...configDefaults.exclude, 'e2e/**'],
