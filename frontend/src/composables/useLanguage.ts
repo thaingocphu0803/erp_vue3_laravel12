@@ -1,11 +1,12 @@
 import i18n from "@/plugins/vueI18n"
-import { setLocale } from "@/utils/locale"
+import { setLanguage } from "@/utils/language"
 
+// change UI language following the locale
 export const changeLanguage = (locale: string) => {
 	
 	if (typeof locale !== 'string') return
 	
-	setLocale(locale)
+	setLanguage(locale)
 	
 	const global = i18n.global as any
 	

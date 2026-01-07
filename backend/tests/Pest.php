@@ -11,9 +11,19 @@
 |
 */
 
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
 pest()->extend(Tests\TestCase::class)
     ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->beforeEach(function () {
+        $this->withHeaders([
+            'Referer' => 'http://reze.crm.local:5173',
+            'Accept' => 'application/json',
+        ]);
+    })
     ->in('Feature');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +51,12 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
-{
-    // ..
-}
+pest()->beforeEach(function () {
+
+
+    User::factory()->create([
+        'name' => 'admin',
+        'email' => 'admin@gmail.com',
+        'password' => Hash::make('Admin123@@')
+    ]);
+})->in('Feature/Auth');

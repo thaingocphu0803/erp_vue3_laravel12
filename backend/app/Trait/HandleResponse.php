@@ -6,9 +6,9 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 trait HandleResponse
 {
-    public function exceptionResponse($messageCode, $status_code)
+    public function exceptionResponse($messageCode, $errors, $status_code)
     {
-        $dataResponse = $this->initResponseData($messageCode);
+        $dataResponse = $this->initValidationResponseData($messageCode, $errors);
 
         throw new HttpResponseException(
             response()->json($dataResponse, (int) $status_code)
@@ -31,4 +31,15 @@ trait HandleResponse
 
         return $data;
     }
+
+    private function initValidationResponseData($messageCode = '', $errors = [])
+    {
+        $data = [
+            'messageCode' => (string) $messageCode,
+            'errors' => (array) $errors
+        ];
+
+        return $data;
+    }
+
 }

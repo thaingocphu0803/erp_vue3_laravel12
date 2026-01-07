@@ -2,7 +2,7 @@
 import BaseIconBtn from '../BaseIconBtn.vue'
 import { languageMenu } from '@/config/menu'
 import { useAuthStore } from '@/stores/auth'
-import { changeLanguage } from '@/composables/useLocale'
+import { changeLanguage } from '@/composables/useLanguage'
 
 const authStore = useAuthStore()
 const handleLogout = async () => await authStore.authLogout()

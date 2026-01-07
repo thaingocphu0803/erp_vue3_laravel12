@@ -5,7 +5,6 @@ namespace App\Http\Requests\Auth;
 use App\Trait\HandleResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Validation\Rules\Password;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -33,7 +32,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email'],
-            'password' => ['required', Password::min(8)->mixedCase(true)],
+            'password' => ['required', Password::min(8)->mixedCase(true)->numbers()->symbols()],
         ];
     }
 
@@ -43,6 +42,8 @@ class LoginRequest extends FormRequest
 
         $message = 'auth.alert.error.invalidAuth';
 
-        $this->exceptionResponse($message, JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        $errors = $validator->errors()->toArray();
+
+        $this->exceptionResponse($message, $errors, JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
     }
 }

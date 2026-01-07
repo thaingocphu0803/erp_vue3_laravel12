@@ -5,7 +5,7 @@ import authEn from '@/languages/english/auth.json'
 import authVi from '@/languages/vietnamese/auth.json'
 import commonEn from '@/languages/english/common.json'
 import commonVi from '@/languages/vietnamese/common.json'
-import { getLocale } from '@/utils/locale'
+import { getLanguage } from '@/utils/language'
 
 const messages = {
 	en: {
@@ -22,7 +22,7 @@ const messages = {
 
 const i18n = createI18n({
 	legacy: false,
-	locale: getLocale(),
+	locale: getLanguage(),
 	fallbackLocale: 'vi',
 	messages,
 })

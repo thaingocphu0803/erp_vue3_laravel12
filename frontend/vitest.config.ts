@@ -6,8 +6,14 @@ import path from 'node:path'
 export default mergeConfig(
   viteConfig,
   defineConfig({
-    test: {
-      environment: 'jsdom',
+	  test: {
+		globals: true,
+		  environment: 'jsdom',
+		  server: {
+			  deps: {
+			  inline: ['vuetify']
+		  }
+	  },
       exclude: [...configDefaults.exclude, 'e2e/**'],
       root: fileURLToPath(new URL('./', import.meta.url)),
     },

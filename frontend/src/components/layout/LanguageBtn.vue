@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import BaseIconBtn from '../BaseIconBtn.vue'
 import { languageMenu } from '@/config/menu'
-import { changeLanguage } from '@/composables/useLocale';
+import { changeLanguage } from '@/composables/useLanguage';
 
 const tooltip: string = 'common.button.language'
 </script>
