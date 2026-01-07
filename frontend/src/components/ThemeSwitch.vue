@@ -8,8 +8,8 @@ const themValue = {
 	light: 'light',
 	dark: 'dark'
 }
-const defaultTheme = ref<string>(theme.global.name.value);
 
+const defaultTheme = ref<string>(theme.global.name.value);
 
 onMounted(() => {
 	let savedTheme = localStorage.getItem('userTheme')
@@ -24,6 +24,7 @@ watch(defaultTheme, (newTheme) => {
     theme.change(newTheme);
     localStorage.setItem('userTheme', newTheme);
 });
+
 </script>
 
 <template>

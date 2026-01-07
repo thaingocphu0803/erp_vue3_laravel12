@@ -4,23 +4,24 @@ import viteConfig from './vite.config'
 import path from 'node:path'
 
 export default mergeConfig(
-  viteConfig,
-  defineConfig({
-	  test: {
-		globals: true,
-		  environment: 'jsdom',
-		  server: {
-			  deps: {
-			  inline: ['vuetify']
-		  }
-	  },
-      exclude: [...configDefaults.exclude, 'e2e/**'],
-      root: fileURLToPath(new URL('./', import.meta.url)),
-    },
-    resolve: {
-      alias: {
-       '@': path.resolve(__dirname, 'src')
-      }
-    }
-  }),
+	viteConfig,
+	defineConfig({
+		test: {
+			globals: true,
+			environment: 'jsdom',
+			server: {
+				deps: {
+					inline: ['vuetify'],
+				},
+			},
+			exclude: [...configDefaults.exclude, 'e2e/**'],
+			root: fileURLToPath(new URL('./', import.meta.url)),
+		},
+		resolve: {
+			alias: {
+				'@': path.resolve(__dirname, 'src'),
+			},
+		},
+	}),
 )
+
