@@ -17,9 +17,9 @@ RUN apt-get update &&   apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     libicu-dev \
     libzip-dev \
-	libfreetype-dev \
-	libjpeg62-turbo-dev \
-	libpng-dev \
+    libfreetype-dev \
+    libjpeg62-turbo-dev \
+    libpng-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     pdo_mysql \
@@ -89,11 +89,11 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # sed -i: In-place edit of zz-docker.conf to inject the status path
 # This is required for the php-fpm-healthcheck script to function
 RUN set -eux; \
-	{ \
-		echo '[www]'; \
-		echo 'pm.status_path = /status'; \
-	} > /usr/local/etc/php-fpm.d/my-fpm.conf
-	
+    { \
+    echo '[www]'; \
+    echo 'pm.status_path = /status'; \
+    } > /usr/local/etc/php-fpm.d/my-fpm.conf
+
 # Copy the application code and dependencies from the build stage
 COPY --from=builder /var/www /var/www
 

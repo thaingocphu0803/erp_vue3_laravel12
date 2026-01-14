@@ -4,7 +4,9 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 COPY ./frontend/package*.json /app
-RUN npm install
+
+# Install project dependencies using npm ci (ensures a clean, reproducible install)
+RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY ./frontend /app
 RUN npm run build
