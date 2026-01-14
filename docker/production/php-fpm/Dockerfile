@@ -1,5 +1,5 @@
 #Builder stage
-FROM php:8.4-fpm as builder
+FROM php:8.4-fpm AS builder
 
 # Update repositories and install dependencies
 # -y: Assume yes to all prompts
@@ -17,7 +17,10 @@ RUN apt-get update &&   apt-get install -y --no-install-recommends \
     libcurl4-openssl-dev \
     libicu-dev \
     libzip-dev \
-	&& docker-php-ext-configuration gd --with-freetype --with-jpeg \
+	libfreetype-dev \
+	libjpeg62-turbo-dev \
+	libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
     pdo_mysql \
     opcache \
@@ -47,7 +50,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
     && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
 
 #Production stage
-FROM php:8.4-fpm as production
+FROM php:8.4-fpm AS production
 
 # Install only runtime libraries needed in production
 # libfcgi-bin and procps are required for the php-fpm-healthcheck script
@@ -85,8 +88,11 @@ RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 # Enable PHP-FPM status page by modifying zz-docker.conf with sed
 # sed -i: In-place edit of zz-docker.conf to inject the status path
 # This is required for the php-fpm-healthcheck script to function
-RUN sed -i '/\[www\]/a pm.status_path = /status' /usr/local/etc/php-fpm.d/zz-docker.conf
-
+RUN set -eux; \
+	{ \
+		echo '[www]'; \
+		echo 'pm.status_path = /status'; \
+	} > /usr/local/etc/php-fpm.d/my-fpm.conf
 # Copy the application code and dependencies from the build stage
 COPY --from=builder /var/www /var/www
 
