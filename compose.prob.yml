@@ -1,0 +1,31 @@
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: ./docker/production/php-fpm/Dockerfile
+      target: production # Specifies the build stage in the Dockerfile to be used
+    restart: unless-stopped # Keeps the container alive unless it was manually stopped by the user 
+    volumes:  # Mount the internal container directory to the volume name defined in the top-level volumes section
+      - laravel-public-assets:/var/www/public/build
+      - laravel-storage-production:/var/www/storage
+    env_file: # Specified .env file
+      - .env
+    networks:
+      - app-production
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      mysql:
+        condition: service_healthy # Ensure that the dependencies is healthy before starting the service.
+  mysql:
+    image: mysql:8.0.44
+
+  networks:
+    app-production:
+      driver: bridge # Isolation container network with my device network
+  volumes:
+    laravel-public-assets:
+    laravel-storage-production:
