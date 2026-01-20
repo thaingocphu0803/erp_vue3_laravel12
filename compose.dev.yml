@@ -1,0 +1,49 @@
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: ./docker/development/php-fpm/Dockerfile
+      target: development
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/var/www
+    networks:
+      - app-development
+    depends_on:
+      mysql:
+        condition: service_started
+  php-cli:
+    build:
+      context: .
+      dockerfile: ./docker/development/php-cli/Dockerfile
+      target: development
+    tty: true
+    stdin_open: true
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/var/www
+    networks:
+      - app-development
+  mysql:
+    image: mysql:8.0.44
+    ports:
+      - "${MYSQL_PORT}:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - mysql-db-dev:/var/lib/mysql
+    networks:
+      - app-development
+networks:
+  app-development:
+    driver: bridge
+volumes:
+  mysql-db-dev:
+  
+
+

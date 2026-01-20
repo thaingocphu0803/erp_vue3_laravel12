@@ -93,6 +93,7 @@ RUN set -eux; \
 		echo '[www]'; \
 		echo 'pm.status_path = /status'; \
 	} > /usr/local/etc/php-fpm.d/my-fpm.conf
+	
 # Copy the application code and dependencies from the build stage
 COPY --from=builder /var/www /var/www
 

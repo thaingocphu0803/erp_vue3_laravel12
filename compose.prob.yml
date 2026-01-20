@@ -60,7 +60,7 @@ services:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    volumes:
+    volumes: # Persists MySQL data in a named volume to prevent data loss when the container is deleted or updated.
       - mysql-db-production:/var/lib/mysql
     networks:
       - app-production
