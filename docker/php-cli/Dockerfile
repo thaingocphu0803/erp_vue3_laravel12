@@ -29,7 +29,8 @@ WORKDIR /var/www
 
 COPY ./backend /var/www/
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+RUN --mount=type=cache,target=/root/.composer/cache \
+	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
 
 # production stage

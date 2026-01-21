@@ -46,7 +46,8 @@ COPY ./backend /var/www/
 # --no-interaction: Automated install without user prompts
 # --no-progress: Keep build logs clean by hiding progress bars
 # --prefer-dist: Install packages from archives for faster downloads
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+RUN --mount=type=cache,target=/root/.composer/cache \
+	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && composer install --no-dev --optimize-autoloader --no-interaction --no-progress --prefer-dist
 
 #Production stage
