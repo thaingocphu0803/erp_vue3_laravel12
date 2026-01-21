@@ -17,7 +17,7 @@ rm -rf /var/www/storage-init
 
 # Run Laravel migrations
 # --force: run command without wating confirm
-php artisan migrate --force
+php artisan migrate --force --seed
 
 # Clear and cache configurations
 php artisan config:cache

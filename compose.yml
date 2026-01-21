@@ -2,7 +2,7 @@ services:
   wed:
     build:
       context: .
-      dockerfile: ./docker/production/nginx/Dockerfile
+      dockerfile: ./docker/nginx/Dockerfile
       target: production
     restart: unless-stopped
     volumes:
@@ -19,7 +19,7 @@ services:
   php-fpm:
     build:
       context: .
-      dockerfile: ./docker/production/php-fpm/Dockerfile
+      dockerfile: ./docker/php-fpm/Dockerfile
       target: production # Specifies the build stage in the Dockerfile to be used
     restart: unless-stopped # Keeps the container alive unless it was manually stopped by the user
     # Mount the internal container directory to the volume name defined in the top-level volumes section
@@ -41,7 +41,7 @@ services:
   php-cli:
     build:
       context: .
-      dockerfile: ./docker/production/php-cli/Dockerfile
+      dockerfile: ./docker/php-cli/Dockerfile
       target: production
     tty: true # Enables an interactive terminal
     stdin_open: true # Keeps standard input open for 'docker exec'
@@ -69,7 +69,7 @@ services:
       interval: 3s
       timeout: 5s
       retries: 5
-
+      start_period: 40s
 # Network service 
 networks:
   app-production:

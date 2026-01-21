@@ -14,7 +14,7 @@ RUN npm run build
 #production stage
 FROM nginx:alpine AS production
 
-COPY ./docker/production/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 
 WORKDIR /var/www
 
