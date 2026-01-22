@@ -1,6 +1,7 @@
 services:
   wed:
-    image: thaingocphu0803/reze-web-nginx:${IMAGE_TAG} # Final image name to run/push
+    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/web-nginx:${IMAGE_TAG} # Final image name to run/push
+    # image: thaingocphu0803/reze-web-nginx:${IMAGE_TAG}
     restart: unless-stopped
     volumes:
       # :ro - read only option
@@ -16,7 +17,8 @@ services:
       php-fpm:
         condition: service_healthy
   php-fpm:
-    image: thaingocphu0803/reze-php-fpm:${IMAGE_TAG} # Final image name to run/push
+    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/php-fpm:${IMAGE_TAG} # Final image name to run/push
+    # image: thaingocphu0803/reze-php-fpm:${IMAGE_TAG}
     restart: unless-stopped # Keeps the container alive unless it was manually stopped by the user
     # Mount the internal container directory to the volume name defined in the top-level volumes section
     volumes:
@@ -35,7 +37,8 @@ services:
       mysql:
         condition: service_healthy # Ensure that the dependencies is healthy before starting the service.
   php-cli:
-    image: thaingocphu0803/reze-php-cli:${IMAGE_TAG} # Final image name to run/push
+    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/php-cli:${IMAGE_TAG} # Final image name to run/push
+    # image: thaingocphu0803/reze-php-cli:${IMAGE_TAG}
     tty: true # Enables an interactive terminal
     stdin_open: true # Keeps standard input open for 'docker exec'
     env_file: # Specified .env file

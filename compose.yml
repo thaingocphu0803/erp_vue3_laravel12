@@ -1,6 +1,7 @@
 services:
   wed:
-    image: thaingocphu0803/reze-web-nginx:${IMAGE_TAG} # Final image name to run/push
+    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/web-nginx:${IMAGE_TAG} # Final image name to run/push
+    # image: thaingocphu0803/reze-web-nginx:${IMAGE_TAG}
     build:
       context: .
       dockerfile: ./docker/nginx/Dockerfile
@@ -20,7 +21,8 @@ services:
       php-fpm:
         condition: service_healthy
   php-fpm:
-    image: thaingocphu0803/reze-php-fpm:${IMAGE_TAG} # Final image name to run/push
+    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/php-fpm:${IMAGE_TAG} # Final image name to run/push
+    # image: thaingocphu0803/reze-php-fpm:${IMAGE_TAG}
     build:
       context: .
       dockerfile: ./docker/php-fpm/Dockerfile
@@ -43,7 +45,8 @@ services:
       mysql:
         condition: service_healthy # Ensure that the dependencies is healthy before starting the service.
   php-cli:
-    image: thaingocphu0803/reze-php-cli:${IMAGE_TAG} # Final image name to run/push
+    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/php-cli:${IMAGE_TAG} # Final image name to run/push
+    # image: thaingocphu0803/reze-php-cli:${IMAGE_TAG}
     build:
       context: .
       dockerfile: ./docker/php-cli/Dockerfile
