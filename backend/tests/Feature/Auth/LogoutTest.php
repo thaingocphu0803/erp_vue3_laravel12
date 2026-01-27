@@ -3,22 +3,22 @@
 use App\Models\User;
 
 describe('logout', function () {
-    it('logout successfully', function () {
+	it('logout successfully', function () {
 
-        $user = User::first();
+		$user = User::first();
 
-        $response = $this->actingAs($user)->getJson('api/auth/logout');
+		$response = $this->actingAs($user)->postJson('api/auth/logout');
 
-        $response->assertStatus(200);
+		$response->assertStatus(200);
 
-        $this->assertGuest('web');
-    });
+		$this->assertGuest('web');
+	});
 
-    it('unauthorized users cannot logout' , function () {
-        $response = $this->getJson('api/auth/logout');
+	it('unauthorized users cannot logout', function () {
+		$response = $this->postJson('api/auth/logout');
 
-        $response->assertStatus(401);
+		$response->assertStatus(401);
 
-        $this->assertGuest('web');
-    });
+		$this->assertGuest('web');
+	});
 });

@@ -15,14 +15,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
 pest()->extend(Tests\TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
-    ->beforeEach(function () {
-        $this->withHeaders([
-            'Referer' => 'http://reze.crm.local:5173',
-            'Accept' => 'application/json',
-        ]);
-    })
-    ->in('Feature');
+	->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+	->beforeEach(function () {
+		$this->withHeaders([
+			'Referer' => 'http://localhost',
+			'Accept' => 'application/json',
+		]);
+	})
+	->in('Feature');
 
 
 /*
@@ -37,7 +37,7 @@ pest()->extend(Tests\TestCase::class)
 */
 
 expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
+	return $this->toBe(1);
 });
 
 /*
@@ -54,9 +54,9 @@ expect()->extend('toBeOne', function () {
 pest()->beforeEach(function () {
 
 
-    User::factory()->create([
-        'name' => 'admin',
-        'email' => 'admin@gmail.com',
-        'password' => Hash::make('Admin123@@')
-    ]);
+	User::factory()->create([
+		'name' => 'admin',
+		'email' => 'admin@gmail.com',
+		'password' => Hash::make('Admin123@@')
+	]);
 })->in('Feature/Auth');
