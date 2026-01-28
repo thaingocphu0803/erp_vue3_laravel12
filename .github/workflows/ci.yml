@@ -11,7 +11,7 @@ jobs: # Define the test laravel job
 
         defaults: # Define default working directory for all step of the job
             run:
-              working-directory: backend
+                working-directory: backend
 
         steps:
             - uses: actions/checkout@v4 # Checkout the repository
