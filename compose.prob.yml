@@ -1,78 +1,78 @@
 services:
-  wed:
-    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/web-nginx:${IMAGE_TAG} # Final image name to run/push
-    # image: thaingocphu0803/reze-web-nginx:${IMAGE_TAG}
-    restart: unless-stopped
-    volumes:
-      # :ro - read only option
-      # - laravel-public-assets:/var/www/public/build:ro
-      - laravel-storage-production:/var/www/storage:ro
-    ports:
-      - "${NGINX_PORT}:80"
-    environment:
-      - NGINX_HOST=${NGINX_HOST}
-    networks:
-      - app-production
-    depends_on:
-      php-fpm:
-        condition: service_healthy
-  php-fpm:
-    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/php-fpm:${IMAGE_TAG} # Final image name to run/push
-    # image: thaingocphu0803/reze-php-fpm:${IMAGE_TAG}
-    restart: unless-stopped # Keeps the container alive unless it was manually stopped by the user
-    # Mount the internal container directory to the volume name defined in the top-level volumes section
-    volumes:
-      # - laravel-public-assets:/var/www/public/build
-      - laravel-storage-production:/var/www/storage
-    env_file: # Specified .env file used container after building
-      - ./backend/.env
-    networks:
-      - app-production
-    healthcheck:
-      test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    depends_on:
-      mysql:
-        condition: service_healthy # Ensure that the dependencies is healthy before starting the service.
-  php-cli:
-    image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/php-cli:${IMAGE_TAG} # Final image name to run/push
-    # image: thaingocphu0803/reze-php-cli:${IMAGE_TAG}
-    tty: true # Enables an interactive terminal
-    stdin_open: true # Keeps standard input open for 'docker exec'
-    env_file: # Specified .env file
-      - ./backend/.env
-    networks:
-      - app-production
-  mysql:
-    image: mysql:8.0.44 #Pull the MySQL image from Docker Hub
-    restart: unless-stopped
-    user: mysql # overrides the root user used to run the container process
-    ports:
-      - "${MYSQL_PORT}:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-    volumes: # Persists MySQL data in a named volume to prevent data loss when the container is deleted or updated.
-      - mysql-db-production:/var/lib/mysql
-    networks:
-      - app-production
-    healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD || exit 1"]
-      interval: 3s
-      timeout: 5s
-      retries: 5
-      start_period: 40s
+    wed:
+        image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/web-nginx:${IMAGE_TAG} # Final image name to run/push
+        # image: thaingocphu0803/reze-web-nginx:${IMAGE_TAG}
+        restart: unless-stopped
+        volumes:
+            # :ro - read only option
+            # - laravel-public-assets:/var/www/public/build:ro
+            - laravel-storage-production:/var/www/storage:ro
+        ports:
+            - "${NGINX_PORT}:80"
+        environment:
+            - NGINX_HOST=${NGINX_HOST}
+        networks:
+            - app-production
+        depends_on:
+            php-fpm:
+                condition: service_healthy
+    php-fpm:
+        image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/php-fpm:${IMAGE_TAG} # Final image name to run/push
+        # image: thaingocphu0803/reze-php-fpm:${IMAGE_TAG}
+        restart: unless-stopped # Keeps the container alive unless it was manually stopped by the user
+        # Mount the internal container directory to the volume name defined in the top-level volumes section
+        volumes:
+            # - laravel-public-assets:/var/www/public/build
+            - laravel-storage-production:/var/www/storage
+        env_file: # Specified .env file used container after building
+            - ./backend/.env
+        networks:
+            - app-production
+        healthcheck:
+            test: ["CMD-SHELL", "php-fpm-healthcheck || exit 1"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
+        depends_on:
+            mysql:
+                condition: service_healthy # Ensure that the dependencies is healthy before starting the service.
+    php-cli:
+        image: us-west1-docker.pkg.dev/reze-erp/docker-reze-erp/php-cli:${IMAGE_TAG} # Final image name to run/push
+        # image: thaingocphu0803/reze-php-cli:${IMAGE_TAG}
+        tty: true # Enables an interactive terminal
+        stdin_open: true # Keeps standard input open for 'docker exec'
+        env_file: # Specified .env file
+            - ./backend/.env
+        networks:
+            - app-production
+    mysql:
+        image: mysql:8.0.44 #Pull the MySQL image from Docker Hub
+        restart: unless-stopped
+        user: mysql # overrides the root user used to run the container process
+        ports:
+            - "${MYSQL_PORT}:3306"
+        environment:
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+        volumes: # Persists MySQL data in a named volume to prevent data loss when the container is deleted or updated.
+            - mysql-db-production:/var/lib/mysql
+        networks:
+            - app-production
+        healthcheck:
+            test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD || exit 1"]
+            interval: 3s
+            timeout: 5s
+            retries: 5
+            start_period: 40s
 # Network service 
 networks:
-  app-production:
-    driver: bridge # Isolation container network with my device network
+    app-production:
+        driver: bridge # Isolation container network with my device network
 
 # Volumes service
 volumes:
-  # laravel-public-assets:
-  laravel-storage-production:
-  mysql-db-production:
+    # laravel-public-assets:
+    laravel-storage-production:
+    mysql-db-production:
