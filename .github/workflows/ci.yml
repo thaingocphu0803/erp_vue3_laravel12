@@ -1,0 +1,41 @@
+name: Reze ERP CI # Define the name of the workflow
+
+on: # Define the events that trigger the workflow
+    pull_request: # Trigger on pull requests to a main branch
+        branches: ["main"]
+
+jobs: # Define the test laravel job
+    laravel-tests: # Define the laravel-test job id
+        name: Laravel Tests # Define the name of the job
+        runs-on: ubuntu-22.04 # Define the OS to run the job on
+
+        defaults: # Define default working directory for all step of the job
+            run:
+              working-directory: backend
+
+        steps:
+            - uses: actions/checkout@v4 # Checkout the repository
+              with:
+                  sparse-checkout: backend
+
+            - uses: shivammathur/setup-php@v2 # Setup PHP environment
+              with:
+                  php-version: "8.4" # Specify PHP version
+
+            - name: Copy .env # Define step name
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');" # Copy .env file if it doesn't exist
+
+            - name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist # Install composer dependencies
+
+            - name: Generate app key
+              run: php artisan key:generate
+
+            - name: Set Directory Permissions
+              run: chmod -R 777 storage bootstrap/cache
+
+            - name: Execute Feature Tests vie Pest
+              env:
+                  DB_CONNECTION: sqlite
+                  DB_DATABASE: ":memory:"
+              run: php artisan test --testsuite=Feature
