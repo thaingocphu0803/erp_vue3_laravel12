@@ -64,3 +64,57 @@ jobs: # Define the test laravel job
 
             - name: Execute Unit tests via Vitest
               run: npm run test:unit
+
+    docker-build-push:
+        name: Docker Build & Push
+        runs-on: ubuntu-22.04
+        environment: develop
+
+        permissions: # Define permissions for the job
+            contents: read # Allows the action to check out the repository's code
+            id-token: write # Allows GitHub to request an OIDC token to authenticate with Google Cloud
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - id: auth
+              name: Authenticate to Google Cloud
+              uses: google-github-actions/auth@v3 # Authenticate to Google Cloud using Workload Identity Federation
+              with:
+                # The full identifier of the Workload Identity Provider
+                workload_identity_provider: "projects/${{secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{secrets.GCP_POOL_ID}}/providers/${{secrets.GCP_PROVIDER_ID}}"
+                # The email of the Service Account that GitHub Actions will impersonate
+                service_account: github-actions@reze-erp.iam.gserviceaccount.com
+
+            - name: Docker prepare .env file
+              env:
+                NGINX_HOST: ${{vars.NGINX_HOST}}
+                NGINX_PORT: ${{vars.NGINX_PORT}}
+                SANCTUM_STATEFUL_DOMAINS: ${{vars.SANCTUM_STATEFUL_DOMAINS}}
+                SESSION_DOMAIN: ${{vars.SESSION_DOMAIN}}
+                MYSQL_PORT: ${{vars.MYSQL_PORT}}
+                MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
+                MYSQL_USER: ${{secrets.MYSQL_USER}}
+                MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
+                MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
+                APP_KEY: ${{secrets.APP_KEY}}
+                ADMIN_EMAIL: ${{vars.ADMIN_EMAIL}}
+                ADMIN_PASSWORD: ${{vars.ADMIN_PASSWORD}}
+              run: |
+                envsubst < .env.example > .env
+                envsubst < backend/.env.example > backend/.env
+
+
+            - name: Docker set up  Buildx
+              uses: docker/setup-buildx-action@v3
+
+            - name: Docker validation configuration
+              uses: docker/bake-action@v6
+              with:
+                call: check
+
+            - name: Docker Build and push
+              uses: docker/bake-action@v6
+              with:
+                cache-from: type=gha
+                cache-to: type=gha,mode=max
