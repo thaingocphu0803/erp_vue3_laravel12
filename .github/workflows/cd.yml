@@ -1,7 +1,7 @@
 name: REZE ERP CD
 on:
-    pull_request:
-        branches: ['main']
+    push:
+        branches: ["main"]
 
 jobs:
     deploy_on_gce:
@@ -9,10 +9,12 @@ jobs:
         runs-on: ubuntu-22.04
         environment: develop
         env:
+            GCP_PROJECT_ID: ${{vars.GCP_PROJECT_ID}}
             GCP_VM_NAME: ${{vars.GCP_VM_NAME}}
             GCP_VM_ZONE: ${{vars.GCP_VM_ZONE}}
             GCP_WIP: projects/${{secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{secrets.GCP_POOL_ID}}/providers/${{secrets.GCP_PROVIDER_ID}}
             GCP_SERVICE_ACCOUNT: ${{secrets.GCP_SERVICE_ACCOUNT}}
+            GCP_ARTIFACT_REGION: ${{vars.GCP_ARTIFACT_REGION}}
         permissions:
             contents: read
             id-token: write
@@ -23,8 +25,8 @@ jobs:
             - name: Authenticate with Google Cloud
               uses: google-github-actions/auth@v3
               with:
-                   workload_identity_provider: ${{env.GCP_WIP}}
-                   service_account: ${{secrets.GCP_SERVICE_ACCOUNT}}
+                  workload_identity_provider: ${{env.GCP_WIP}}
+                  service_account: ${{secrets.GCP_SERVICE_ACCOUNT}}
 
             - name: Generate .env Files
               env:
@@ -40,46 +42,43 @@ jobs:
                   APP_KEY: ${{secrets.APP_KEY}}
                   ADMIN_EMAIL: ${{secrets.ADMIN_EMAIL}}
                   ADMIN_PASSWORD: ${{secrets.ADMIN_PASSWORD}}
-              run: | # Replace placeholders with "$VARIABLE" format in .env.example with environment variables and save to .env
+              run:
+                  | # Replace placeholders with "$VARIABLE" format in .env.example with environment variables and save to .env
                   envsubst < .env.example > .env
                   envsubst < backend/.env.example > backend/.env
 
-            - name: Generate ssh key
+            - name: Prepare and Upload Files
               run: |
-                mkdir -p $HOME/.ssh
-                ssh-keygen -t rsa -f  $HOME/.ssh/gce_rsa -N "" -C "github-actions"
 
-            - name: add ssh key to Github env
-              run: |
-                echo "GCP_SSH_PRIVATE_KEY<<EOF" >> $GITHUB_ENV
-                cat $HOME/.ssh/gce_rsa >> $GITHUB_ENV
-                echo "EOF" >> $GITHUB_ENV
+                  gcloud compute ssh ${{env.GCP_VM_NAME}} \
+                  --zone=${{env.GCP_VM_ZONE}} \
+                  --command="mkdir -p ~/deploy/backend" \
+                  --tunnel-through-iap \
+                  --quiet
 
-            - name: Add ssh key to OS login
-              run: |
-                gcloud compute os-login ssh-keys add \
-                --key-file=$HOME/.ssh/gce_rsa.pub \
-                --project=reze-erp \
-                --account=${{ secrets.GCP_SERVICE_ACCOUNT }} \
-                --ttl=5m --quiet
+                  gcloud compute scp .env compose.prod.yml ${{env.GCP_VM_NAME}}:~/deploy \
+                  --zone=${{env.GCP_VM_ZONE}} \
+                  --tunnel-through-iap \
+                  --quiet
 
-            - name: Create Remote Directory on VM
-              run: |
-                gcloud compute ssh ${{env.GCP_VM_NAME}} --zone=${{env.GCP_VM_ZONE}} --ssh-key-file=$HOME/.ssh/gce_rsa --command="mkdir -p $HOME/deploy/backend" --tunnel-through-iap --quiet
-
-            - name: Secure Copy (SCP) Config Files to VM
-              run:
-                gcloud compute scp .env compose.prod.yml ${{env.GCP_VM_NAME}}:$HOME/deploy --zone=${{env.GCP_VM_ZONE}} --ssh-key-file=$HOME/.ssh/gce_rsa --tunnel-through-iap --quiet
-                gcloud compute scp backend/.env ${{env.GCP_VM_NAME}}:$HOME/deploy/backend --zone=${{env.GCP_VM_ZONE}} --ssh-key-file=$HOME/.ssh/gce_rsa --tunnel-through-iap --quiet
+                  gcloud compute scp backend/.env ${{env.GCP_VM_NAME}}:~/deploy/backend \
+                  --zone=${{env.GCP_VM_ZONE}} \
+                  --tunnel-through-iap \
+                  --quiet
 
             - name: Execute Docker Compose on VM
-              uses: google-github-actions/ssh-compute@v2
-              with:
-                  instance_name: ${{env.GCP_VM_NAME}}
-                  zone: ${{env.GCP_VM_ZONE}}
-                  ssh_private_key: ${{env.GCP_SSH_PRIVATE_KEY}}
-                  command: |
-                    cd $HOME/deploy
-                    docker compose pull
-                    docker compose -f compose.prod.yml up -d
-                    docker image prune -f
+              run: |
+                  gcloud compute ssh ${{env.GCP_VM_NAME}} \
+                  --zone=${{env.GCP_VM_ZONE}} \
+                  --command="
+                      set -e
+
+                      sudo gcloud auth configure-docker ${{env.GCP_ARTIFACT_REGION}}-docker.pkg.dev --quiet
+                      cd ~/deploy
+                      sudo docker compose -f compose.prod.yml pull
+                      sudo docker compose -f compose.prod.yml up -d
+                      sudo docker image prune -f
+                      sudo docker ps
+                  " \
+                  --tunnel-through-iap \
+                  --quiet
