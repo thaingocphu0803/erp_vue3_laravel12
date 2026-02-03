@@ -77,44 +77,58 @@ jobs: # Define the test laravel job
         steps:
             - uses: actions/checkout@v4
 
-            - id: auth
+            - id: auth # unique identifier for the step
               name: Authenticate to Google Cloud
               uses: google-github-actions/auth@v3 # Authenticate to Google Cloud using Workload Identity Federation
               with:
-                # The full identifier of the Workload Identity Provider
-                workload_identity_provider: "projects/${{secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{secrets.GCP_POOL_ID}}/providers/${{secrets.GCP_PROVIDER_ID}}"
-                # The email of the Service Account that GitHub Actions will impersonate
-                service_account: github-actions@reze-erp.iam.gserviceaccount.com
+                  # The full identifier of the Workload Identity Provider
+                  workload_identity_provider: "projects/${{secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{secrets.GCP_POOL_ID}}/providers/${{secrets.GCP_PROVIDER_ID}}"
+                  # The email of the Service Account that GitHub Actions will impersonate
+                  service_account: github-actions@reze-erp.iam.gserviceaccount.com # The Service Account email that GitHub Actions will impersonate.
+                  token_format: access_token # token format for usibf OAuth2
+
+            - name: Login to Google Artifact Registry
+              uses: docker/login-action@v3 # Login to Docker registry
+              with:
+                  registry: 'us-west1-docker.pkg.dev' # Use the regional endpoint for Artifact Registry
+                  username: oauth2accesstoken # Authentication for Google Cloud using OAuth2 access token
+                  password: ${{steps.auth.outputs.access_token}}
 
             - name: Docker prepare .env file
               env:
-                NGINX_HOST: ${{vars.NGINX_HOST}}
-                NGINX_PORT: ${{vars.NGINX_PORT}}
-                SANCTUM_STATEFUL_DOMAINS: ${{vars.SANCTUM_STATEFUL_DOMAINS}}
-                SESSION_DOMAIN: ${{vars.SESSION_DOMAIN}}
-                MYSQL_PORT: ${{vars.MYSQL_PORT}}
-                MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
-                MYSQL_USER: ${{secrets.MYSQL_USER}}
-                MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
-                MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
-                APP_KEY: ${{secrets.APP_KEY}}
-                ADMIN_EMAIL: ${{vars.ADMIN_EMAIL}}
-                ADMIN_PASSWORD: ${{vars.ADMIN_PASSWORD}}
-              run: |
-                envsubst < .env.example > .env
-                envsubst < backend/.env.example > backend/.env
-
+                  NGINX_HOST: ${{vars.NGINX_HOST}}
+                  NGINX_PORT: ${{vars.NGINX_PORT}}
+                  SANCTUM_STATEFUL_DOMAINS: ${{vars.SANCTUM_STATEFUL_DOMAINS}}
+                  SESSION_DOMAIN: ${{vars.SESSION_DOMAIN}}
+                  MYSQL_PORT: ${{vars.MYSQL_PORT}}
+                  MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
+                  MYSQL_USER: ${{secrets.MYSQL_USER}}
+                  MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_ROOT_PASSWORD}}
+                  MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
+                  APP_KEY: ${{secrets.APP_KEY}}
+                  ADMIN_EMAIL: ${{secrets.ADMIN_EMAIL}}
+                  ADMIN_PASSWORD: ${{secrets.ADMIN_PASSWORD}}
+              run: | # Replace placeholders with "$VARIABLE" format in .env.example with environment variables and save to .env
+                  envsubst < .env.example > .env
+                  envsubst < backend/.env.example > backend/.env
 
             - name: Docker set up  Buildx
-              uses: docker/setup-buildx-action@v3
+              uses: docker/setup-buildx-action@v3 # Create and boot a builder instance to support multi-platform builds and advanced caching
 
             - name: Docker validation configuration
               uses: docker/bake-action@v6
               with:
-                call: check
+                  call: check # Dry-run to validate syntax and configuration without performing the actual build
 
             - name: Docker Build and push
               uses: docker/bake-action@v6
               with:
-                cache-from: type=gha
-                cache-to: type=gha,mode=max
+                  push: true # Push the images to the registry after a successful build
+
+                  # Leverage GitHub Actions cache backend for optimized build performance
+                  # mode=max: Caches all layers, including intermediate ones (Best for speed, more storage)
+                  # mode=min: Caches only the resulting layers of the exported image (Default)
+                  set: |
+                    *.cache-from=type=gha
+                    *.cache-to=type=gha,mode=max
+
