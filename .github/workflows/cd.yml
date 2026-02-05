@@ -47,6 +47,25 @@ jobs:
                   envsubst < .env.example > .env
                   envsubst < backend/.env.example > backend/.env
 
+            - name: Generate ssh key
+              run: |
+                  mkdir -p /home/runner/.ssh
+                  ssh-keygen -t rsa -f /home/runner/.ssh/google_compute_engine -N "" -C "github-actions"
+
+            - name: "Set up Cloud SDK"
+              uses: "google-github-actions/setup-gcloud@v3"
+              with:
+                  version: ">= 363.0.0"
+                  project_id: ${{env.GCP_PROJECT_ID}}
+
+            - name: Add SSH key to OS login
+              run: |
+                  gcloud compute os-login ssh-keys add \
+                  --key-file=/home/runner/.ssh/google_compute_engine.pub \
+                  --project=${{env.GCP_PROJECT_ID}} \
+                  --account=${{ secrets.GCP_SERVICE_ACCOUNT }} \
+                  --ttl=10m --quiet
+
             - name: Prepare and Upload Files
               run: |
 
