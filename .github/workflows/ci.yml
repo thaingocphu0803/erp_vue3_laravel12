@@ -84,7 +84,7 @@ jobs: # Define the test laravel job
                   # The full identifier of the Workload Identity Provider
                   workload_identity_provider: "projects/${{secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{secrets.GCP_POOL_ID}}/providers/${{secrets.GCP_PROVIDER_ID}}"
                   # The email of the Service Account that GitHub Actions will impersonate
-                  service_account: github-actions@reze-erp.iam.gserviceaccount.com # The Service Account email that GitHub Actions will impersonate.
+                  service_account: ${{secrets.GCP_SERVICE_ACCOUNT}} # The Service Account email that GitHub Actions will impersonate.
                   token_format: access_token # token format for usibf OAuth2
 
             - name: Login to Google Artifact Registry
