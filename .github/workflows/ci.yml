@@ -68,7 +68,11 @@ jobs: # Define the test laravel job
     docker-build-push:
         name: Docker Build & Push
         runs-on: ubuntu-22.04
+        needs: [laravel-tests, vuetify-tests]
         environment: develop
+        env:
+            GCP_WIP: projects/${{secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{secrets.GCP_POOL_ID}}/providers/${{secrets.GCP_PROVIDER_ID}}
+            GCP_SERVICE_ACCOUNT: ${{secrets.GCP_SERVICE_ACCOUNT}}
 
         permissions: # Define permissions for the job
             contents: read # Allows the action to check out the repository's code
@@ -82,9 +86,9 @@ jobs: # Define the test laravel job
               uses: google-github-actions/auth@v3 # Authenticate to Google Cloud using Workload Identity Federation
               with:
                   # The full identifier of the Workload Identity Provider
-                  workload_identity_provider: "projects/${{secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{secrets.GCP_POOL_ID}}/providers/${{secrets.GCP_PROVIDER_ID}}"
+                  workload_identity_provider: ${{env.GCP_WIP}}
                   # The email of the Service Account that GitHub Actions will impersonate
-                  service_account: ${{secrets.GCP_SERVICE_ACCOUNT}} # The Service Account email that GitHub Actions will impersonate.
+                  service_account: ${{env.GCP_SERVICE_ACCOUNT}} # The Service Account email that GitHub Actions will impersonate.
                   token_format: access_token # token format for usibf OAuth2
 
             - name: Login to Google Artifact Registry
