@@ -47,17 +47,21 @@ jobs:
                   envsubst < .env.example > .env
                   envsubst < backend/.env.example > backend/.env
 
+            # Generate SSH key in Runner environment
             - name: Generate ssh key
               run: |
                   mkdir -p /home/runner/.ssh
                   ssh-keygen -t rsa -f /home/runner/.ssh/google_compute_engine -N "" -C "github-actions"
 
             - name: "Set up Cloud SDK"
-              uses: "google-github-actions/setup-gcloud@v3"
+              uses: "google-github-actions/setup-gcloud@v3" # Install GCloud CLi in Runner environment
               with:
                   version: ">= 363.0.0"
                   project_id: ${{env.GCP_PROJECT_ID}}
 
+            # Add SSH key from Runner environment to OS Login Authenticate
+            # --ttl: set life time for SSH key
+            # --account: specifice Service account for OS Login
             - name: Add SSH key to OS login
               run: |
                   gcloud compute os-login ssh-keys add \
@@ -66,9 +70,12 @@ jobs:
                   --account=${{ secrets.GCP_SERVICE_ACCOUNT }} \
                   --ttl=10m --quiet
 
+            # SSH to VM from Runner environment by gcloud compute ssh
+            # Greate folder ~/deploy/backend on VM by --command flag
+            # Coppy file from Runner Enviroment to VM by gcloud compute scp
+            # tunnel-through-iap: Enable SSH from Runner environment to VM by port 22
             - name: Prepare and Upload Files
               run: |
-
                   gcloud compute ssh ${{env.GCP_VM_NAME}} \
                   --zone=${{env.GCP_VM_ZONE}} \
                   --command="mkdir -p ~/deploy/backend" \
@@ -85,6 +92,11 @@ jobs:
                   --tunnel-through-iap \
                   --quiet
 
+            # set -e: Stopping execute if having any issue
+            # sudo gcloud auth configure-docker <region>-docker.pkg.dev: Authentication with GAR
+            # sudo docker compose -f compose.prod.yml pull: pull image from GAR which is specificed in compose..prod.yml
+            # sudo docker compose -f compose.prod.yml up -d: build and run container from the pull images
+            # sudo docker image prune -f: remove dalling images in VM
             - name: Execute Docker Compose on VM
               run: |
                   gcloud compute ssh ${{env.GCP_VM_NAME}} \
@@ -97,7 +109,6 @@ jobs:
                       sudo docker compose -f compose.prod.yml pull
                       sudo docker compose -f compose.prod.yml up -d
                       sudo docker image prune -f
-                      sudo docker ps
                   " \
                   --tunnel-through-iap \
                   --quiet
