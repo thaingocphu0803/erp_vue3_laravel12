@@ -85,6 +85,8 @@ services:
         environment:
             - TUNNEL_TOKEN=${CLOUDFLARE_TOKEN}
         command: tunnel --no-autoupdate run
+        depends_on:
+            - wed
         healthcheck:
             test: ["CMD-SHELL", "cloudflared --version"]
             interval: 30s
