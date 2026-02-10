@@ -78,7 +78,22 @@ services:
             timeout: 5s
             retries: 5
             start_period: 40s
-# Network service 
+
+    cloudflare-tunnel:
+        image: cloudflare/cloudflared:latest
+        restart: unless-stopped
+        environment:
+            - TUNNEL_TOKEN=${CLOUDFLARE_TOKEN}
+        command: tunnel --no-autoupdate run
+        healthcheck:
+            test: ["CMD-SHELL", "cloudflared --version"]
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+        networks:
+            - app-production
+# Network service
 networks:
     app-production:
         driver: bridge # Isolation container network with my device network
