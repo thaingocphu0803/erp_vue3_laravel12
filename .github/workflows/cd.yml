@@ -42,6 +42,7 @@ jobs:
                   APP_KEY: ${{secrets.APP_KEY}}
                   ADMIN_EMAIL: ${{secrets.ADMIN_EMAIL}}
                   ADMIN_PASSWORD: ${{secrets.ADMIN_PASSWORD}}
+                  CLOUDFLARE_TOKEN: ${{secrets.CLOUDFLARE_TOKEN}}
               run:
                   | # Replace placeholders with "$VARIABLE" format in .env.example with environment variables and save to .env
                   envsubst < .env.example > .env
