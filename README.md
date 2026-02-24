@@ -8,7 +8,7 @@
 
 - Sử dụng baseImage là **node:20-alpine**
 
-- Đặt thư mục làm việc ở giai đoạn này thành **/app** -> Copy file **frontend/package\*/json** từ máy host vào thư mục **/app** trong container
+- Đặt thư mục làm việc ở giai đoạn này thành **/app** -> Copy file **frontend/package\*\.json** từ máy host vào thư mục **/app** trong container
 
 - Cài đặt dependencies và đặt trong nó trong thư mục **/root/.npm** ở lần đầu, những lần sau sử dụng dependencies trong thư mục này.
 
@@ -24,7 +24,7 @@
 
     - Tất cả url bắt đầu với **/api** điều kiểm tra **file**, **folder**. Nếu tất cả đều không khớp thì đưa đến **index.php** để xử lý kèm với **\$query_string** parameters -> Url **/api/token** sẽ được chuyển thành **sanctum/csrf-cookie**
 
-    - Tất cả url kết thúc với **\*.php** thì **fastgci_pass** sẽ chuyển sang **php-fpm server** để xử lý -> Chỉ định **fastcgi_index** là **index.php** để xử lý -> Tạo biến **SCRIPT_FILENAME** với lệnh **fastcgi_param** để chỉ đường cho php-fpm đi tới file code. Cấu trúc **SCRIPT_FILENAME** được cấu hình từ **\$document_root** và **\$fastcgi_script_name** -> Gửi dữ liệu trong **fastcgi_params** tới php-fpm với lệnh **include**
+    - Tất cả url kết thúc với **\*.php** thì **fastgci_pass** sẽ chuyển sang **php-fpm server** để xử lý -> Chỉ định **fastcgi_index** là **index.php** để xử lý -> Tạo biến **SCRIPT_FILENAME** với lệnh **fastcgi_param** để chỉ đường cho php-fpm đi tới file code. Cấu trúc **SCRIPT_FILENAME** được cấu hình từ **\$document_root** và **\$fastcgi_script_name** -> Gửi toàn bộ nôi dung file **fastcgi_params** của nginx tới cấu hình hiện tại thông qua lệnh **include**
 
 - Đặt thư mục làm việc ở giai đoạn này là **/var/www**
 
@@ -96,7 +96,7 @@ Tương tự php-fpm dockerfile nhưng không thực thi **entrypoint.sh**
 
 - Image được push và pull từ **GAR**
 
-- Buil với dockerfile **/docker/php-fpm/Dockerfile** ở giai đoạn production
+- Build với dockerfile **/docker/php-fpm/Dockerfile** ở giai đoạn production
 
 - Volume **laravel-storage-production** gắn với thư mục **/var/www/storage** của container cùng quyền chỉ đọc
 
