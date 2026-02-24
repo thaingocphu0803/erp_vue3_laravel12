@@ -35,9 +35,6 @@ jobs: # Define the test laravel job
               run: chmod -R 777 storage bootstrap/cache
 
             - name: Execute Feature Tests vie Pest
-              env:
-                  DB_CONNECTION: sqlite
-                  DB_DATABASE: ":memory:"
               run: php artisan test --testsuite=Feature
 
     vuetify-tests:
@@ -89,7 +86,7 @@ jobs: # Define the test laravel job
                   workload_identity_provider: ${{env.GCP_WIP}}
                   # The email of the Service Account that GitHub Actions will impersonate
                   service_account: ${{env.GCP_SERVICE_ACCOUNT}} # The Service Account email that GitHub Actions will impersonate.
-                  token_format: access_token # token format for usibf OAuth2
+                  token_format: access_token # token format for using OAuth2
 
             - name: Login to Google Artifact Registry
               uses: docker/login-action@v3 # Login to Docker registry

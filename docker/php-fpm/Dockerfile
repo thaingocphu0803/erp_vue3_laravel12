@@ -7,7 +7,7 @@ FROM php:8.4-fpm AS builder
 # apt-get autoremove: Cleanup unnecessary build-time dependencies
 # apt-get clean & rm: Remove cached package lists and temporary files to reduce image size
 # docker-php-ext-install: Helper script to compile and configure PHP extensions from source
-# -j$(nproc): Enables parallel processing by utilizing all available CPU cores 
+# -j$(nproc): Enables parallel processing by utilizing all available CPU cores
 RUN apt-get update &&   apt-get install -y --no-install-recommends \
     curl \
     unzip \
@@ -87,7 +87,8 @@ COPY --from=builder /usr/local/bin/docker-php-ext-* /usr/local/bin/
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # Enable PHP-FPM status page by modifying zz-docker.conf with sed
-# sed -i: In-place edit of zz-docker.conf to inject the status path
+# set -eux: stict mode
+# Copy content in the {} to destination
 # This is required for the php-fpm-healthcheck script to function
 RUN set -eux; \
     { \
