@@ -180,7 +180,7 @@ Tương tự php-fpm dockerfile nhưng không thực thi **entrypoint.sh**
 
 > Thực thi khi tạo **pull request** vào nhánh **main**
 
-> Tất cả Runner chạy trên Ubuntu 22.04 
+> Tất cả Runner chạy trên Ubuntu 22.04
 
 ##### # Laravel test job
 
@@ -194,7 +194,7 @@ Tương tự php-fpm dockerfile nhưng không thực thi **entrypoint.sh**
 
 - Cài đặt **composer dependencies**
 
-- Khởi tạo app key với lệnh **php artisan key:generate** -> Chỉ định quyền đọc -  ghi - thực thi cho thư mục **storage** và **boostrap/cache** để đảm bao ứng dụng không phát sinh lỗi trong quá trình testing
+- Khởi tạo app key với lệnh **php artisan key:generate** -> Chỉ định quyền đọc - ghi - thực thi cho thư mục **storage** và **boostrap/cache** để đảm bao ứng dụng không phát sinh lỗi trong quá trình testing
 
 - Thực thi lệnh **php artisan test --testsuite=Feature** để thực hiện **Feature Test**
 
@@ -218,8 +218,8 @@ Tương tự php-fpm dockerfile nhưng không thực thi **entrypoint.sh**
 
 - Chờ job laravel test và vuetify test hoàn tất thì job này mới bắt đầu chạy
 
-- Khai bao môi trường là **develop** để sử dụng các biến **Github secret** và 
-**Github variable** của môi trường này
+- Khai bao môi trường là **develop** để sử dụng các biến **Github secret** và
+  **Github variable** của môi trường này
 
 - Khai báo biến môi trường **GCP_WIP** và **GCP_SERVICE_ACCOUNT** để dùng cho action **google-github-actions/auth@v3**
 
@@ -228,25 +228,22 @@ Tương tự php-fpm dockerfile nhưng không thực thi **entrypoint.sh**
 - Sử dụng action **actions/checkout@v4** để checkout repository
 
 - Sử dụng action **google-github-actions/auth@v3** để xác thực giữa **Github Actions** và **GCP** với các thuộc tính sau:
-	- **workload_identity_provider: \${{env.GCP_WIP}}**: đường dẫn xác thực đầy đủ của Workload Identity Provider trên **GCP**
-	
-	- **service_account: \${{env.GCP_SERVICE_ACCOUNT}}**: email service account trên **GCP** sử dụng cho GitHub Action
-	
-	- **token_format: access_token**: token format sử dụng cho OAth2
+    - **workload_identity_provider: \${{env.GCP_WIP}}**: đường dẫn xác thực đầy đủ của Workload Identity Provider trên **GCP**
+    - **service_account: \${{env.GCP_SERVICE_ACCOUNT}}**: email service account trên **GCP** sử dụng cho GitHub Action
+    - **token_format: access_token**: token format sử dụng cho OAth2
 
 - Sử dụng action **docker/login-action@v3** để login vào **GAR** với các thuộc tính sau:
-	- **registry: \<region\>-docker.pkg.dev**: Chỉ định khu vực **GAR** đang được đặt.
+    - **registry: \<region\>-docker.pkg.dev**: Chỉ định khu vực **GAR** đang được đặt.
 
-	- **username: oauth2accesstoken**: Măc định xác thực với **GCP** bằng OAth2 access token
+    - **username: oauth2accesstoken**: Măc định xác thực với **GCP** bằng OAth2 access token
 
-	- **password: \${{steps.auth.outputs.access_token}}**: access token mặc định được sinh ra sau khi xác thực với **GCP** ở bước trước đó
+    - **password: \${{steps.auth.outputs.access_token}}**: access token mặc định được sinh ra sau khi xác thực với **GCP** ở bước trước đó
 
 - Khai báo các biến env từ **Github secret** và **Github variable** để sử dụng cho các file **.env** trong repository -> Thực thi lệnh **envsubst \< \.env\.example \> \.env** và **envsubst \< backend\/\.env.example \> backend\/\.env** để thay thế các tham số **$\*** thành biến ở step hiện tại sau đó xuất kết quả vào file **\.env** ở môi trường Runner
 
 - Sử dụng action **docker/setup-buildx-action@v3** để xây dựng trình biên dịch **Buildx** để **build docker Images** trên đa nền tảng và hỗ trợ caching
 
 - Sử dụng action **docker/bake-action@v6** với thuộc tính **with.call: check** để kiểm tra cấu hình docker trước khi build thật
-
 
 - Sử dụng action **docker/bake-action@v6** với thuộc tính **with.push: true** để build images và đẩy images lên kho lưu trữ **GAR** sau khi build xong. Ngoài ra thuộc tính **with.set: \*.cache-from=type=gha \&& \*.cache-to=type=gha,mode=max** giúp lưu và sử dụng cache trong **Github Actions**
 
@@ -278,7 +275,6 @@ Tương tự php-fpm dockerfile nhưng không thực thi **entrypoint.sh**
 
 - Thực thi lệnh **gcloud compute os-login ssh-keys add ...** để thêm ssh key tạo ở runner vào OS login của **GCP**
 
-
 - Thực thi lệnh **gcloud compute ssh --command="mkdir -p \~\/deploy\/backend" --tunnel-through-iap** để tạo thư mục **deploy/backend** trên **GCE**.
 
 - Thực thi lệnh **gcloud compute scp .env compose.prod.yml ${{env.GCP_VM_NAME}}\:\~\/deploy --tunnel-through-iap** để sao chép file **.env** **compose.prod.yml** từ môi trường runner vào thưc mục **deploy** trên **GCE**.
@@ -288,12 +284,11 @@ Tương tự php-fpm dockerfile nhưng không thực thi **entrypoint.sh**
 - Thực thi lệnh **gcloud compute ssh --command="mkdir -p \~\/deploy\/backend" --tunnel-through-iap** để tạo thư mục **deploy/backend** trên **GCE**.
 
 - Thực thi lệnh **gcloud compute ssh --command ...** để gộp nhiều thao tác lệnh trên **GCE** theo trình tự như sau:
-	- **sudo gcloud auth configure-docker <region>-docker.pkg.dev**: Xác thực VM với kho lưu trữ **GAR**
-	
-	-  **cd ~\/deploy**: đi vào thư mục deploy của VM
+    - **sudo gcloud auth configure-docker <region>-docker.pkg.dev**: Xác thực VM với kho lưu trữ **GAR**
+    - **cd ~\/deploy**: đi vào thư mục deploy của VM
 
-	- **sudo docker compose -f compose.prod.yml pull**: tải image từ kho lưu trữ **GAR** về VM
+    - **sudo docker compose -f compose.prod.yml pull**: tải image từ kho lưu trữ **GAR** về VM
 
-	- **sudo docker compose -f compose.prod.yml up -d**: xây dựng và chạy các container từ image đã tải về VM
+    - **sudo docker compose -f compose.prod.yml up -d**: xây dựng và chạy các container từ image đã tải về VM
 
-	- **sudo docker image prune -f**: xóa các images lửng lơ trên VM
+    - **sudo docker image prune -f**: xóa các images lửng lơ trên VM
