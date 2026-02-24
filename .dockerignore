@@ -16,5 +16,6 @@ backend/storage/logs/*.log
 backend/storage/framework/views/*
 backend/storage/framework/sessions/*
 backend/storage/framework/cache/*
+backend/storage/erd/*.erd.json
 
 gha-creds-*.json
