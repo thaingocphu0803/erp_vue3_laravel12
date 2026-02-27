@@ -29,9 +29,24 @@ const router = createRouter({
 					component: () => import('@/views/main/Attendance.vue'),
 				},
 				{
-					path: 'employee',
-					name: 'employee',
-					component: () => import('@/views/main/Employee.vue'),
+					path: 'hr',
+					redirect: {name: 'hr.employee'},
+					meta: {title: 'common.module.humanResource', disabled: true},
+					children: [
+						{
+							path: 'employee',
+							name: 'hr.employee',
+							component: () => import('@/views/main/humanResource/employee/List.vue'),
+							meta: {title: 'common.subModule.employee'},
+
+						},
+						{
+							path: 'department',
+							name: 'hr.department',
+							component: () => import('@/views/main/humanResource/department/List.vue'),
+							meta: {title: 'common.subModule.department'},
+						},
+					],
 				},
 				{
 					path: 'profile',
@@ -68,4 +83,3 @@ router.beforeEach(async (to, from) => {
 })
 
 export default router
-

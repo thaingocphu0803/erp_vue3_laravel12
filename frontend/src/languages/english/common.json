@@ -4,9 +4,13 @@
 			"dashboard": "Dashboard",
 			"attendance": "Attendance",
 			"myProfile": "My Profile",
-			"humanceResource": "Human Resources",
+			"humanResource": "Human Resources",
 			"message": "Messages",
 			"setting": "Setting"
+		},
+		"subModule":{
+			"department": "Departments",
+			"employee": "Employees"
 		},
 		"language": {
 			"english": "English",
@@ -23,6 +27,6 @@
 		},
 		"subttitle": {
 			"notification": "Today"
-		} 
+		}
 	}
 }

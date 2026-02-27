@@ -4,10 +4,14 @@
             "dashboard": "Bảng Điều Khiển",
             "attendance": "Điểm Danh",
             "myProfile": "Hồ Sơ Của Tôi",
-            "humanceResource": "Quản Lý Nhân Sự",
+            "humanResource": "Quản Lý Nhân Sự",
             "message": "Tin Nhắn",
             "setting": "Cài Đặt"
         },
+		"subModule":{
+			"department": "Phòng Ban",
+			"employee": "Nhân Sự"
+		},
         "language": {
             "english": "Tiếng Anh",
             "vietnamese": "Tiếng Việt"

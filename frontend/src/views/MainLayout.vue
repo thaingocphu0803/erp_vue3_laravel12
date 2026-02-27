@@ -37,7 +37,9 @@ const handleNavDisplay = () => {
 			<theme-switch color="primary" base-color="primary" />
 
 			<base-btn :title="logoutBtnTitle" color="primary" append-icon="mdi-logout" @click="handleLogout"
-				class="text-capitalize d-none d-sm-flex"></base-btn>
+				class="text-capitalize d-none d-sm-flex">
+			</base-btn>
+
 			<mobile-menu-btn />
 		</layout-bar>
 
