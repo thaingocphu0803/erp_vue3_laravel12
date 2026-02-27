@@ -4,9 +4,13 @@
 			"dashboard": "Dashboard",
 			"attendance": "Attendance",
 			"myProfile": "My Profile",
-			"humanceResource": "Human Resources",
+			"humanResource": "Human Resources",
 			"message": "Messages",
 			"setting": "Setting"
+		},
+		"subModule": {
+			"department": "Departments",
+			"employee": "Employees"
 		},
 		"language": {
 			"english": "English",
@@ -16,13 +20,30 @@
 			"notification": "Notifications",
 			"language": "Languages",
 			"logout": "Logout",
-			"seeAll": "See all"
+			"seeAll": "See all",
+			"addEmployee": "Create a new contract"
 		},
 		"state": {
 			"comeSoon": "Comming Soon..."
 		},
 		"subttitle": {
 			"notification": "Today"
-		} 
+		},
+		"header": {
+			"listEmployee": "Employee List"
+		},
+		"filter": {
+			"employeeNameOrCode": "Search by employee name or code",
+			"position": "Position",
+			"status": "Status",
+			"department": "Department",
+			"itemPerPage": "Rows per page"
+		},
+		"staffPosition": {
+			"intern": "Intern",
+			"staff": "Staff",
+			"Head": "Head of Department",
+			"deputyHead": "Deputy Head of Department"
+		}
 	}
 }
