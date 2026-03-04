@@ -21,12 +21,13 @@
 			"language": "Languages",
 			"logout": "Logout",
 			"seeAll": "See all",
-			"addEmployee": "Create a new contract"
+			"addEmployee": "Create a new contract",
+			"addDepartment": "Create a department"
 		},
 		"state": {
 			"comeSoon": "Comming Soon..."
 		},
-		"subttitle": {
+		"subtitle": {
 			"notification": "Today"
 		},
 		"header": {
@@ -44,6 +45,9 @@
 			"staff": "Staff",
 			"Head": "Head of Department",
 			"deputyHead": "Deputy Head of Department"
+		},
+		"action": {
+			"create": "create"
 		}
 	}
 }

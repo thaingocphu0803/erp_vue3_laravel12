@@ -14,12 +14,10 @@ Route::controller(AuthController::class)->prefix('auth')->group(function(){
 
 // DepartmentController
 Route::controller(DepartmentController::class)->prefix('department')->middleware('auth:sanctum')->group(function(){
-	// empty
+	Route::post('create', 'create');
 });
 
 // DepartmentController
 Route::controller(LookupController::class)->prefix('lookup')->middleware('auth:sanctum')->group(function(){
 	Route::get('list', 'list');
 });
-
-

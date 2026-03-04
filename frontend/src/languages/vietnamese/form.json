@@ -41,6 +41,48 @@
 				"me": "Truy cập thông tin người dùng thành công"
 			}
 		}
+	},
+	"department": {
+		"title": {
+			"create": "Thêm phòng ban mới"
+		},
+		"input": {
+			"departmentName": "Tên phòng ban",
+			"departmentCode": "Mã phòng ban",
+			"departmentParent": "Phòng ban cha",
+			"departmentDesc": "Mô tả Phòng ban"
+		},
+		"validate": {
+			"name": {
+				"required": "Vui lòng nhập tên phòng ban",
+				"max": "Tên phòng ban không được vượt quá 100 ký tự",
+				"noSpecialChars": "Tên phòng ban không được chứa ký tự đặc biệt"
+			},
+			"code": {
+				"max": "Mã phòng ban không được vượt quá 20 ký tự"
+			}
+		},
+		"tooltip": {
+			"codeAutoGenerate": "Hệ thống tự tạo mã phòng ban nếu để trống"
+		},
+		"alert": {
+			"error": {
+				"create": "Tạo mới phòng ban thất bại"
+			},
+			"success": {
+				"create": "Tạo mới phòng ban thành công"
+			}
+		}
+	},
+	"common-list": {
+		"alert": {
+			"error": {
+				"badRequest": "Yêu cầu không hợp lệ",
+				"getList": "Tải danh sách thất bại. Vui lòng thử lại sau"
+			},
+			"success": {
+				"getList": "Tải danh sách thành công."
+			}
+		}
 	}
 }
-

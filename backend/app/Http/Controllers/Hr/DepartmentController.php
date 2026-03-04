@@ -2,48 +2,43 @@
 
 namespace App\Http\Controllers\Hr;
 
+use App\Enum\Status;
+use App\Enum\Table;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Hr\Department\StoreDepartmentRequest;
+use App\Models\Department;
+use App\Trait\HasAutoCode;
+use App\Trait\HasResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DepartmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
+	use HasResponse, HasAutoCode;
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+	public function __construct(){}
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+	public function create(StoreDepartmentRequest $request){
+		$payload = $request->only('name', 'code', 'parent_id', 'description');
+		$payload['status'] = Status::ACTIVE->value;
+		$payload['created_by'] = Auth::id();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+		if(is_null($payload['code'])){
+			$payload['code'] = $this->generateCode(Table::DEPARTMENT->value, 'DEP');
+		}
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
+		try{
+			return DB::transaction(function () use ($payload) {
+				Department::create($payload);
+
+				$message = 'department.alert.success.create';
+
+				return $this->jsonResponse($message, JsonResponse::HTTP_OK);
+			});
+		}catch(\Exception $e){
+			$message = 'department.alert.error.create';
+			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+		}
+	}
 }

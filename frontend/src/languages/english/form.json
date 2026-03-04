@@ -41,6 +41,48 @@
 				"me": "Retrieved user successfully"
 			}
 		}
+	},
+	"department": {
+		"title": {
+			"create": "Create new department"
+		},
+		"input": {
+			"departmentName": "Department Name",
+			"departmentCode": "Department Code",
+			"departmentParent": "Parent Department",
+			"departmentDesc": "Description"
+		},
+		"validate": {
+			"name": {
+				"required": "Department name is required",
+				"max": "Department name must not exceed 100 characters",
+				"noSpecialChars": "Department name must not contain special characters"
+			},
+			"code": {
+				"max": "Department code must not exceed 20 characters"
+			}
+		},
+		"tooltip": {
+			"codeAutoGenerate": "The system will automatically generate a department code if left blank"
+		},
+		"alert": {
+			"error": {
+				"create": "Failed to create department"
+			},
+			"success": {
+				"create": "Department created successfully"
+			}
+		}
+	},
+	"common-list": {
+		"alert": {
+			"error": {
+				"badRequest": "Invalid request",
+				"getList": "Failed to load the list. Please try again later."
+			},
+			"success": {
+				"getList": "The list was loaded successfully."
+			}
+		}
 	}
 }
-

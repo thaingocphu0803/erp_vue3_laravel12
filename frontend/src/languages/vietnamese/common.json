@@ -21,12 +21,13 @@
             "language": "Ngôn Ngữ",
             "logout": "Đăng Xuất",
 			"seeAll": "Xem tất cả",
-			"addEmployee": "Tạo hợp đồng mới"
+			"addEmployee": "Tạo hợp đồng mới",
+			"addDepartment": "Tạo phòng ban"
         },
         "state": {
             "comeSoon": "Sắp Ra Mắt..."
         },
-        "subttitle": {
+        "subtitle": {
             "notification": "Hôm nay"
         },
 		"header": {
@@ -44,6 +45,13 @@
 			"staff": "Nhân viên",
 			"Head": "Trưởng phòng",
 			"deputyHead": "Phó phòng"
+		},
+		"action": {
+			"create": "thêm mới"
+		},
+		"btn": {
+			"cancel": "Hủy",
+			"create": "Tạo"
 		}
     }
 }

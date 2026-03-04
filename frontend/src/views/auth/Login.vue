@@ -11,11 +11,17 @@ import { provide, reactive, ref } from 'vue'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useRoute, type RouteLocationRaw } from 'vue-router'
+import { mapLaravelError } from '@/utils/errorHandler'
 
 interface LoginForm {
 	email: string
 	password: string
 	rememberMe: Boolean
+}
+
+interface ValidateMessage {
+	email: string,
+	password: string
 }
 
 const title: string = 'auth.title.login'
@@ -28,6 +34,11 @@ const LoginData = reactive<LoginForm>({
 	email: '',
 	password: '',
 	rememberMe: false,
+})
+
+const validateMessage = reactive<ValidateMessage>({
+	email: '',
+	password: ''
 })
 
 const checkboxData = {
@@ -56,8 +67,10 @@ const handleLogin = async () => {
 	} catch (error: any) {
 		const status = error.response.status
 
-		if (status === 422 || status === 401) {
+		if (status === 401) {
 			errorMessage.value = error.response.data.messageCode
+		} else if (status == 422) {
+			mapLaravelError(validateMessage, error)
 		}
 	} finally {
 		loading.value = false
@@ -80,9 +93,9 @@ const handleLogin = async () => {
 				</v-alert>
 
 				<Input :label="$t('auth.input.email')" name="email" placeholder="example@gmail.com"
-					:rules="authValidation.email" v-model="LoginData.email" />
+					:rules="authValidation.email" v-model="LoginData.email" :error-messages="validateMessage.email"/>
 				<Input :label="$t('auth.input.password')" name="password" type="password"
-					:rules="authValidation.password" v-model="LoginData.password" />
+					:rules="authValidation.password" v-model="LoginData.password" :error-messages="validateMessage.password"/>
 				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="LoginData.rememberMe"
 					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
 				<base-btn :title :loading="loading" type="submit" block />

@@ -37,14 +37,25 @@ const router = createRouter({
 							path: 'employee',
 							name: 'hr.employee',
 							component: () => import('@/views/main/humanResource/employee/List.vue'),
-							meta: {title: 'common.subModule.employee'},
-
+							meta: { title: 'common.subModule.employee' },
 						},
 						{
 							path: 'department',
-							name: 'hr.department',
-							component: () => import('@/views/main/humanResource/department/List.vue'),
-							meta: {title: 'common.subModule.department'},
+							component: () =>  import('@/views/main/humanResource/Department.vue'),
+							meta: { title: 'common.subModule.department' },
+							children: [
+								{
+									path: '',
+									name: 'hr.department',
+									component: () => import('@/views/main/humanResource/department/Index.vue'),
+								},
+								{
+									path: 'create',
+									name: 'hr.department.create',
+									component: () => import('@/views/main/humanResource/department/Create.vue'),
+									meta: { title: 'common.action.create' },
+								}
+							]
 						},
 					],
 				},

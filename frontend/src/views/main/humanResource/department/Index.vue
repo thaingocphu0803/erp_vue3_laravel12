@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
 import ListSearch from '@/components/list/ListSearch.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import defaultConfig from '@/config/default'
+import { useToastStore } from '@/stores/toast'
+
+const route = useRoute()
+const router = useRouter()
 
 const search = ref('')
 const itemsPerPage = ref(10)
@@ -18,18 +23,18 @@ const departments = ['IT', 'Khách hàng cá nhân', 'Khách hàng doanh nghiệ
 const positions = ['Nhân viên', 'Trưởng phòng', 'Phó phòng', 'Giám đốc', 'Thực tập sinh']
 const statuses = ['Active', 'Inactive']
 
-const headers = [
+const headers:any = [
 	{ title: 'Tên', key: 'name', align: 'start' },
 	{ title: 'Mã Nhân viên', key: 'code', align: 'start' },
-	{ title: 'Phòng ban', key: 'department' },
-	{ title: 'Chức vụ', key: 'position' },
-	{ title: 'Trạng thái', key: 'status' },
+	{ title: 'Phòng ban', key: 'department',  align: 'start' },
+	{ title: 'Chức vụ', key: 'position',  align: 'start' },
+	{ title: 'Trạng thái', key: 'status',  align: 'start' },
 ]
 
 // Tạo 150 nhân viên giả lập để có đủ 15 trang
-const allEmployees = Array.from({ length: 150 }, (_, i) => ({	
+const allEmployees = Array.from({ length: 150 }, (_, i) => ({
 	id: i + 1,
-	name: `Nguyễn Văn ${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
+	name: `Phòng ${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
 	code: `${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
 	department: departments[i % 5],
 	position: positions[i % 5],
@@ -60,9 +65,9 @@ const pageCount = computed(() => {
 	<v-container :fluid="true" class="employee-list">
 		<list-header title="common.header.listEmployee">
 			<template v-slot:prepend>
-				<v-btn color="primary" class="text-none">
+				<v-btn color="primary" class="text-none" :to="{name: 'hr.department.create'}">
 					<v-icon icon="mdi-plus"></v-icon>
-					<span class="d-none d-sm-inline ml-sm-2">{{ $t('common.button.addEmployee') }}</span>
+					<span class="d-none d-sm-inline ml-sm-2">{{ $t('common.button.addDepartment') }}</span>
 				</v-btn>
 			</template>
 		</list-header>

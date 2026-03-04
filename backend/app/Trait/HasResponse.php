@@ -4,9 +4,9 @@ namespace App\Trait;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-trait HandleResponse
+trait HasResponse
 {
-    public function exceptionResponse($messageCode, $errors, $status_code)
+    public function exceptionResponse($messageCode, $status_code, $errors= [])
     {
         $dataResponse = $this->initValidationResponseData($messageCode, $errors);
 

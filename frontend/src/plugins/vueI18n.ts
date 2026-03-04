@@ -1,8 +1,8 @@
 import { createI18n, useI18n } from 'vue-i18n'
 import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
 import { en, vi } from 'vuetify/locale'
-import authEn from '@/languages/english/auth.json'
-import authVi from '@/languages/vietnamese/auth.json'
+import formEn from '@/languages/english/form.json'
+import formVi from '@/languages/vietnamese/form.json'
 import commonEn from '@/languages/english/common.json'
 import commonVi from '@/languages/vietnamese/common.json'
 import { getLanguage } from '@/utils/language'
@@ -10,12 +10,12 @@ import { getLanguage } from '@/utils/language'
 const messages = {
 	en: {
 		$vuetify: { ...en },
-		...authEn,
+		...formEn,
 		...commonEn
 	},
 	vi: {
 		$vuetify: { ...vi },
-		...authVi,
+		...formVi,
 		...commonVi
 	},
 }

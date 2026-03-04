@@ -7,6 +7,7 @@ import ThemeSwitch from '@/components/ThemeSwitch.vue';
 import BaseBtn from '@/components/BaseBtn.vue';
 import MobileMenuBtn from '@/components/layout/MobileMenuBtn.vue';
 import { useAuthStore } from '@/stores/auth';
+import AppToast from '@/components/layout/AppToast.vue'
 import { ref } from 'vue';
 
 const logoutBtnTitle: string = 'common.button.logout'
@@ -47,6 +48,7 @@ const handleNavDisplay = () => {
 
 		<v-main>
 			<router-view></router-view>
+			<app-toast />
 		</v-main>
 	</v-layout>
 </template>

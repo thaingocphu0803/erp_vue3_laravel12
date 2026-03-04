@@ -23,6 +23,13 @@ export const hasNumber = (msg: string) => (v: any) => /\d/.test(v) || msg
 // has special char rule
 export const hasSpecialChar = (msg: string) => (v: any) => /[^A-Za-z0-9]/.test(v) || msg
 
+// alphanumeric only (letters and digits, no spaces or special chars)
+export const alphanumeric = (msg: string) => (v: any) => /^[A-Za-z0-9]+$/.test(v) || msg
+
+// unicode-friendly name: allows UTF-8 letters, digits, spaces, hyphens and underscores
+export const noSpecialChars = (msg: string) => (v: any) =>
+	/^[\p{L}\p{N}\s\-_]+$/u.test(v) || msg
+
 // match target rule
 export const sameAs = (msg: string, target: any) => (v: any) => v === target || msg
 
