@@ -47,7 +47,18 @@
 			"deputyHead": "Deputy Head of Department"
 		},
 		"action": {
-			"create": "create"
+			"create": "Adding new"
+		},
+		"btn": {
+			"cancel": "Cancel",
+			"create": "Create"
+		},
+		"table": {
+			"department": {
+				"name": "Department Name",
+				"code": "Department Code",
+				"numberEmployees": "Number of Employees"
+			}
 		}
 	}
 }

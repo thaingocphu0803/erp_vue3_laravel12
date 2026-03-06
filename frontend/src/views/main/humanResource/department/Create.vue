@@ -26,6 +26,8 @@ interface ValidateMessage {
 	code: string,
 }
 
+const title = 'department.title.create'
+
 const departmentStore = useDepartmentStore()
 
 const toast = useToastStore();
@@ -93,7 +95,7 @@ const handleCancel = () => {
 	<app-breadcrumb />
 
 	<v-container max-width="700px">
-		<Form :title="$t('department.title.create')" @submit-form="handleCreate">
+		<Form :title @submit-form="handleCreate">
 			<v-row dense>
 				<v-col cols="12">
 					<Input

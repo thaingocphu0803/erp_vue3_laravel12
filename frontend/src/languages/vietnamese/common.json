@@ -52,6 +52,13 @@
 		"btn": {
 			"cancel": "Hủy",
 			"create": "Tạo"
+		},
+		"table": {
+			"department": {
+				"name": "Tên phòng ban",
+				"code": "mã phòng ban",
+				"numberEmployees": "Số Lượng nhân viên"
+			}
 		}
     }
 }

@@ -6,10 +6,7 @@ import ListHeader from '@/components/list/ListHeader.vue'
 import ListSearch from '@/components/list/ListSearch.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import defaultConfig from '@/config/default'
-import { useToastStore } from '@/stores/toast'
-
-const route = useRoute()
-const router = useRouter()
+import {t} from '@/plugins/vueI18n'
 
 const search = ref('')
 const itemsPerPage = ref(10)
@@ -23,46 +20,19 @@ const departments = ['IT', 'Khách hàng cá nhân', 'Khách hàng doanh nghiệ
 const positions = ['Nhân viên', 'Trưởng phòng', 'Phó phòng', 'Giám đốc', 'Thực tập sinh']
 const statuses = ['Active', 'Inactive']
 
-const headers:any = [
-	{ title: 'Tên', key: 'name', align: 'start' },
-	{ title: 'Mã Nhân viên', key: 'code', align: 'start' },
-	{ title: 'Phòng ban', key: 'department',  align: 'start' },
-	{ title: 'Chức vụ', key: 'position',  align: 'start' },
-	{ title: 'Trạng thái', key: 'status',  align: 'start' },
-]
+const headers:any = computed(()=> [
+	{ title: t('common.table.department.name'), key: 'name', align: 'start' },
+	{ title: t('common.table.department.code'), key: 'code', align: 'center' },
+	{ title: t('common.table.department.numberEmployees'), key: 'numberEmployees',  align: 'center' },
+	{ title: t('common.filter.status'), key: 'status',  align: 'center' },
+])
 
-// Tạo 150 nhân viên giả lập để có đủ 15 trang
-const allEmployees = Array.from({ length: 150 }, (_, i) => ({
-	id: i + 1,
-	name: `Phòng ${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
-	code: `${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
-	department: departments[i % 5],
-	position: positions[i % 5],
-	status: i % 4 === 0 ? 'Inactive' : 'Active',
-}))
-
-const employees = ref(allEmployees)
-
-const filteredEmployees = computed(() => {
-	return employees.value.filter((emp) => {
-		const matchName = emp.name.toLowerCase().includes(search.value.toLowerCase())
-		const matchDept = !filterDepartment.value || emp.department === filterDepartment.value
-		const matchPos = !filterPosition.value || emp.position === filterPosition.value
-		const matchStatus = !filterStatus.value || emp.status === filterStatus.value
-
-		return matchName && matchDept && matchPos && matchStatus
-	})
-})
-
-const pageCount = computed(() => {
-	return Math.ceil(filteredEmployees.value.length / itemsPerPage.value) || 1
-})
 </script>
 
 <template>
 	<app-breadcrumb class="mb-2" />
 
-	<v-container :fluid="true" class="employee-list">
+	<v-container fluid class="employee-list">
 		<list-header title="common.header.listEmployee">
 			<template v-slot:prepend>
 				<v-btn color="primary" class="text-none" :to="{name: 'hr.department.create'}">
@@ -93,15 +63,6 @@ const pageCount = computed(() => {
 
 					<v-col cols="12" sm="6" md="3" lg="2">
 						<list-filter
-							v-model="filterPosition"
-							:items="positions"
-							:label="$t('common.filter.position')"
-							searchable
-						></list-filter>
-					</v-col>
-
-					<v-col cols="12" sm="6" md="3" lg="2">
-						<list-filter
 							v-model="filterStatus"
 							:items="statuses"
 							:label="$t('common.filter.status')"
@@ -112,19 +73,20 @@ const pageCount = computed(() => {
 		</v-card>
 
 		<v-card class="elevation-1">
-			<v-data-table
+			<v-data-table-server
 				v-model:page="page"
 				:headers="headers"
-				:items="filteredEmployees"
+				:items="[]"
 				:items-per-page="itemsPerPage"
 				item-value="id"
+				:items-length="itemsPerPage"
 			>
 				<template v-slot:item.name="{ item }">
 					<a
 						href="#"
 						class="text-primary font-weight-medium text-decoration-none text-hover-underline"
 					>
-						{{ item.name }}
+						{{ item }}
 					</a>
 				</template>
 
@@ -153,14 +115,14 @@ const pageCount = computed(() => {
 
 						<v-pagination
 							v-model="page"
-							:length="pageCount"
+							:length="1"
 							:total-visible="5"
 							rounded="shape"
 							density="comfortable"
 						></v-pagination>
 					</div>
 				</template>
-			</v-data-table>
+			</v-data-table-server>
 		</v-card>
 	</v-container>
 </template>
