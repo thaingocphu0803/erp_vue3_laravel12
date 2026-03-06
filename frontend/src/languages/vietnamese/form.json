@@ -78,10 +78,14 @@
 		"alert": {
 			"error": {
 				"badRequest": "Yêu cầu không hợp lệ",
-				"getList": "Tải danh sách thất bại. Vui lòng thử lại sau"
+				"getList": "Tải danh sách thất bại. Vui lòng thử lại sau",
+				"getTableData": "Tải dữ liệu cho bảng thất bại. Vui lòng thử lại sau",
+				"badFilter": "Dữ liệu lọc không hợp lệ"
 			},
 			"success": {
-				"getList": "Tải danh sách thành công."
+				"getList": "Tải danh sách thành công",
+				"getTableData": "Tải dữ liệu cho bảng thành công"
+
 			}
 		}
 	}

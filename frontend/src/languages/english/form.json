@@ -78,10 +78,13 @@
 		"alert": {
 			"error": {
 				"badRequest": "Invalid request",
-				"getList": "Failed to load the list. Please try again later."
+				"getList": "Failed to load the list. Please try again later",
+				"getTableData": "Failed to load the table data. Please try again later",
+				"badFilter": "Invalid the filter data"
 			},
 			"success": {
-				"getList": "The list was loaded successfully."
+				"getList": "The list was loaded successfully",
+				"getTableData": "The table data was loaded successfully"
 			}
 		}
 	}

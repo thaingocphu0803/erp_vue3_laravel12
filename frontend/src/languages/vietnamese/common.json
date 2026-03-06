@@ -35,6 +35,7 @@
 		},
 		"filter": {
 			"employeeNameOrCode": "Tìm theo tên hoặc mã nhân viên",
+			"departmentNameOrCode": "Tìm theo tên hoặc mã phòng ban",
 			"position": "Chức vụ",
 			"status": "Trạng thái",
 			"department": "Phòng Ban",
@@ -52,6 +53,17 @@
 		"btn": {
 			"cancel": "Hủy",
 			"create": "Tạo"
+		},
+		"table": {
+			"department": {
+				"name": "Tên phòng ban",
+				"code": "Mã phòng ban",
+				"numberEmployees": "Số Lượng nhân viên"
+			}
+		},
+		"status": {
+			"active": "Hoạt động",
+			"inActive": "Không hoạt động"
 		}
     }
 }

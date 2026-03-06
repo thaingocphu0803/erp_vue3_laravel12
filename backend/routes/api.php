@@ -15,6 +15,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function(){
 // DepartmentController
 Route::controller(DepartmentController::class)->prefix('department')->middleware('auth:sanctum')->group(function(){
 	Route::post('create', 'create');
+	Route::get('index', 'index');
 });
 
 // DepartmentController

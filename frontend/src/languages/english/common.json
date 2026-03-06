@@ -35,6 +35,7 @@
 		},
 		"filter": {
 			"employeeNameOrCode": "Search by employee name or code",
+			"departmentNameOrCode": "Search by department name or code",
 			"position": "Position",
 			"status": "Status",
 			"department": "Department",
@@ -47,7 +48,22 @@
 			"deputyHead": "Deputy Head of Department"
 		},
 		"action": {
-			"create": "create"
+			"create": "Adding new"
+		},
+		"btn": {
+			"cancel": "Cancel",
+			"create": "Create"
+		},
+		"table": {
+			"department": {
+				"name": "Department name",
+				"code": "Department code",
+				"numberEmployees": "Number of employees"
+			}
+		},
+		"status": {
+			"active": "Active",
+			"inActive": "Inactive"
 		}
 	}
 }
