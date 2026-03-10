@@ -59,4 +59,4 @@ pest()->beforeEach(function () {
 		'email' => 'admin@gmail.com',
 		'password' => Hash::make('Admin123@@')
 	]);
-})->in('Feature/Auth');
+})->in('Feature/Auth', 'Feature/Hr');

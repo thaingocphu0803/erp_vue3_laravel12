@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue';
+import ComeSoon from '@/components/ComeSoon.vue';
 </script>
 
 <template>
-    <app-breadcrumb></app-breadcrumb>
+    <come-soon/>
 </template>

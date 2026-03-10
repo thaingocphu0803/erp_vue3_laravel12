@@ -39,8 +39,6 @@ class AuthController extends Controller
 
     public function me()
     {
-        $user = Auth::user();
-
         $user = Auth::user()->only(['name', 'email']);
         $data['user'] = $user;
         $message = 'auth.alert.success.me';
