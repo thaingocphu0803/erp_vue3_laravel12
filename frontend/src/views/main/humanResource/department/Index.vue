@@ -107,7 +107,7 @@ const fetchDepartmentIndex = async (params: object) => {
 		const response = await api.get('department/index', { params });
 
 		if (response.status === 200) {
-			const data = response.data?.data
+			const data = response?.data
 
 			departmentItems.value = data.data
 			totalItemLength.value = data.meta.total
