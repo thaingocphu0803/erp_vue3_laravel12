@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Hr\Department;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDepartmentRequest extends FormRequest
 {
@@ -22,8 +23,8 @@ class StoreDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{N}\s\-_]+$/u'],
-            'code'      => ['bail', 'nullable', 'max:20'],
+            'name'      => ['bail', 'required', 'max:1', 'regex:/^[\p{L}\p{N}\s\-_]+$/u'],
+            'code'      => ['bail', 'nullable', 'max:20', Rule::unique('departments','code')->ignore($this->id)],
         ];
     }
 
@@ -34,6 +35,7 @@ class StoreDepartmentRequest extends FormRequest
             'name.max'      => 'department.validate.name.max',
             'name.regex'    => 'department.validate.name.noSpecialChars',
             'code.max'      => 'department.validate.code.max',
+			'code.unique' =>  'department.validate.code.unique'
         ];
     }
 

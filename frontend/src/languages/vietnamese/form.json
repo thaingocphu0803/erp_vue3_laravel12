@@ -59,7 +59,8 @@
 				"noSpecialChars": "Tên phòng ban không được chứa ký tự đặc biệt"
 			},
 			"code": {
-				"max": "Mã phòng ban không được vượt quá 20 ký tự"
+				"max": "Mã phòng ban không được vượt quá 20 ký tự",
+				"unique": "Mã phòng ban đã tồn tại"
 			}
 		},
 		"tooltip": {

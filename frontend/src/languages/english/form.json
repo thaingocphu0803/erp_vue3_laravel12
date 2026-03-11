@@ -59,7 +59,9 @@
 				"noSpecialChars": "Department name must not contain special characters"
 			},
 			"code": {
-				"max": "Department code must not exceed 20 characters"
+				"max": "Department code must not exceed 20 characters",
+				"unique": "Department code already existed"
+
 			}
 		},
 		"tooltip": {
