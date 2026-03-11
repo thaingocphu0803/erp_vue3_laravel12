@@ -1,7 +1,7 @@
 {
 	"auth": {
 		"title": {
-			"login": "login"
+			"login": "Login"
 		},
 		"input": {
 			"email": "Email",

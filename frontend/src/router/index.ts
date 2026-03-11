@@ -11,7 +11,7 @@ const router = createRouter({
 			path: '/login',
 			component: Login,
 			name: 'login',
-			meta: { guestOnly: true },
+			meta: { guestOnly: true, title: 'auth.title.login'},
 		},
 		{
 			path: '/',
@@ -23,11 +23,14 @@ const router = createRouter({
 					path: 'dashboard',
 					name: 'dashboard',
 					component: () => import('@/views/main/Dashboard.vue'),
+					meta: { title: 'common.module.dashboard' },
 				},
 				{
 					path: 'attendance',
 					name: 'attendance',
 					component: () => import('@/views/main/Attendance.vue'),
+					meta: { title: 'common.module.attendance' },
+
 				},
 				{
 					path: 'hr',
@@ -66,16 +69,19 @@ const router = createRouter({
 					path: 'profile',
 					name: 'profile',
 					component: () => import('@/views/main/Profile.vue'),
+					meta: { title: 'common.module.myProfile' },
 				},
 				{
 					path: 'message',
 					name: 'message',
 					component: () => import('@/views/main/Message.vue'),
+					meta: { title: 'common.module.message' },
 				},
 				{
 					path: 'setting',
 					name: 'setting',
 					component: () => import('@/views/main/Setting.vue'),
+					meta: { title: 'common.module.setting' },
 				},
 			],
 		},

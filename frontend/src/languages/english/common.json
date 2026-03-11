@@ -48,7 +48,7 @@
 			"deputyHead": "Deputy Head of Department"
 		},
 		"action": {
-			"create": "Adding new"
+			"create": "Create Department"
 		},
 		"btn": {
 			"cancel": "Cancel",
