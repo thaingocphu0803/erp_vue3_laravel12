@@ -2,12 +2,12 @@
 
 namespace App\Http\Requests\Hr\Department;
 
-use App\Http\Requests\CommonIndexRequest;
+use App\Http\Requests\IndexCommonRequest;
 use App\Trait\HasResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\JsonResponse;
 
-class IndexDepartmentRequest extends CommonIndexRequest
+class IndexDepartmentRequest extends IndexCommonRequest
 {
 	use HasResponse;
     /**
@@ -37,7 +37,7 @@ class IndexDepartmentRequest extends CommonIndexRequest
 
 	public function failedValidation(Validator $validator)
 	{
-		$errors = $validator->errors();
+		$errors = $validator->errors()->messages();
 
 		$message = 'common-list.alert.error.badFilter';
 

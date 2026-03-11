@@ -59,11 +59,8 @@ class DepartmentController extends Controller
 			->sortOrder($sort)
 			->paginate($itemPerPage);
 
-			$resource = DepartmentResource::collection($departments)->response()->getData(true);
+			return DepartmentResource::collection($departments)->response();
 
-			$message= 'common-list.alert.success.getTableData';
-
-			return $this->jsonResponse($message, JsonResponse::HTTP_OK, $resource);
 	} catch (\Exception $e) {
 		return $this->exceptionResponse('common-list.alert.error.getTableData', JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 	}
