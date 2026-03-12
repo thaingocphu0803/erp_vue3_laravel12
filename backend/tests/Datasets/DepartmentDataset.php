@@ -1,12 +1,14 @@
 <?php
 
 dataset('valid_department_create',[
-	'Full request data' => [['name' => 'Department','code' => 'OKSSS']],
-	'Missing code' => [['name' => 'Department2','code' => null]],
+	'Full request data' => [['name' => 'Department','code' => 'OKSSS', 'parent_id'=> 1]],
+	'Missing code and parent_id' => [['name' => 'Department2', 'code'=> null,'parent_id'=> null ]],
 ]);
 
 dataset('invalid_department_create', [
 	'Missing name' => [['name'=>null, 'code'=>null],['name']],
+	'Incorrect parent_id format' => [['name'=>null, 'parent_id'=>'A'],['parent_id']],
+	'Invalid parent_id format' => [['name'=>null, 'parent_id'=>3],['parent_id']],
 	'The name exceeds the maximum length' => [['name'=>'Learning new programming concepts takes time and patience. Practicing every day helps developers improve their skills and write cleaner, more efficient code.', 'code'=>null],['name']],
 	'The name exceeds the Regex' => [['name'=>'Department @', 'code'=>null],['name']],
 	'The code exceeds the maximum length' => [['name'=>'Department 2', 'code'=>'Learning new programming concepts takes time and patience. Practicing every day helps developers improve their skills and write cleaner, more efficient code.'],['code']]

@@ -8,13 +8,20 @@ describe('create department', function () {
 	beforeEach(function(){
 		$user = User::first();
 		$this->actingAs($user);
+
+		Department::factory()->create([
+			'name' => 'Accounting',
+			'code' => 'ACC',
+			'status' => 'A',
+			'parent_id' => '1',
+		]);
 	});
 
 	it('create successfully', function (array $data) {
 
 		$response = $this->postJson('api/department/create', $data);
 
-		$response->assertValid(['name', 'code']);
+		$response->assertValid(['name', 'code', 'parent_id']);
 
 		$response->assertStatus(200);
 
