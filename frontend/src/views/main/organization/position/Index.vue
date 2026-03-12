@@ -44,7 +44,7 @@ const totalPage = ref<number>(0)
 
 const { updateQueryParams, replaceQueryParams } = useRouteQuery()
 const { statuses } = useFilterModule()
-const { departmentHeaders } = useTableModule()
+const { positionHeaders } = useTableModule()
 
 const resetURLToDefault = () => {
 	page.value = defaultConfig.page
@@ -133,7 +133,7 @@ const fetchDepartmentIndex = async (params: object) => {
 	<app-breadcrumb class="mb-2" />
 
 	<v-container fluid class="employee-list">
-		<list-header title="common.header.listEmployee">
+		<list-header title="common.header.listPosition">
 			<template v-slot:prepend>
 				<v-btn color="primary" class="text-none" :to="{ name: 'org.position.create' }">
 					<v-icon icon="mdi-plus"></v-icon>
@@ -172,7 +172,7 @@ const fetchDepartmentIndex = async (params: object) => {
 		<v-card class="elevation-1">
 			<v-data-table-server
 				:page
-				:headers="departmentHeaders"
+				:headers="positionHeaders"
 				:items="departmentItems"
 				:items-per-page="itemsPerPage"
 				item-value="id"

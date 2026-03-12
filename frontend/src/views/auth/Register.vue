@@ -5,7 +5,7 @@ import Form from '@/components/Form.vue'
 import Input from '@/components/form/Input.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import { reactive } from 'vue'
-import authValidation from '@/composables/useAuthValidation'
+import authValidation from '@/composables/validation/useAuthValidation'
 
 interface RegisterForm {
   name: string

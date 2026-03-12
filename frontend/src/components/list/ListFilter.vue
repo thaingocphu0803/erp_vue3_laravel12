@@ -14,7 +14,11 @@ const props = defineProps<Props>()
 		density="compact"
 		hide-details
 		clearable
-	></v-autocomplete>
+	>
+		<template v-for="(_, name) in $slots" #[name]="slotProps">
+			<slot :name="name" v-bind="slotProps ?? {}" />
+		</template>
+	</v-autocomplete>
 	<v-select
 		v-else
 		v-bind="$attrs"
@@ -22,5 +26,9 @@ const props = defineProps<Props>()
 		density="compact"
 		hide-details
 		clearable
-	></v-select>
+	>
+		<template v-for="(_, name) in $slots" #[name]="slotProps">
+			<slot :name="name" v-bind="slotProps ?? {}" />
+		</template>
+	</v-select>
 </template>

@@ -133,7 +133,7 @@ const fetchDepartmentIndex = async (params: object) => {
 	<app-breadcrumb class="mb-2" />
 
 	<v-container fluid class="employee-list">
-		<list-header title="common.header.listEmployee">
+		<list-header title="common.header.listDepartment">
 			<template v-slot:prepend>
 				<v-btn color="primary" class="text-none" :to="{ name: 'org.department.create' }">
 					<v-icon icon="mdi-plus"></v-icon>

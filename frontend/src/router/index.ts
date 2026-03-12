@@ -41,7 +41,6 @@ const router = createRouter({
 							name: 'org.position',
 							component: RouteViewLayout,
 							redirect: { name: 'org.position.index' },
-
 							meta: { title: 'common.subModule.position' },
 							children: [
 								{

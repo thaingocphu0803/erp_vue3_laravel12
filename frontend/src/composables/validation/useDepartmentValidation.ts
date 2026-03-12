@@ -13,9 +13,6 @@ const departmentValidation = {
 		required(messages.name.required),
 		noSpecialChars(messages.name.noSpecialChars),
 	],
-
-	// department code is optional – no rules applied
-	code: [],
 }
 
 export default departmentValidation

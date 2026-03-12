@@ -28,7 +28,7 @@ export const alphanumeric = (msg: string) => (v: any) => /^[A-Za-z0-9]+$/.test(v
 
 // unicode-friendly name: allows UTF-8 letters, digits, spaces, hyphens and underscores
 export const noSpecialChars = (msg: string) => (v: any) =>
-	/^[\p{L}\p{N}\s\-_]+$/u.test(v) || msg
+	/^[\p{L}\p{M}\p{N}\s\-_]+$/u.test(v) || msg
 
 // match target rule
 export const sameAs = (msg: string, target: any) => (v: any) => v === target || msg

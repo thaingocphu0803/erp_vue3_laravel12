@@ -75,6 +75,26 @@
 			}
 		}
 	},
+	"position": {
+		"title": {
+			"create": "Thêm chức vụ mới"
+		},
+		"input": {
+			"positionName": "Tên phòng ban",
+			"selectDepartment": "Chọn phòng ban",
+			"permissionForPossision": "Phân quyền cho chức vụ",
+			"positionDesc": "Mô tả chức vụ"
+		},
+		"tooltip": {
+			"unselectDepartment": "Nếu không chọn phòng ban, chức vụ sẽ áp dụng cho tất cả phòng ban"
+		},
+		"validate": {
+			"name": {
+				"required": "Vui lòng nhập tên chức vụ",
+				"noSpecialChars": "Tên chức vụ không được chứa ký tự đặc biệt"
+			}
+		}
+	},
 	"common-list": {
 		"alert": {
 			"error": {
@@ -86,7 +106,6 @@
 			"success": {
 				"getList": "Tải danh sách thành công",
 				"getTableData": "Tải dữ liệu cho bảng thành công"
-
 			}
 		}
 	}

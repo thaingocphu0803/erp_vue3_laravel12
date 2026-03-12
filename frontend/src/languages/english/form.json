@@ -61,7 +61,6 @@
 			"code": {
 				"max": "Department code must not exceed 20 characters",
 				"unique": "Department code already existed"
-
 			}
 		},
 		"tooltip": {
@@ -73,6 +72,26 @@
 			},
 			"success": {
 				"create": "Department created successfully"
+			}
+		}
+	},
+	"position": {
+		"title": {
+			"create": "Add New Position"
+		},
+		"input": {
+			"positionName": "Position Name",
+			"selectDepartment": "Department",
+			"permissionsForPosition": "Assign Permissions",
+			"positionDescription": "Position Description"
+		},
+		"tooltip": {
+			"unselectDepartment": "If no department is selected, this position will apply to all departments."
+		},
+		"validate": {
+			"name": {
+				"required": "Position name is required",
+				"noSpecialChars": "Position name must not contain special characters"
 			}
 		}
 	},

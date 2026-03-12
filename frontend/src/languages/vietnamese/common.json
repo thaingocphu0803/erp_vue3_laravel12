@@ -34,7 +34,9 @@
             "notification": "Hôm nay"
         },
 		"header": {
-			"listEmployee": "Danh sách nhân viên"
+			"listEmployee": "Danh sách nhân viên",
+			"listDepartment": "Danh sách phòng ban",
+			"listPosition": "Danh sách chức vụ"
 		},
 		"filter": {
 			"employeeNameOrCode": "Tìm theo tên hoặc mã nhân viên",
@@ -67,6 +69,9 @@
 				"name": "Tên phòng ban",
 				"code": "Mã phòng ban",
 				"numberEmployees": "Số Lượng nhân viên"
+			},
+			"position": {
+				"name": "Tên chức vụ"
 			}
 		},
 		"status": {

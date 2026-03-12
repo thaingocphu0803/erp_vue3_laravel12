@@ -35,7 +35,10 @@
 			"notification": "Today"
 		},
 		"header": {
-			"listEmployee": "Employee List"
+			"listEmployee": "Employee List",
+			"listDepartment": "Department List",
+			"listPosition": "Position List"
+
 		},
 		"filter": {
 			"employeeNameOrCode": "Search by employee name or code",
@@ -68,6 +71,9 @@
 				"name": "Department name",
 				"code": "Department code",
 				"numberEmployees": "Number of employees"
+			},
+			"position": {
+				"name": "Position name"
 			}
 		},
 		"status": {
