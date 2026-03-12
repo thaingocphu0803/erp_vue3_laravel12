@@ -135,7 +135,7 @@ const fetchDepartmentIndex = async (params: object) => {
 	<v-container fluid class="employee-list">
 		<list-header title="common.header.listEmployee">
 			<template v-slot:prepend>
-				<v-btn color="primary" class="text-none" :to="{ name: 'hr.department.create' }">
+				<v-btn color="primary" class="text-none" :to="{ name: 'org.department.create' }">
 					<v-icon icon="mdi-plus"></v-icon>
 					<span class="d-none d-sm-inline ml-sm-2">{{
 						$t('common.button.addDepartment')

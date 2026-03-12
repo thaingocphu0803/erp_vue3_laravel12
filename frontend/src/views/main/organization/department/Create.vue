@@ -76,7 +76,7 @@ const handleCreate = async () => {
 
 		toast.show(response.data.messageCode, 'success')
 
-		router.push({ name: 'hr.department' })
+		router.push({ name: 'org.department' })
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)

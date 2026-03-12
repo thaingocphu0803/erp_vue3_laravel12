@@ -11,7 +11,7 @@ const router = createRouter({
 			path: '/login',
 			component: Login,
 			name: 'login',
-			meta: { guestOnly: true, title: 'auth.title.login'},
+			meta: { guestOnly: true, title: 'auth.title.login' },
 		},
 		{
 			path: '/',
@@ -30,38 +30,69 @@ const router = createRouter({
 					name: 'attendance',
 					component: () => import('@/views/main/Attendance.vue'),
 					meta: { title: 'common.module.attendance' },
-
 				},
 				{
-					path: 'hr',
-					redirect: {name: 'hr.employee'},
-					meta: {title: 'common.module.humanResource', disabled: true},
+					path: '',
+					redirect: { name: 'org.department' },
+					meta: { title: 'common.module.organization', disabled: true },
+					children: [
+						{
+							path: 'position',
+							name: 'org.position',
+							component: RouteViewLayout,
+							redirect: { name: 'org.position.index' },
+
+							meta: { title: 'common.subModule.position' },
+							children: [
+								{
+									path: '',
+									name: 'org.position.index',
+									component: () =>
+										import('@/views/main/organization/position/Index.vue'),
+								},
+								{
+									path: 'create',
+									name: 'org.position.create',
+									component: () =>
+										import('@/views/main/organization/position/Create.vue'),
+									meta: { title: 'common.action.position.create' },
+								},
+							],
+						},
+						{
+							path: 'department',
+							name: 'org.department',
+							redirect: { name: 'org.department.index' },
+							component: RouteViewLayout,
+							meta: { title: 'common.subModule.department' },
+							children: [
+								{
+									path: '',
+									name: 'org.department.index',
+									component: () =>
+										import('@/views/main/organization/department/Index.vue'),
+								},
+								{
+									path: 'create',
+									name: 'org.department.create',
+									component: () =>
+										import('@/views/main/organization/department/Create.vue'),
+									meta: { title: 'common.action.department.create' },
+								},
+							],
+						},
+					],
+				},
+				{
+					path: '',
+					redirect: { name: 'hr.employee' },
+					meta: { title: 'common.module.humanResource', disabled: true },
 					children: [
 						{
 							path: 'employee',
 							name: 'hr.employee',
 							component: () => import('@/views/main/humanResource/employee/List.vue'),
 							meta: { title: 'common.subModule.employee' },
-						},
-						{
-							path: 'department',
-							name: 'hr.department',
-							redirect: {name: 'hr.department.index'},
-							component: RouteViewLayout,
-							meta: { title: 'common.subModule.department' },
-							children: [
-								{
-									path: '',
-									name: 'hr.department.index',
-									component: () => import('@/views/main/humanResource/department/Index.vue'),
-								},
-								{
-									path: 'create',
-									name: 'hr.department.create',
-									component: () => import('@/views/main/humanResource/department/Create.vue'),
-									meta: { title: 'common.action.create' },
-								}
-							]
 						},
 					],
 				},

@@ -4,12 +4,14 @@
 			"dashboard": "Dashboard",
 			"attendance": "Attendance",
 			"myProfile": "My Profile",
+			"organization": "Organization",
 			"humanResource": "Human Resources",
 			"message": "Messages",
 			"setting": "Setting"
 		},
 		"subModule": {
 			"department": "Departments",
+			"position": "Positions",
 			"employee": "Employees"
 		},
 		"language": {
@@ -22,7 +24,9 @@
 			"logout": "Logout",
 			"seeAll": "See all",
 			"addEmployee": "Create a new contract",
-			"addDepartment": "Create a department"
+			"addDepartment": "Create a department",
+			"addPosition": "Create a position"
+
 		},
 		"state": {
 			"comeSoon": "Comming Soon..."
@@ -48,7 +52,12 @@
 			"deputyHead": "Deputy Head of Department"
 		},
 		"action": {
-			"create": "Create Department"
+			"department":{
+				"create": "Add Department"
+			},
+			"position":{
+				"create": "Add Position"
+			}
 		},
 		"btn": {
 			"cancel": "Cancel",

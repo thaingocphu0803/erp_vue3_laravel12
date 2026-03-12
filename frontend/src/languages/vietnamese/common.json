@@ -4,12 +4,14 @@
             "dashboard": "Bảng Điều Khiển",
             "attendance": "Điểm Danh",
             "myProfile": "Hồ Sơ Của Tôi",
-            "humanResource": "Quản Lý Nhân Sự",
+            "organization": "Tổ chức",
+			"humanResource": "Quản lý nhân sự",
             "message": "Tin Nhắn",
             "setting": "Cài Đặt"
         },
 		"subModule":{
-			"department": "Phòng Ban",
+			"department": "Phòng ban",
+			"position": "Chức vụ",
 			"employee": "Nhân Sự"
 		},
         "language": {
@@ -22,7 +24,8 @@
             "logout": "Đăng Xuất",
 			"seeAll": "Xem tất cả",
 			"addEmployee": "Tạo hợp đồng mới",
-			"addDepartment": "Tạo phòng ban"
+			"addDepartment": "Tạo phòng ban",
+			"addPosition": "Tạo chức vụ"
         },
         "state": {
             "comeSoon": "Sắp Ra Mắt..."
@@ -48,7 +51,12 @@
 			"deputyHead": "Phó phòng"
 		},
 		"action": {
-			"create": "Tạo Phòng Ban"
+			"department":{
+				"create": "Thêm Phòng Ban"
+			},
+			"position":{
+				"create": "Thêm Chức Vụ"
+			}
 		},
 		"btn": {
 			"cancel": "Hủy",

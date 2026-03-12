@@ -6,20 +6,33 @@ const navMenu = [
 		routeName: 'dashboard',
 	},
 	{
-		title: 'common.module.humanResource',
-		value: 'hr',
-		icon: 'mdi-account-group',
+		title: 'common.module.organization',
+		value: 'org',
+		icon: 'mdi-domain',
 		children: [
 			{
 				title: 'common.subModule.department',
 				value: 'department',
 				icon: 'mdi mdi-sitemap',
-				routeName: 'hr.department',
+				routeName: 'org.department',
 			},
+			{
+				title: 'common.subModule.position',
+				value: 'position',
+				icon: 'mdi-badge-account-horizontal',
+				routeName: 'org.position',
+			},
+		],
+	},
+	{
+		title: 'common.module.humanResource',
+		value: 'hr',
+		icon: 'mdi-account-group',
+		children: [
 			{
 				title: 'common.subModule.employee',
 				value: 'employee',
-				icon: 'mdi-account-details',
+				icon: 'mdi-account-multiple',
 				routeName: 'hr.employee',
 			},
 		],
@@ -27,7 +40,7 @@ const navMenu = [
 	{
 		title: 'common.module.myProfile',
 		value: 'profile',
-		icon: 'mdi-account',
+		icon: 'mdi-account-details',
 		routeName: 'profile',
 	},
 	{
