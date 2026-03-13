@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
-import PositionForm from './components/PositionForm.vue'
+import PositionForm from '../../../../components/form/commonForm/PositionForm.vue'
 import router from '@/router'
 
 const handleSuccess = () => {
@@ -16,6 +16,6 @@ const handleCancel = () => {
 	<app-breadcrumb />
 
 	<v-container max-width="700px">
-		<PositionForm @success="handleSuccess" @cancel="handleCancel" />
+		<position-form @success="handleSuccess" @cancel="handleCancel" />
 	</v-container>
 </template>

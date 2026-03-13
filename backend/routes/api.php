@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\Hr\DepartmentController;
+use App\Http\Controllers\Organization\DepartmentController;
 use App\Http\Controllers\LookupController;
 use Illuminate\Support\Facades\Route;
 

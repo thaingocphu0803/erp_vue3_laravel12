@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Hr;
+namespace App\Http\Controllers\Organization;
 
 use App\Enum\Status;
 use App\Enum\Table;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Hr\Department\IndexDepartmentRequest;
-use App\Http\Requests\Hr\Department\StoreDepartmentRequest;
+use App\Http\Requests\Organization\Department\IndexDepartmentRequest;
+use App\Http\Requests\Organization\Department\StoreDepartmentRequest;
 use App\Models\Department;
 use App\Trait\HasAutoCode;
 use App\Trait\HasResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Http\Resources\Hr\DepartmentResource;
+use App\Http\Resources\Organization\DepartmentResource;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DepartmentController extends Controller

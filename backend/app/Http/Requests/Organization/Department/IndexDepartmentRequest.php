@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Hr\Department;
+namespace App\Http\Requests\Organization\Department;
 
 use App\Http\Requests\IndexCommonRequest;
 use App\Trait\HasResponse;
