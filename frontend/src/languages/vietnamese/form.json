@@ -80,7 +80,7 @@
 			"create": "Thêm chức vụ mới"
 		},
 		"input": {
-			"positionName": "Tên phòng ban",
+			"positionName": "Tên chức vụ",
 			"selectDepartment": "Chọn phòng ban",
 			"permissionForPossision": "Phân quyền cho chức vụ",
 			"positionDesc": "Mô tả chức vụ"

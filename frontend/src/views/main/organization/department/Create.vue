@@ -2,6 +2,7 @@
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import DepartmentForm from '../../../../components/form/commonForm/DepartmentForm.vue'
 import router from '@/router'
+import defaultConfig from '@/config/default'
 
 const handleSuccess = () => {
 	router.push({ name: 'org.department' })
@@ -15,7 +16,7 @@ const handleCancel = () => {
 <template>
 	<app-breadcrumb />
 
-	<v-container max-width="700px">
+	<v-container :max-width="defaultConfig.maxWidthForm">
 		<department-form @success="handleSuccess" @cancel="handleCancel"/>
 	</v-container>
 </template>

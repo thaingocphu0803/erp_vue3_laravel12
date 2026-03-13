@@ -5,11 +5,13 @@ import BaseBtn from '@/components/BaseBtn.vue'
 import Textarea from '@/components/form/Textarea.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import positionValidation from '@/composables/validation/usePositionValidation'
+import DepartmentForm from './DepartmentForm.vue'
 import { reactive, ref } from 'vue'
 import { useDepartmentStore } from '@/stores/department'
 import { storeToRefs } from 'pinia'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
+import defaultConfig from '@/config/default'
 
 interface PositionForm {
 	name: string
@@ -128,6 +130,13 @@ const toggleGroupAll = (group: PermissionGroup, val: boolean | null) => {
 	})
 }
 
+const showDepartmentDialog = ref<boolean>(false)
+
+const onDepartmentSuccess = () => {
+	showDepartmentDialog.value = false
+	getDepartmentList()
+}
+
 const getDepartmentList = async () => {
 	try {
 		loading.value = true
@@ -197,6 +206,21 @@ const handleCancel = () => {
 					:disabled="disabledSelect"
 					@click="getDepartmentList"
 				>
+					<template #prepend-item>
+						<v-list-item
+							@click="showDepartmentDialog = true"
+							color="primary"
+							class="text-primary"
+						>
+							<template #prepend>
+								<v-icon icon="mdi-plus-circle-outline" />
+							</template>
+							<v-list-item-title class="font-weight-bold">
+								{{ $t('department.title.create') }}
+							</v-list-item-title>
+						</v-list-item>
+						<v-divider class="mb-2" />
+					</template>
 					<template #append-inner>
 						<v-tooltip location="top" :text="$t('position.tooltip.unselectDepartment')">
 							<template #activator="{ props }">
@@ -309,4 +333,11 @@ const handleCancel = () => {
 			</v-col>
 		</v-row>
 	</Form>
+
+	<!-- Dialog Create Department -->
+	<v-dialog v-model="showDepartmentDialog" :max-width="defaultConfig.maxWidthForm" persistent>
+		<v-card class="pa-4 rounded-lg">
+			<DepartmentForm @success="onDepartmentSuccess" @cancel="showDepartmentDialog = false" />
+		</v-card>
+	</v-dialog>
 </template>
