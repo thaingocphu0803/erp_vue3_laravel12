@@ -3,13 +3,13 @@ import { defineStore } from 'pinia'
 import api from '@/services/api'
 import router from '@/router'
 
-export const useAuthStore = defineStore('auth', () => {
-	interface User {
-		name: string
-		email: string
-		avatar: string
-	}
+interface User {
+	name: string
+	email: string
+	avatar: string
+}
 
+export const useAuthStore = defineStore('auth', () => {
 	const user = ref<User | null>(null)
 
 	const isInitialized = ref<boolean>(false)
@@ -64,4 +64,3 @@ export const useAuthStore = defineStore('auth', () => {
 
 	return { user, isInitialized, isLoggedin, authFetch, authLogin, authLogout, clearAuth }
 })
-

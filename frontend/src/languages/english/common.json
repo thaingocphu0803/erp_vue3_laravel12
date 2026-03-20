@@ -12,7 +12,8 @@
 		"subModule": {
 			"department": "Departments",
 			"position": "Positions",
-			"employee": "Employees"
+			"employee": "Employees",
+			"role": "Roles"
 		},
 		"language": {
 			"english": "English",
@@ -25,8 +26,8 @@
 			"seeAll": "See all",
 			"addEmployee": "Create a new contract",
 			"addDepartment": "Create a department",
-			"addPosition": "Create a position"
-
+			"addPosition": "Create a position",
+			"addRole": "Create a role"
 		},
 		"state": {
 			"comeSoon": "Comming Soon..."
@@ -37,12 +38,13 @@
 		"header": {
 			"listEmployee": "Employee List",
 			"listDepartment": "Department List",
-			"listPosition": "Position List"
-
+			"listPosition": "Position List",
+			"listRole": "Role List"
 		},
 		"filter": {
 			"employeeNameOrCode": "Search by employee name or code",
 			"departmentNameOrCode": "Search by department name or code",
+			"permissionModule": "Search by permission module",
 			"position": "Position",
 			"status": "Status",
 			"department": "Department",
@@ -55,16 +57,21 @@
 			"deputyHead": "Deputy Head of Department"
 		},
 		"action": {
-			"department":{
+			"department": {
 				"create": "Add Department"
 			},
-			"position":{
+			"position": {
 				"create": "Add Position"
+			},
+			"role": {
+				"create": "Add Role"
 			}
 		},
 		"btn": {
 			"cancel": "Cancel",
-			"create": "Create"
+			"create": "Create",
+			"next": "Next",
+			"back": "Back"
 		},
 		"table": {
 			"department": {
@@ -79,6 +86,20 @@
 		"status": {
 			"active": "Active",
 			"inActive": "Inactive"
+		},
+		"permission": {
+			"action": {
+				"show": "View",
+				"create": "Create",
+				"update": "Update",
+				"delete": "Delete"
+			},
+			"scope": {
+				"all": "System",
+				"dept": "Department",
+				"own": "Own",
+				"none": "None"
+			}
 		}
 	}
 }

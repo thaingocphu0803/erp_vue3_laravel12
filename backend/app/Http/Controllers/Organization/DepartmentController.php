@@ -24,7 +24,6 @@ class DepartmentController extends Controller
 	public function create(StoreDepartmentRequest $request)
 	{
 		$payload = $request->only('name', 'code', 'parent_id', 'description');
-		$payload['status'] = Status::ACTIVE->value;
 		$payload['created_by'] = Auth::id();
 
 		if (is_null($payload['code'])) {

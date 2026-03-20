@@ -56,11 +56,16 @@
 			"name": {
 				"required": "Department name is required",
 				"max": "Department name must not exceed 100 characters",
-				"noSpecialChars": "Department name must not contain special characters"
+				"noSpecialChars": "Department name must not contain special characters",
+				"unique": "Department name already existed"
 			},
 			"code": {
 				"max": "Department code must not exceed 20 characters",
 				"unique": "Department code already existed"
+			},
+			"parent_id": {
+				"format": "Parent department format is incorrect",
+				"exists": "Parent department does not exist"
 			}
 		},
 		"tooltip": {
@@ -77,12 +82,11 @@
 	},
 	"position": {
 		"title": {
-			"create": "Add New Position"
+			"create": "Add new position"
 		},
 		"input": {
 			"positionName": "Position Name",
 			"selectDepartment": "Department",
-			"permissionsForPosition": "Assign Permissions",
 			"positionDescription": "Position Description"
 		},
 		"tooltip": {
@@ -91,7 +95,52 @@
 		"validate": {
 			"name": {
 				"required": "Position name is required",
-				"noSpecialChars": "Position name must not contain special characters"
+				"max": "Position name must not exceed 100 characters",
+				"noSpecialChars": "Position name must not contain special characters",
+				"unique": "Position name already existed"
+			},
+			"department_id": {
+				"format": "Department format is incorrect",
+				"exists": "Department does not exist"
+			}
+		},
+		"alert": {
+			"error": {
+				"create": "Failed to create position"
+			},
+			"success": {
+				"create": "Position created successfully"
+			}
+		}
+	},
+	"role": {
+		"title": {
+			"create": "Add new role"
+		},
+		"step": {
+			"info": "Fill Information",
+			"permission": "Permissions"
+		},
+		"input": {
+			"roleName": "Role Name",
+			"assignPermission": "Assign Permissions",
+			"roleDescription": "Role Description"
+		},
+		"tooltip": {
+			"applyToAll": "Apply to all permissions"
+		},
+		"validate": {
+			"name": {
+				"required": "Role name is required",
+				"max": "Role name must not exceed 100 characters",
+				"noSpecialChars": "Role name must not contain special characters",
+				"unique": "Role name already existed"
+			},
+			"permissions": {
+				"atLeastOne": "Please select at least one permission with scope All system, department or own",
+				"format": "Permission format is incorrect",
+				"exists": "Permission does not exist",
+				"distinct": "Duplicate permissions are not allowed"
 			}
 		}
 	},
@@ -101,7 +150,8 @@
 				"badRequest": "Invalid request",
 				"getList": "Failed to load the list. Please try again later",
 				"getTableData": "Failed to load the table data. Please try again later",
-				"badFilter": "Invalid the filter data"
+				"badFilter": "Invalid the filter data",
+				"getPermissions": "Failed to load the permissions. Please try again later"
 			},
 			"success": {
 				"getList": "The list was loaded successfully",

@@ -56,11 +56,16 @@
 			"name": {
 				"required": "Vui lòng nhập tên phòng ban",
 				"max": "Tên phòng ban không được vượt quá 100 ký tự",
-				"noSpecialChars": "Tên phòng ban không được chứa ký tự đặc biệt"
+				"noSpecialChars": "Tên phòng ban không được chứa ký tự đặc biệt",
+				"unique": "Tên phòng ban đã tồn tại"
 			},
 			"code": {
 				"max": "Mã phòng ban không được vượt quá 20 ký tự",
 				"unique": "Mã phòng ban đã tồn tại"
+			},
+			"parent_id": {
+				"format": "Sai định dạng phòng ban cha",
+				"exists": "Không tìm thấy phòng ban cha"
 			}
 		},
 		"tooltip": {
@@ -82,7 +87,6 @@
 		"input": {
 			"positionName": "Tên chức vụ",
 			"selectDepartment": "Chọn phòng ban",
-			"permissionForPossision": "Phân quyền cho chức vụ",
 			"positionDesc": "Mô tả chức vụ"
 		},
 		"tooltip": {
@@ -91,7 +95,52 @@
 		"validate": {
 			"name": {
 				"required": "Vui lòng nhập tên chức vụ",
-				"noSpecialChars": "Tên chức vụ không được chứa ký tự đặc biệt"
+				"max": "Tên chức vụ không được vượt quá 100 ký tự",
+				"noSpecialChars": "Tên chức vụ không được chứa ký tự đặc biệt",
+				"unique": "Tên chức vụ đã tồn tại"
+			},
+			"department_id": {
+				"format": "Sai định dạng phòng ban",
+				"exists": "Không tìm thấy phòng ban"
+			}
+		},
+		"alert": {
+			"error": {
+				"create": "Tạo mới chức vụ thất bại"
+			},
+			"success": {
+				"create": "Tạo mới chức vụ thành công"
+			}
+		}
+	},
+	"role": {
+		"title": {
+			"create": "Thêm vai trò mới"
+		},
+		"step": {
+			"info": "Điền thông tin",
+			"permission": "Phân quyền"
+		},
+		"input": {
+			"roleName": "Tên vai trò",
+			"assignPermission": "Phân quyền",
+			"roleDescription": "Mô tả vai trò"
+		},
+		"tooltip": {
+			"applyToAll": "Click vào để áp dụng phạm vi này cho tất cả quyền"
+		},
+		"validate": {
+			"name": {
+				"required": "Vui lòng nhập tên vai trò",
+				"max": "Tên vai trò không được vượt quá 100 ký tự",
+				"noSpecialChars": "Tên vai trò không được chứa ký tự đặc biệt",
+				"unique": "Tên vai trò đã tồn tại"
+			},
+			"permissions": {
+				"atLeastOne": "Vui lòng chọn ít nhất một quyền với phạm vi Tất cả hệ thống, phòng ban hoặc cá nhân",
+				"format": "Sai định dạng quyền",
+				"exists": "Không tìm thấy quyền",
+				"distinct": "Không được chọn quyền trùng lặp"
 			}
 		}
 	},
@@ -101,7 +150,8 @@
 				"badRequest": "Yêu cầu không hợp lệ",
 				"getList": "Tải danh sách thất bại. Vui lòng thử lại sau",
 				"getTableData": "Tải dữ liệu cho bảng thất bại. Vui lòng thử lại sau",
-				"badFilter": "Dữ liệu lọc không hợp lệ"
+				"badFilter": "Dữ liệu lọc không hợp lệ",
+				"getPermissions": "Tải danh sách quyền thất bại. Vui lòng thử lại sau"
 			},
 			"success": {
 				"getList": "Tải danh sách thành công",

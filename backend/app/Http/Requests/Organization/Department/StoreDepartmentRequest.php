@@ -23,7 +23,7 @@ class StoreDepartmentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u'],
+            'name'      => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('departments', 'name')->ignore($this->id)],
             'code'      => ['bail', 'nullable', 'max:20', Rule::unique('departments','code')->ignore($this->id)],
 			'parent_id' => ['bail','nullable','integer', Rule::exists('departments', 'id')]
         ];
@@ -35,8 +35,10 @@ class StoreDepartmentRequest extends FormRequest
             'name.required' => 'department.validate.name.required',
             'name.max'      => 'department.validate.name.max',
             'name.regex' => 'department.validate.name.noSpecialChars',
+			'name.unique' => 'department.validate.name.unique',
             'code.max'      => 'department.validate.code.max',
 			'code.unique' =>  'department.validate.code.unique',
+			'parent_id.integer' => 'department.validate.parent_id.format',
 			'parent_id.exists' => 'department.validate.parent_id.exists'
         ];
     }

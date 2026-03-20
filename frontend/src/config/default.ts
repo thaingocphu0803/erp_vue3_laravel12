@@ -7,7 +7,9 @@ const defaultConfig =  {
 	pageVisible: 5,
 	itemPerPage: 10,
 	debounceTimeout: 1000,
-	maxWidthForm: 700
+	maxWidthForm: 800,
+	maxLengthName: 100,
+	maxLengthCode: 20
 }
 
 export default defaultConfig

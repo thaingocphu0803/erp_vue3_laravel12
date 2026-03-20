@@ -19,7 +19,7 @@ return new class extends Migration
 			$table->foreignId('parent_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->enum('status', ['A', 'X'])->default('A');
 			$table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
-			$table->foreignId('update_by')->nullable()->constrained('users')->nullOnDelete();
+			$table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->softDeletes();
             $table->timestamps();
         });

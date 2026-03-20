@@ -2,15 +2,17 @@
 import Form from '@/components/Form.vue'
 import Input from '@/components/form/Input.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
+import AnnotationTooltip from '../AnnotationTooltip.vue'
+import ErrorAlert from '../ErrorAlert.vue'
 import departmentValidation from '@/composables/validation/useDepartmentValidation'
 import {reactive, ref } from 'vue'
-import router from '@/router'
 import ListFilter from '@/components/list/ListFilter.vue'
 import Textarea from '@/components/form/Textarea.vue'
 import { useDepartmentStore } from '@/stores/department'
 import { storeToRefs } from 'pinia'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
+import defaultConfig from '@/config/default'
 
 
 interface DepartmentForm {
@@ -23,6 +25,7 @@ interface DepartmentForm {
 interface ValidateMessage {
 	name: string,
 	code: string,
+	parent_id: string
 }
 
 const title = 'department.title.create'
@@ -49,6 +52,7 @@ const departmentData = reactive<DepartmentForm>({
 const errorMessage = reactive<ValidateMessage>({
 	name: '',
 	code: '',
+	parent_id: ''
 })
 
 const getParentErrorMessage = ref<string>('')
@@ -95,13 +99,15 @@ const handleCancel = () => {
 <template>
 
 		<Form :title @submit-form="handleCreate">
+			<error-alert :messages="errorMessage" :ignore="['name', 'code']"></error-alert>
+
 			<v-row dense>
 				<v-col cols="12">
 					<Input
 						name="name"
 						:rules="departmentValidation.name"
 						v-model="departmentData.name"
-						maxlength="100"
+						:maxlength="defaultConfig.maxLengthName"
 						counter
 						:error-messages="errorMessage.name"
 					>
@@ -119,16 +125,12 @@ const handleCancel = () => {
 						:label="$t('department.input.departmentCode')"
 						name="code"
 						v-model="departmentData.code"
-						maxlength="20"
+						:maxlength="defaultConfig.maxLengthCode"
 						counter
 						:error-messages="errorMessage.code"
 					>
 						<template #append-inner>
-							<v-tooltip location="top" :text="$t('department.tooltip.codeAutoGenerate')">
-								<template #activator="{ props }">
-									<v-icon v-bind="props" icon="mdi-information-outline" size="18" color="grey-dranken-3" />
-								</template>
-							</v-tooltip>
+							<annotation-tooltip text="department.tooltip.codeAutoGenerate"></annotation-tooltip>
 						</template>
 					</Input>
 				</v-col>

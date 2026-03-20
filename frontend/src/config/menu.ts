@@ -22,6 +22,12 @@ const navMenu = [
 				icon: 'mdi-badge-account-horizontal',
 				routeName: 'org.position',
 			},
+			{
+				title: 'common.subModule.role',
+				value: 'role',
+				icon: 'mdi-shield-account',
+				routeName: 'org.role',
+			},
 		],
 	},
 	{

@@ -1,46 +1,50 @@
 {
-    "common": {
-        "module": {
-            "dashboard": "Bảng Điều Khiển",
-            "attendance": "Điểm Danh",
-            "myProfile": "Hồ Sơ Của Tôi",
-            "organization": "Tổ chức",
+	"common": {
+		"module": {
+			"dashboard": "Bảng Điều Khiển",
+			"attendance": "Điểm Danh",
+			"myProfile": "Hồ Sơ Của Tôi",
+			"organization": "Tổ chức",
 			"humanResource": "Quản lý nhân sự",
-            "message": "Tin Nhắn",
-            "setting": "Cài Đặt"
-        },
-		"subModule":{
+			"message": "Tin Nhắn",
+			"setting": "Cài Đặt"
+		},
+		"subModule": {
 			"department": "Phòng ban",
 			"position": "Chức vụ",
-			"employee": "Nhân Sự"
+			"employee": "Nhân Sự",
+			"role": "Vai trò"
 		},
-        "language": {
-            "english": "Tiếng Anh",
-            "vietnamese": "Tiếng Việt"
-        },
-        "button": {
-            "notification": "Thông báo",
-            "language": "Ngôn Ngữ",
-            "logout": "Đăng Xuất",
+		"language": {
+			"english": "Tiếng Anh",
+			"vietnamese": "Tiếng Việt"
+		},
+		"button": {
+			"notification": "Thông báo",
+			"language": "Ngôn Ngữ",
+			"logout": "Đăng Xuất",
 			"seeAll": "Xem tất cả",
 			"addEmployee": "Tạo hợp đồng mới",
 			"addDepartment": "Tạo phòng ban",
-			"addPosition": "Tạo chức vụ"
-        },
-        "state": {
-            "comeSoon": "Sắp Ra Mắt..."
-        },
-        "subtitle": {
-            "notification": "Hôm nay"
-        },
+			"addPosition": "Tạo chức vụ",
+			"addRole": "Tạo vai trò"
+		},
+		"state": {
+			"comeSoon": "Sắp Ra Mắt..."
+		},
+		"subtitle": {
+			"notification": "Hôm nay"
+		},
 		"header": {
 			"listEmployee": "Danh sách nhân viên",
 			"listDepartment": "Danh sách phòng ban",
-			"listPosition": "Danh sách chức vụ"
+			"listPosition": "Danh sách chức vụ",
+			"listRole": "Danh sách vai trò"
 		},
 		"filter": {
 			"employeeNameOrCode": "Tìm theo tên hoặc mã nhân viên",
 			"departmentNameOrCode": "Tìm theo tên hoặc mã phòng ban",
+			"permissionModule": "Tìm theo nhóm quyền",
 			"position": "Chức vụ",
 			"status": "Trạng thái",
 			"department": "Phòng Ban",
@@ -53,16 +57,21 @@
 			"deputyHead": "Phó phòng"
 		},
 		"action": {
-			"department":{
+			"department": {
 				"create": "Thêm Phòng Ban"
 			},
-			"position":{
+			"position": {
 				"create": "Thêm Chức Vụ"
+			},
+			"role": {
+				"create": "Thêm Vai Trò"
 			}
 		},
 		"btn": {
 			"cancel": "Hủy",
-			"create": "Tạo"
+			"create": "Tạo",
+			"next": "Tiếp tục",
+			"back": "Quay lại"
 		},
 		"table": {
 			"department": {
@@ -77,6 +86,20 @@
 		"status": {
 			"active": "Hoạt động",
 			"inActive": "Không hoạt động"
+		},
+		"permission": {
+			"action": {
+				"show": "Xem",
+				"create": "Thêm mới",
+				"update": "Cập nhật",
+				"delete": "Xóa"
+			},
+			"scope": {
+				"all": "Toàn hệ thống",
+				"dept": "Phòng ban",
+				"own": "Cá nhân",
+				"none": "Không"
+			}
 		}
-    }
+	}
 }

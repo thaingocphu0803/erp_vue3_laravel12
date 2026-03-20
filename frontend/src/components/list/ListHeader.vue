@@ -12,5 +12,3 @@ const props = defineProps<Props>()
 		<slot name="prepend"></slot>
 	</div>
 </template>
-
-

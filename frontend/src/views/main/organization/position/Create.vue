@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
-import PositionForm from '../../../../components/form/commonForm/PositionForm.vue'
+import PositionForm from '../../../../components/form/formModal/PositionForm.vue'
 import router from '@/router'
 import defaultConfig from '@/config/default'
 

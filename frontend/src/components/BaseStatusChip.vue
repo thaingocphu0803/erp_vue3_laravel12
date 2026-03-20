@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { useFilterModule } from '@/composables/useFilterModule'
+import type { commonStatus } from '@/types/common';
 
 const { statusMap } = useFilterModule()
 
 interface Props {
-	val: 'A' | 'X'
+	val: commonStatus
 }
 
 const props = defineProps<Props>()

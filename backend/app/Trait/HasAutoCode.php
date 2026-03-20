@@ -9,6 +9,7 @@ trait HasAutoCode
 	public function generateCode($table, $prefix = 'AUTO', $length = 4)
 	{
 		$existCodes = DB::table($table)
+			->lockForUpdate()
 			->select('code')
 			->where('code', 'LIKE', $prefix . '%')
 			->pluck('code')

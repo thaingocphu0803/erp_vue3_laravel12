@@ -1,9 +1,10 @@
 import { t } from "@/plugins/vueI18n"
+import type { commonStatus } from "@/types/common"
 import { computed } from "vue"
 
 interface Status {
 	name: string,
-	id: 'A' | 'X',
+	id: commonStatus,
 	color: 'success' | 'error'
 }
 

@@ -59,6 +59,28 @@ const router = createRouter({
 							],
 						},
 						{
+							path: 'role',
+							name: 'org.role',
+							component: RouteViewLayout,
+							redirect: { name: 'org.role.index' },
+							meta: { title: 'common.subModule.role' },
+							children: [
+								{
+									path: '',
+									name: 'org.role.index',
+									component: () =>
+										import('@/views/main/organization/role/Index.vue'),
+								},
+								{
+									path: 'create',
+									name: 'org.role.create',
+									component: () =>
+										import('@/views/main/organization/role/Create.vue'),
+									meta: { title: 'common.action.role.create' },
+								},
+							],
+						},
+						{
 							path: 'department',
 							name: 'org.department',
 							redirect: { name: 'org.department.index' },

@@ -2,7 +2,7 @@
 import { ref, computed, reactive, watch, onMounted } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
-import ListSearch from '@/components/list/ListSearch.vue'
+import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import defaultConfig from '@/config/default'
 import { useRoute } from 'vue-router'
@@ -13,6 +13,7 @@ import { useTableModule } from '@/composables/useTableModule'
 import api from '@/services/api'
 import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
+import type { commonStatus } from '@/types/common'
 
 
 interface DepartmentItem {
@@ -20,7 +21,7 @@ interface DepartmentItem {
 	name: string,
 	code: string,
 	description: string,
-	status: 'A' | 'X'
+	status: commonStatus
 }
 
 const route = useRoute();
@@ -148,12 +149,12 @@ const fetchDepartmentIndex = async (params: object) => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" lg="4">
-						<list-search
+						<base-search-btn
 							v-model="tempSearch"
 							:label="$t('common.filter.departmentNameOrCode')"
 							@update:model-value="handleUpdateSearchValue"
 						>
-						</list-search>
+						</base-search-btn>
 					</v-col>
 
 					<v-col cols="12" sm="6" lg="3">

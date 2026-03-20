@@ -24,7 +24,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <v-card density="comfortable" border>
+  <v-card density="comfortable" class="border">
     <v-card-title class="text-uppercase text-center" data-testId="form-title">{{ $t(props.title) }}</v-card-title>
 
     <v-card-text class="mt-5">

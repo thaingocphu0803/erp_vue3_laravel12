@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
-import DepartmentForm from '../../../../components/form/commonForm/DepartmentForm.vue'
+import DepartmentForm from '../../../../components/form/formModal/DepartmentForm.vue'
 import router from '@/router'
 import defaultConfig from '@/config/default'
 

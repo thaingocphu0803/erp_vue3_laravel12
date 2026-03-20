@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
-import ListSearch from '@/components/list/ListSearch.vue'
+import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import defaultConfig from '@/config/default'
 
@@ -27,7 +27,7 @@ const headers = [
 ]
 
 // Tạo 150 nhân viên giả lập để có đủ 15 trang
-const allEmployees = Array.from({ length: 150 }, (_, i) => ({	
+const allEmployees = Array.from({ length: 150 }, (_, i) => ({
 	id: i + 1,
 	name: `Nguyễn Văn ${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
 	code: `${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
@@ -71,10 +71,10 @@ const pageCount = computed(() => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" md="3" lg="3">
-						<list-search
+						<base-search-btn
 							v-model="search"
 							:label="$t('common.filter.employeeNameOrCode')">
-						</list-search>
+						</base-search-btn>
 					</v-col>
 
 					<v-col cols="12" sm="6" md="3" lg="2">
