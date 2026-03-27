@@ -85,6 +85,7 @@ const handleCreate = async () => {
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)
+			return
 		}
 		toast.show(error.response?.data?.messageCode, 'error')
 	}
@@ -99,7 +100,7 @@ const handleCancel = () => {
 <template>
 
 		<Form :title @submit-form="handleCreate">
-			<error-alert :messages="errorMessage" :ignore="['name', 'code']"></error-alert>
+			<error-alert :messages="errorMessage"></error-alert>
 
 			<v-row dense>
 				<v-col cols="12">
@@ -109,7 +110,6 @@ const handleCancel = () => {
 						v-model="departmentData.name"
 						:maxlength="defaultConfig.maxLengthName"
 						counter
-						:error-messages="errorMessage.name"
 					>
 					<template #label>
 						{{ $t('department.input.departmentName') }}
@@ -127,7 +127,6 @@ const handleCancel = () => {
 						v-model="departmentData.code"
 						:maxlength="defaultConfig.maxLengthCode"
 						counter
-						:error-messages="errorMessage.code"
 					>
 						<template #append-inner>
 							<annotation-tooltip text="department.tooltip.codeAutoGenerate"></annotation-tooltip>

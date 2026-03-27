@@ -3,10 +3,8 @@
 namespace App\Http\Requests\Auth;
 
 use App\Trait\HasResponse;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class LoginRequest extends FormRequest
 {

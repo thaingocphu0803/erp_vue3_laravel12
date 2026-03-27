@@ -32,7 +32,6 @@ class IndexDepartmentRequest extends IndexCommonRequest
 		];
 
 		return array_merge($commonRules, $departmentRules);
-
     }
 
 	public function failedValidation(Validator $validator)

@@ -141,6 +141,7 @@ const handleSubmit = async () => {
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)
+			return
 		}
 		toast.show(error.response?.data?.messageCode, 'error')
 	}
@@ -154,7 +155,7 @@ const handleCancel = () => {
 <template>
 	<Form title="position.title.create" @submit-form="handleSubmit">
 
-		<error-alert :messages="errorMessage" :ignore="['name']"></error-alert>
+		<error-alert :messages="errorMessage"></error-alert>
 
 		<!-- Row 1: Position Name -->
 		<v-row dense>
@@ -165,7 +166,6 @@ const handleCancel = () => {
 					v-model="positionData.name"
 					:maxlength="defaultConfig.maxLengthName"
 					counter
-					:error-messages="errorMessage.name"
 				>
 					<template #label>
 						{{ $t('position.input.positionName') }}

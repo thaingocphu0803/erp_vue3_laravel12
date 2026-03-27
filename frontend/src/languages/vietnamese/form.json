@@ -139,7 +139,7 @@
 			"permissions": {
 				"atLeastOne": "Vui lòng chọn ít nhất một quyền với phạm vi Tất cả hệ thống, phòng ban hoặc cá nhân",
 				"format": "Sai định dạng quyền",
-				"exists": "Không tìm thấy quyền",
+				"exists": "Quyền không tồn tại",
 				"distinct": "Không được chọn quyền trùng lặp"
 			}
 		}

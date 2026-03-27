@@ -73,8 +73,10 @@ const handleSubmit = async () => {
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)
+			return
 		}
-		toast.show(error.response?.data?.messageCode, 'error')
+
+		// toast.show(error.response?.data?.messageCode, 'error')
 	}
 }
 
