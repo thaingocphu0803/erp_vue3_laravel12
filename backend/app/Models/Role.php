@@ -10,7 +10,7 @@ class Role extends Model
 {
 	use SoftDeletes;
 
-    protected $fillable = [
+	protected $fillable = [
 		'name',
 		'description',
 		'status',
@@ -18,7 +18,8 @@ class Role extends Model
 		'updated_by'
 	];
 
-	public function permissions() : BelongsToMany {
+	public function permissions(): BelongsToMany
+	{
 		return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id')
 			->withPivot('scope')
 			->withTimestamps();
