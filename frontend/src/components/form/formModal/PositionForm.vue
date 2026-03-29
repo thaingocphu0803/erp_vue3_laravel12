@@ -45,14 +45,14 @@ onMounted(async () => {
 
 
 
-const emit = defineEmits(['success', 'cancel'])
+const emit = defineEmits(['save', 'cancel'])
 
 
 const { permissionGroup } = storeToRefs(usePositionStore())
 const { permissionFetch, positionCreate } = usePositionStore()
 
 
-const {departmentsFetch} = useDepartmentStore()
+const { departmentsFetch } = useDepartmentStore()
 const toast = useToastStore()
 const { departments } = storeToRefs(useDepartmentStore())
 
@@ -79,7 +79,7 @@ const errorMessage = reactive<ValidateMessage>({
 
 const showDepartmentDialog = ref<boolean>(false)
 
-const permissionSet = computed(()=> new Set(positionData.permissions))
+const permissionSet = computed(() => new Set(positionData.permissions))
 
 watch(() => positionData.permissions.length, (newLength) => {
 	if (newLength === 0) {
@@ -87,7 +87,7 @@ watch(() => positionData.permissions.length, (newLength) => {
 	} else {
 		errorMessage.permissions = ''
 	}
-}, {immediate: true})
+}, { immediate: true })
 
 const onDepartmentSuccess = () => {
 	showDepartmentDialog.value = false
@@ -112,7 +112,7 @@ const toggleGroup = (permissions: Permission[]) => {
 const isIndeterminate = (permissions: Permission[]) => {
 	const count = permissions.reduce((acc, permission) => {
 		return permissionSet.value.has(permission.id) ? acc + 1 : acc
-	} , 0)
+	}, 0)
 
 	return count > 0 && count < permissions.length
 }
@@ -137,7 +137,7 @@ const handleSubmit = async () => {
 	try {
 		const response = await positionCreate(positionData)
 		toast.show(response.data.messageCode, 'success')
-		emit('success')
+		emit('save')
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)
@@ -160,13 +160,8 @@ const handleCancel = () => {
 		<!-- Row 1: Position Name -->
 		<v-row dense>
 			<v-col cols="12">
-				<Input
-					name="name"
-					:rules="positionValidation.name"
-					v-model="positionData.name"
-					:maxlength="defaultConfig.maxLengthName"
-					counter
-				>
+				<Input name="name" :rules="positionValidation.name" v-model="positionData.name"
+					:maxlength="defaultConfig.maxLengthName" counter>
 					<template #label>
 						{{ $t('position.input.positionName') }}
 						<span class="text-error">*</span>
@@ -178,26 +173,13 @@ const handleCancel = () => {
 		<!-- Row 2: Department Select with tooltip inside (append-inner) -->
 		<v-row dense>
 			<v-col cols="12">
-				<list-filter
-					:label="
-						getDepartmentErrorMessage.length
-							? $t(getDepartmentErrorMessage)
-							: $t('position.input.selectDepartment')
-					"
-					v-model="positionData.department_id"
-					:items="departments"
-					searchable
-					item-title="name"
-					item-value="id"
-					:loading="loadingDepartment"
-					:disabled="disabledSelect"
-					@click="getDepartmentList"
-				>
+				<list-filter :label="getDepartmentErrorMessage.length
+					? $t(getDepartmentErrorMessage)
+					: $t('position.input.selectDepartment')
+					" v-model="positionData.department_id" :items="departments" searchable item-title="name" item-value="id"
+					:loading="loadingDepartment" :disabled="disabledSelect" @click="getDepartmentList">
 					<template #prepend-item>
-						<create-prepend-item
-							title="department.title.create"
-							@open-model="showDepartmentDialog = true"
-						>
+						<create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true">
 						</create-prepend-item>
 						<v-divider />
 					</template>
@@ -212,11 +194,8 @@ const handleCancel = () => {
 		<!-- Row 3: Description -->
 		<v-row dense>
 			<v-col cols="12">
-				<Textarea
-					:label="$t('position.input.positionDesc')"
-					name="description"
-					v-model="positionData.description"
-				></Textarea>
+				<Textarea :label="$t('position.input.positionDesc')" name="description"
+					v-model="positionData.description"></Textarea>
 			</v-col>
 		</v-row>
 
@@ -232,14 +211,9 @@ const handleCancel = () => {
 				<v-expansion-panels v-for="(permissions, module) in permissionGroup" :key="module">
 					<v-expansion-panel class="mb-3">
 						<v-expansion-panel-title>
-							<check-box
-								color="primary"
-								:label="$t(module)"
-								class="font-weight-semibold"
-								:model-value="isAllSelected(permissions)"
-								:indeterminate="isIndeterminate(permissions)"
-								@click.stop="toggleGroup(permissions)"
-							>
+							<check-box color="primary" :label="$t(module)" class="font-weight-semibold"
+								:model-value="isAllSelected(permissions)" :indeterminate="isIndeterminate(permissions)"
+								@click.stop="toggleGroup(permissions)">
 							</check-box>
 						</v-expansion-panel-title>
 
@@ -247,18 +221,9 @@ const handleCancel = () => {
 
 						<v-expansion-panel-text>
 							<v-row dense>
-								<v-col
-									v-for="permission in permissions"
-									:key="permission.id"
-									cols="6"
-									sm="3"
-								>
-									<check-box
-										v-model="positionData.permissions"
-										:value="permission.id"
-										:label="$t(permission.name)"
-										color="primary"
-									/>
+								<v-col v-for="permission in permissions" :key="permission.id" cols="6" sm="3">
+									<check-box v-model="positionData.permissions" :value="permission.id"
+										:label="$t(permission.name)" color="primary" />
 								</v-col>
 							</v-row>
 						</v-expansion-panel-text>
@@ -270,11 +235,7 @@ const handleCancel = () => {
 		<!-- Actions: Cancel + Create -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn
-					title="common.btn.cancel"
-					color="red-darken-1"
-					@click.prevent="handleCancel"
-				/>
+				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
 			</v-col>
 			<v-col cols="auto">
 				<BaseBtn title="common.btn.create" color="primary" type="submit" />
@@ -285,7 +246,7 @@ const handleCancel = () => {
 	<!-- Dialog Create Department -->
 	<v-dialog v-model="showDepartmentDialog" :max-width="defaultConfig.maxWidthForm" persistent>
 		<v-card class="pa-4 rounded-lg">
-			<DepartmentForm @success="onDepartmentSuccess" @cancel="showDepartmentDialog = false" />
+			<DepartmentForm @save="onDepartmentSuccess" @cancel="showDepartmentDialog = false" />
 		</v-card>
 	</v-dialog>
 </template>

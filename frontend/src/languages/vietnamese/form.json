@@ -142,6 +142,14 @@
 				"exists": "Quyền không tồn tại",
 				"distinct": "Không được chọn quyền trùng lặp"
 			}
+		},
+		"alert": {
+			"error": {
+				"create": "Tạo mới vai trò thất bại"
+			},
+			"success": {
+				"create": "Tạo mới vai trò thành công"
+			}
 		}
 	},
 	"common-list": {

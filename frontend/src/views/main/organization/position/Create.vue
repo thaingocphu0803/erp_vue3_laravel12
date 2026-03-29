@@ -17,6 +17,6 @@ const handleCancel = () => {
 	<app-breadcrumb />
 
 	<v-container :max-width="defaultConfig.maxWidthForm">
-		<position-form @success="handleSuccess" @cancel="handleCancel" />
+		<position-form @save="handleSuccess" @cancel="handleCancel" />
 	</v-container>
 </template>

@@ -30,7 +30,7 @@ interface ValidateMessage {
 
 const title = 'department.title.create'
 
-const emit = defineEmits(['success', 'cancel'])
+const emit = defineEmits(['save', 'cancel'])
 
 const departmentStore = useDepartmentStore()
 
@@ -81,7 +81,7 @@ const handleCreate = async () => {
 
 		toast.show(response.data.messageCode, 'success')
 
-		emit('success')
+		emit('save')
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)

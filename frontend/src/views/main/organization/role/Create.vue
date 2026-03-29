@@ -5,7 +5,7 @@ import router from '@/router'
 import defaultConfig from '@/config/default'
 
 const handleSuccess = () => {
-	router.push({ name: 'org.position' })
+	router.push({ name: 'org.role' })
 }
 
 const handleCancel = () => {
@@ -17,6 +17,6 @@ const handleCancel = () => {
 	<app-breadcrumb />
 
 	<v-container :max-width="defaultConfig.maxWidthForm">
-		<role-form @success="handleSuccess" @cancel="handleCancel" />
+		<role-form @save="handleSuccess" @cancel="handleCancel" />
 	</v-container>
 </template>
