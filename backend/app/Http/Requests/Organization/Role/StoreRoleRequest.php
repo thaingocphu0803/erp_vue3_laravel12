@@ -3,7 +3,6 @@
 namespace App\Http\Requests\Organization\Role;
 
 use App\Rules\PermissionItemRule;
-use App\Rules\PermissionRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,6 +25,7 @@ class StoreRoleRequest extends FormRequest
 	{
 		return [
 			'name'      => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('roles', 'name')->ignore($this->id)],
+			'description' => ['bail', 'nullable', 'string'],
 			'permissions' => ['bail', 'required', 'array', 'min:1', 'distinct', new PermissionItemRule],
 		];
 	}
@@ -39,10 +39,11 @@ class StoreRoleRequest extends FormRequest
 			'name.max'      => 'role.validate.name.max',
 			'name.regex' => 'role.validate.name.noSpecialChars',
 			'name.unique' => 'role.validate.name.unique',
-			'permissions.min' => $atLeastOne,
-			'permissions.required' => $atLeastOne,
+			'description.string' => 'role.validate.description.format',
 			'permissions.distinct' => 'role.validate.permissions.distinct',
 			'permissions.array' => 'role.validate.permissions.format',
+			'permissions.min' => $atLeastOne,
+			'permissions.required' => $atLeastOne
 		];
 	}
 }

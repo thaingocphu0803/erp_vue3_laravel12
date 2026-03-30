@@ -2,66 +2,53 @@
 
 namespace App\Http\Controllers\Organization;
 
-use App\Enum\Status;
-use App\Enum\Table;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Organization\Department\IndexDepartmentRequest;
 use App\Http\Requests\Organization\Department\StoreDepartmentRequest;
-use App\Models\Department;
-use App\Trait\HasAutoCode;
 use App\Trait\HasResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use App\Http\Resources\Organization\DepartmentResource;
+use App\Services\Organization\DepartmentService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DepartmentController extends Controller
 {
-	use HasResponse, HasAutoCode;
+	use HasResponse;
 
-	public function __construct() {}
+	public function __construct(
+		protected DepartmentService $departmentService
+	) {}
 
-	public function create(StoreDepartmentRequest $request)
+	public function create(StoreDepartmentRequest $storeDepartmentRequest)
 	{
-		$payload = $request->only('name', 'code', 'parent_id', 'description');
-		$payload['created_by'] = Auth::id();
+		$validatedData = $storeDepartmentRequest->validated();
 
-		if (is_null($payload['code'])) {
-			$payload['code'] = $this->generateCode(Table::DEPARTMENT->value, 'DEP');
+		$departmentPayload = [
+			'name' => $validatedData['name'],
+			'code' => $validatedData['code'],
+			'parent_id' => $validatedData['parent_id'],
+			'description' => $validatedData['description'],
+		];
+
+		if($this->departmentService->create($departmentPayload)){
+			$message = 'department.alert.success.create';
+			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
 		}
 
-		try {
-			return DB::transaction(function () use ($payload) {
-				Department::create($payload);
+		$message = 'department.alert.error.create';
+		return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+	}
 
-				$message = 'department.alert.success.create';
+	public function index(IndexDepartmentRequest $indexDepartmentRequest)
+	{
+		$paginatePayload = $indexDepartmentRequest->validated();
 
-				return $this->jsonResponse($message, JsonResponse::HTTP_OK);
-			});
-		} catch (\Exception $e) {
-			$message = 'department.alert.error.create';
+		$departments = $this->departmentService->paginate($paginatePayload);
+
+		if(!$departments){
+			$message = 'common-list.alert.error.getTableData';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
-	}
 
-	public function index(IndexDepartmentRequest $request)
-	{
-		$filters = $request->only('status');
-		$sort =  $request->only(['sortKey', 'sortOrder']);
-		$search = $request->input('search');
-		$itemPerPage = (int)$request->input('itemsPerPage');
-
-		try {
-
-			$departments = Department::filter($filters)
-			->search($search)
-			->sortOrder($sort)
-			->paginate($itemPerPage);
-
-			return DepartmentResource::collection($departments)->response();
-
-	} catch (\Exception $e) {
-		return $this->exceptionResponse('common-list.alert.error.getTableData', JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-	}
+		return DepartmentResource::collection($departments)->response();
 	}
 }

@@ -28,6 +28,9 @@
 				"min": "Mật khẩu phải có ít nhất 8 ký tự",
 				"hasNumber": "Mật khẩu phải có ít nhất một chữ số",
 				"hasSpecialChar": "Mật khẩu phải có ít nhất một ký tự đặc biệt"
+			},
+			"rememberMe": {
+				"format": "Định dạng ghi nhớ đăng nhập không hợp lệ"
 			}
 		},
 		"alert": {
@@ -66,6 +69,9 @@
 			"parent_id": {
 				"format": "Sai định dạng phòng ban cha",
 				"exists": "Không tìm thấy phòng ban cha"
+			},
+			"description": {
+				"format": "Sai định dạng mô tả phòng ban"
 			}
 		},
 		"tooltip": {
@@ -135,6 +141,9 @@
 				"max": "Tên vai trò không được vượt quá 100 ký tự",
 				"noSpecialChars": "Tên vai trò không được chứa ký tự đặc biệt",
 				"unique": "Tên vai trò đã tồn tại"
+			},
+			"description": {
+				"format": "Sai định dạng mô tả vai trò"
 			},
 			"permissions": {
 				"atLeastOne": "Vui lòng chọn ít nhất một quyền với phạm vi Tất cả hệ thống, phòng ban hoặc cá nhân",

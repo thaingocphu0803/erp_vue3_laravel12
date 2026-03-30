@@ -4,32 +4,38 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\Auth\AuthService;
 use App\Trait\HasResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AuthController extends Controller
 {
     use HasResponse;
 
-    public function __construct() {}
+    public function __construct(
+		protected AuthService $authService
+	) {}
 
     public function login(LoginRequest $loginRequest)
     {
-        $credentials = $loginRequest->validated();
+		$validatedData =  $loginRequest->validated();
 
-        $rememberMe = (bool) $loginRequest->input('rememberMe');
+        $credentials = [
+			'email' => $validatedData['email'],
+			'password' => $validatedData['password']
+		];
 
-        $auth = Auth::attempt($credentials, $rememberMe);
+        $rememberMe = $validatedData['rememberMe'];
 
-        if ($auth) {
-            $loginRequest->session()->regenerateToken();
+        if ($this->authService->login($credentials, $rememberMe)) {
+
+			$loginRequest->session()->regenerateToken();
+			$user = $this->authService->me();
 
             $message = 'auth.alert.success.login';
-            $user = Auth::user()->only(['name', 'email']);
-            $data['user'] = $user;
-            return $this->jsonResponse($message, JsonResponse::HTTP_OK, $data);
+
+            return $this->jsonResponse($message, JsonResponse::HTTP_OK, compact('user'));
         }
 
         $message = 'auth.alert.error.incorrectAuth';
@@ -39,22 +45,19 @@ class AuthController extends Controller
 
     public function me()
     {
-        $user = Auth::user()->only(['name', 'email']);
-        $data['user'] = $user;
+		$user = $this->authService->me();
+
         $message = 'auth.alert.success.me';
-        return $this->jsonResponse($message, JsonResponse::HTTP_OK, $data);
+        return $this->jsonResponse($message, JsonResponse::HTTP_OK, compact('user'));
     }
 
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
-
+		$this->authService->logout();
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         $message = 'auth.alert.success.logout';
-
         return  $this->jsonResponse($message, JsonResponse::HTTP_OK);
     }
 }

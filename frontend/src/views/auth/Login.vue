@@ -7,6 +7,7 @@ import Checkbox from '@/components/form/CheckBox.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import LanguageBtn from '@/components/layout/LanguageBtn.vue'
 import authValidation from '@/composables/validation/useAuthValidation'
+import ErrorAlert from '@/components/form/ErrorAlert.vue'
 import { provide, reactive, ref } from 'vue'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
@@ -19,13 +20,14 @@ interface LoginForm {
 	rememberMe: Boolean
 }
 
-interface ValidateMessage {
+interface ErrorMessage {
+	unauthorized: string
 	email: string,
 	password: string
+	rememberMe: string
 }
 
 const title: string = 'auth.title.login'
-
 const LanguageBtnColor: string = 'blue-gray-draken-4'
 
 provide('LanguageBtnColor', LanguageBtnColor)
@@ -36,9 +38,11 @@ const LoginData = reactive<LoginForm>({
 	rememberMe: false,
 })
 
-const validateMessage = reactive<ValidateMessage>({
+const errorMessage = reactive<ErrorMessage>({
+	unauthorized: '',
 	email: '',
-	password: ''
+	password: '',
+	rememberMe: ''
 })
 
 const checkboxData = {
@@ -52,25 +56,23 @@ const redirect = ref<RouteLocationRaw>('')
 
 const loading = ref<boolean>(false)
 
-const errorMessage = ref<string>('')
-
 const handleLogin = async () => {
 	try {
 		loading.value = true
 
 		const { authLogin } = useAuthStore()
 		const response = await authLogin(LoginData)
-		if (response.status === 200) {
-			redirect.value = (route.query.redirect as string) || { name: 'dashboard' }
-			router.replace(redirect.value)
-		}
+
+		redirect.value = (route.query.redirect as string) || { name: 'dashboard' }
+		router.replace(redirect.value)
+
 	} catch (error: any) {
 		const status = error.response.status
 
 		if (status === 401) {
-			errorMessage.value = error.response.data.messageCode
+			errorMessage.unauthorized = error.response.data.messageCode
 		} else if (status == 422) {
-			mapLaravelError(validateMessage, error)
+			mapLaravelError(errorMessage, error)
 		}
 	} finally {
 		loading.value = false
@@ -87,19 +89,29 @@ const handleLogin = async () => {
 
 		<v-main class="mx-auto my-auto" max-width="420px">
 			<Form :title @submit-form="handleLogin">
-				<v-alert v-if="errorMessage.length" color="red-lighten-4" density="comfortable"
-					class="text-error text-center">
-					{{ $t(errorMessage) }}
-				</v-alert>
+				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
 				<Input :label="$t('auth.input.email')" name="email" placeholder="example@gmail.com"
-					:rules="authValidation.email" v-model="LoginData.email" :error-messages="validateMessage.email"/>
+					:rules="authValidation.email" v-model="LoginData.email"/>
+
 				<Input :label="$t('auth.input.password')" name="password" type="password"
-					:rules="authValidation.password" v-model="LoginData.password" :error-messages="validateMessage.password"/>
+					:rules="authValidation.password" v-model="LoginData.password"/>
+
 				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="LoginData.rememberMe"
 					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
+
 				<base-btn :title :loading="loading" type="submit" block />
 			</Form>
 		</v-main>
 	</v-layout>
 </template>
+
+<style scoped>
+	:deep(ul){
+		list-style-type: none;
+		padding-left: unset;
+	}
+	:deep(li){
+		margin-left: unset;
+	}
+</style>

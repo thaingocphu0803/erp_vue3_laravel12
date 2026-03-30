@@ -37,6 +37,7 @@ const filterMessages = computed(() => {
 <style scoped>
 	ul {
 		list-style-type: disc;
+		padding-left: 10px;
 	}
 	li {
 		margin-left: 1em;

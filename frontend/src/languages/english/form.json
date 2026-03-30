@@ -28,6 +28,9 @@
 				"min": "Password must be at least 8 letters",
 				"hasNumber": "Password must be at least one number letter",
 				"hasSpecialChar": "Password must be at least one special letter"
+			},
+			"rememberMe": {
+				"format": "Incorrect format Remember login"
 			}
 		},
 		"alert": {
@@ -66,6 +69,9 @@
 			"parent_id": {
 				"format": "Parent department format is incorrect",
 				"exists": "Parent department does not exist"
+			},
+			"description": {
+				"format": "Department's description format is incorrect"
 			}
 		},
 		"tooltip": {
@@ -135,6 +141,9 @@
 				"max": "Role name must not exceed 100 characters",
 				"noSpecialChars": "Role name must not contain special characters",
 				"unique": "Role name already existed"
+			},
+			"description": {
+				"format": "Role's description format is incorrect"
 			},
 			"permissions": {
 				"atLeastOne": "Please select at least one permission with scope All system, department or own",

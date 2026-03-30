@@ -29,8 +29,9 @@ class LoginRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'email' => ['required', 'email'],
+			'email' => ['bail','required', 'email'],
 			'password' => ['bail', 'required', Password::min(8)->mixedCase(true)->numbers()->symbols()],
+			'rememberMe' => ['boolean']
 		];
 	}
 
@@ -43,7 +44,8 @@ class LoginRequest extends FormRequest
 			'password.min' => 'auth.validate.password.min',
 			'password.mixed' => 'auth.validate.password.hasUpperLetter',
 			'password.numbers' => 'auth.validate.password.hasNumber',
-			'password.symbols' => 'auth.validate.password.hasSpecialChar'
+			'password.symbols' => 'auth.validate.password.hasSpecialChar',
+			'rememberMe.boolean' => 'auth.validate.rememberMe.format',
 		];
 	}
 }

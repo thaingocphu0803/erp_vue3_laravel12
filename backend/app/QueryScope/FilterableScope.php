@@ -19,7 +19,7 @@ trait FilterableScope
 	}
 
 	public function scopeSortOrder(Builder $query, array $sort){
-		$query->when(!empty($sort['sortKey']) && !empty($sort['sortOrder']), function($q) use ($sort){
+		$query->when(!is_null($sort['sortKey']) && !is_null($sort['sortOrder']), function($q) use ($sort){
 			$q->orderBy($sort['sortKey'], $sort['sortOrder']);
 		});
 
@@ -27,7 +27,7 @@ trait FilterableScope
 	}
 
 	public function scopeSearch(Builder $query, string|null $search){
-		$query->when(!empty($search), function ($q) use ($search) {
+		$query->when(!is_null($search), function ($q) use ($search) {
 			$q->where(function ($sq) use ($search) {
 				$sq->where('name', 'LIKE', "%$search%")
 				   ->orWhere('code', 'LIKE', "%$search%");
