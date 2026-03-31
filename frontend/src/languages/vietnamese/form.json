@@ -108,6 +108,9 @@
 			"department_id": {
 				"format": "Sai định dạng phòng ban",
 				"exists": "Không tìm thấy phòng ban"
+			},
+			"description": {
+				"format": "Sai định dạng mô tả chức vụ"
 			}
 		},
 		"alert": {

@@ -31,7 +31,6 @@ export const useTableModule = () => {
 		{ title: t('common.filter.status'), key: 'status', align: 'center',headerProps: { class: 'font-weight-bold' } },
 	])
 
-
 	const roleHeaders = computed<TableHeader[]>(() => [
 		{ title: t('common.table.role.name'), key: 'name', align: 'start', headerProps: { class: 'font-weight-bold' } },
 		{ title: t('common.table.role.name'), key: 'name', align: 'start', headerProps: { class: 'font-weight-bold' } },

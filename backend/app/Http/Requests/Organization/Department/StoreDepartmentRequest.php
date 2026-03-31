@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\Organization\Department;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\StoreCommonRequest;
 use Illuminate\Validation\Rule;
 
-class StoreDepartmentRequest extends FormRequest
+class StoreDepartmentRequest extends StoreCommonRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -22,12 +22,14 @@ class StoreDepartmentRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [
-			'name'      => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('departments', 'name')->ignore($this->id)],
+		$parentRules = parent::rules();
+
+		$departmentRules = [
 			'code'      => ['bail', 'nullable', 'max:20', Rule::unique('departments', 'code')->ignore($this->id)],
 			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')],
-			'description' => ['bail', 'nullable', 'string'],
 		];
+
+		return array_merge($parentRules, $departmentRules);
 	}
 
 	public function messages(): array

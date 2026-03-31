@@ -8,7 +8,7 @@ import DepartmentForm from './DepartmentForm.vue'
 import CreatePrependItem from '../AddItemListBtn.vue'
 import AnnotationTooltip from '../AnnotationTooltip.vue'
 import ErrorAlert from '../ErrorAlert.vue'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { reactive, ref } from 'vue'
 import { useDepartmentStore } from '@/stores/department'
 import { storeToRefs } from 'pinia'
 import { mapLaravelError } from '@/utils/errorHandler'
@@ -16,47 +16,27 @@ import { useToastStore } from '@/stores/toast'
 import positionValidation from '@/composables/validation/usePositionValidation'
 import defaultConfig from '@/config/default'
 import { usePositionStore } from '@/stores/position'
-import type { Permission } from '@/stores/position'
-import CheckBox from '../CheckBox.vue'
 
 interface PositionForm {
 	name: string
 	department_id: number | null
 	description: string
-	permissions: number[]
 }
 
 interface ValidateMessage {
 	name: string,
-	permissions: string,
-	department_id: string
+	department_id: string,
+	description: string
 }
-
-onMounted(async () => {
-	try {
-		loadingPermission.value = true
-		await permissionFetch()
-	} catch (error: any) {
-		console.log(error)
-	} finally {
-		loadingPermission.value = false
-	}
-})
-
-
 
 const emit = defineEmits(['save', 'cancel'])
 
-
-const { permissionGroup } = storeToRefs(usePositionStore())
-const { permissionFetch, positionCreate } = usePositionStore()
-
+const toast = useToastStore()
 
 const { departmentsFetch } = useDepartmentStore()
-const toast = useToastStore()
 const { departments } = storeToRefs(useDepartmentStore())
 
-const loadingPermission = ref<boolean>(false)
+const {positionCreate} = usePositionStore()
 
 const loadingDepartment = ref<boolean>(false)
 
@@ -68,53 +48,18 @@ const positionData = reactive<PositionForm>({
 	name: '',
 	department_id: null,
 	description: '',
-	permissions: [],
 })
 
 const errorMessage = reactive<ValidateMessage>({
 	name: '',
-	permissions: '',
-	department_id: ''
+	department_id: '',
+	description: ''
 })
 
 const showDepartmentDialog = ref<boolean>(false)
 
-const permissionSet = computed(() => new Set(positionData.permissions))
-
-watch(() => positionData.permissions.length, (newLength) => {
-	if (newLength === 0) {
-		errorMessage.permissions = 'position.validate.permissions.atLeastOne'
-	} else {
-		errorMessage.permissions = ''
-	}
-}, { immediate: true })
-
 const onDepartmentSuccess = () => {
 	showDepartmentDialog.value = false
-}
-
-const isAllSelected = (permissions: Permission[]) => {
-	return permissions.every(item => permissionSet.value.has(item.id))
-}
-
-const toggleGroup = (permissions: Permission[]) => {
-	const groupIds = permissions.map(i => i.id)
-	const groupSet = new Set(groupIds)
-
-	if (isAllSelected(permissions)) {
-		positionData.permissions = positionData.permissions.filter(id => !groupSet.has(id))
-	} else {
-		const newIds = groupIds.filter(id => !permissionSet.value.has(id))
-		positionData.permissions.push(...newIds)
-	}
-}
-
-const isIndeterminate = (permissions: Permission[]) => {
-	const count = permissions.reduce((acc, permission) => {
-		return permissionSet.value.has(permission.id) ? acc + 1 : acc
-	}, 0)
-
-	return count > 0 && count < permissions.length
 }
 
 const getDepartmentList = async () => {
@@ -196,39 +141,6 @@ const handleCancel = () => {
 			<v-col cols="12">
 				<Textarea :label="$t('position.input.positionDesc')" name="description"
 					v-model="positionData.description"></Textarea>
-			</v-col>
-		</v-row>
-
-		<!-- Row 4: Permission Groups -->
-		<v-row dense class="mt-2">
-
-			<v-col cols="12" class="text-center">
-				<div class="mb-3 text-h5">{{ $t('position.input.assignPermission') }}</div>
-				<v-progress-circular indeterminate v-if="loadingPermission"></v-progress-circular>
-			</v-col>
-
-			<v-col cols="12">
-				<v-expansion-panels v-for="(permissions, module) in permissionGroup" :key="module">
-					<v-expansion-panel class="mb-3">
-						<v-expansion-panel-title>
-							<check-box color="primary" :label="$t(module)" class="font-weight-semibold"
-								:model-value="isAllSelected(permissions)" :indeterminate="isIndeterminate(permissions)"
-								@click.stop="toggleGroup(permissions)">
-							</check-box>
-						</v-expansion-panel-title>
-
-						<v-divider></v-divider>
-
-						<v-expansion-panel-text>
-							<v-row dense>
-								<v-col v-for="permission in permissions" :key="permission.id" cols="6" sm="3">
-									<check-box v-model="positionData.permissions" :value="permission.id"
-										:label="$t(permission.name)" color="primary" />
-								</v-col>
-							</v-row>
-						</v-expansion-panel-text>
-					</v-expansion-panel>
-				</v-expansion-panels>
 			</v-col>
 		</v-row>
 

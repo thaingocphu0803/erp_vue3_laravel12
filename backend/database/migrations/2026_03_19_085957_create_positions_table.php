@@ -16,7 +16,7 @@ return new class extends Migration
 			$table->string('name', 100)->unique();
 			$table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->text('description')->nullable();
-			$table->enum('status', ['A', 'X'])->default('X');
+			$table->enum('status', ['A', 'X'])->default('A');
 			$table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->softDeletes();

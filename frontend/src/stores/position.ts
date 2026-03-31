@@ -4,12 +4,12 @@ import { ref } from "vue";
 
 export const usePositionStore = defineStore('position', () => {
 
-	const isFetchedPosition = ref<boolean>(false);
+	const isFetched = ref<boolean>(false);
 
 	const positionCreate = async (payload: object) => {
 		try {
 			const response = await api.post('position/create', payload)
-			isFetchedPosition.value = false
+			isFetched.value = false
 			return response
 		} catch (error: any) {
 			throw error

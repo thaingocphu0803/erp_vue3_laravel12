@@ -34,6 +34,8 @@ Route::controller(PermissionController::class)->prefix('permission')->middleware
 // PositionController
 Route::controller(PositionController::class)->prefix('position')->middleware('auth:sanctum')->group(function(){
 	Route::post('create', 'create');
+	Route::get('index', 'index');
+
 });
 
 // RoleController

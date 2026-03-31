@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Organization\Role;
 
+use App\Http\Requests\StoreCommonRequest;
 use App\Rules\PermissionItemRule;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class StoreRoleRequest extends FormRequest
+class StoreRoleRequest extends StoreCommonRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -23,11 +22,13 @@ class StoreRoleRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [
-			'name'      => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('roles', 'name')->ignore($this->id)],
-			'description' => ['bail', 'nullable', 'string'],
+		$parentRules = parent::rules();
+
+		$roleRules =  [
 			'permissions' => ['bail', 'required', 'array', 'min:1', 'distinct', new PermissionItemRule],
 		];
+
+		return array_merge($parentRules, $roleRules);
 	}
 
 	public function messages()

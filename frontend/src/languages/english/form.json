@@ -108,6 +108,9 @@
 			"department_id": {
 				"format": "Department format is incorrect",
 				"exists": "Department does not exist"
+			},
+			"description": {
+				"format": "Position's description format is incorrect"
 			}
 		},
 		"alert": {

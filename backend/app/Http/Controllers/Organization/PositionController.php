@@ -2,39 +2,44 @@
 
 namespace App\Http\Controllers\Organization;
 
-use App\Enum\Status;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\IndexCommonRequest;
 use App\Http\Requests\Organization\Position\StorePositionRequest;
-use App\Models\Position;
+use App\Http\Resources\Organization\PositionResource;
+use App\Services\Organization\PositionService;
 use App\Trait\HasResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class PositionController extends Controller
 {
 	use HasResponse;
 
+	public function __construct(
+		protected PositionService $positionService
+	){}
+
 	public function create(StorePositionRequest $request)
 	{
-		$payload = $request->only('name', 'department_id', 'description');
-		$payload['created_by'] = Auth::id();
+		$positionPayload = $request->validated();
 
-		$syncPayload = $request->input('permissions');
+		if($this->positionService->create($positionPayload)){
+			$message = 'position.alert.success.create';
+			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
+		}
 
-		try {
-			return DB::transaction(function () use ($payload, $syncPayload) {
-				$position = Position::create($payload);
-				$position->permissions()->attach($syncPayload);
+		$message = 'position.alert.error.create';
+		return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+	}
 
-				$message = 'position.alert.success.create';
+	public function index(IndexCommonRequest $indexCommonRequest){
+		$positionPayload = $indexCommonRequest->validated();
+		$positions = $this->positionService->paginate($positionPayload);
 
-				return $this->jsonResponse($message, JsonResponse::HTTP_OK);
-			});
-		} catch (\Exception $e) {
-			$message = 'position.alert.error.create';
+		if (!$positions) {
+			$message = 'common-list.alert.error.getTableData';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
+
+		return PositionResource::collection($positions)->response();
 	}
 }

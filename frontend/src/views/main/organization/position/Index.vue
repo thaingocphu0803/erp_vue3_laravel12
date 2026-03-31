@@ -29,7 +29,7 @@ const toast = useToastStore();
 
 const loading = ref<boolean>(false)
 
-const departmentStatus = ref(route.query.status as "A" | "X" | undefined)
+const departmentStatus = ref(route.query.status as commonStatus | undefined)
 
 const tempSearch = ref((route.query.search as string) || '')
 
@@ -105,7 +105,7 @@ const handleDepartmentPaginate = async (options: any) => {
 const fetchDepartmentIndex = async (params: object) => {
 	try {
 		loading.value = true
-		const response = await api.get('department/index', { params });
+		const response = await api.get('position/index', { params });
 
 		if (response.status === 200) {
 			const data = response?.data

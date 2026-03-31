@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\QueryScope\FilterableScope;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Position extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, FilterableScope;
 
 	protected $fillable = [
 		'name',
@@ -18,9 +18,4 @@ class Position extends Model
 		'updated_by',
 		'status'
 	];
-
-	public function permissions() : BelongsToMany {
-		return $this->belongsToMany(Permission::class,'permission_position', 'position_id', 'permission_id')
-					->withTimestamps();
-	}
 }
