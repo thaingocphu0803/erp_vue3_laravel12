@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Organization;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Organization\Department\IndexDepartmentRequest;
+use App\Http\Requests\IndexCommonRequest;
 use App\Http\Requests\Organization\Department\StoreDepartmentRequest;
 use App\Trait\HasResponse;
 use App\Http\Resources\Organization\DepartmentResource;
@@ -38,9 +38,9 @@ class DepartmentController extends Controller
 		return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 	}
 
-	public function index(IndexDepartmentRequest $indexDepartmentRequest)
+	public function index(IndexCommonRequest $indexCommonRequest)
 	{
-		$paginatePayload = $indexDepartmentRequest->validated();
+		$paginatePayload = $indexCommonRequest->validated();
 
 		$departments = $this->departmentService->paginate($paginatePayload);
 

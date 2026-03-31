@@ -32,11 +32,11 @@ const title = 'department.title.create'
 
 const emit = defineEmits(['save', 'cancel'])
 
-const departmentStore = useDepartmentStore()
+const {departmentsFetch, departmentCreate} = useDepartmentStore()
 
 const toast = useToastStore();
 
-const { departments } = storeToRefs(departmentStore)
+const { departments } = storeToRefs( useDepartmentStore())
 
 const loading = ref<boolean>(false)
 
@@ -60,7 +60,7 @@ const getParentErrorMessage = ref<string>('')
 const getDepartmentList = async () => {
 	try {
 		loading.value = true
-		await departmentStore.departmentsFetch();
+		await departmentsFetch();
 	} catch (error: any) {
 		if (error.status === 400 || error.status === 500) {
 			getParentErrorMessage.value = error.response?.data?.messageCode
@@ -77,7 +77,7 @@ const getDepartmentList = async () => {
 
 const handleCreate = async () => {
 	try {
-		const response = await departmentStore.departmentCreate(departmentData)
+		const response = await departmentCreate(departmentData)
 
 		toast.show(response.data.messageCode, 'success')
 

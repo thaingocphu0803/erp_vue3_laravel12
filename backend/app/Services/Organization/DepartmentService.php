@@ -36,7 +36,8 @@ class DepartmentService
 
 	public function paginate(array $paginationPayload){
 		try{
-			return $this->departmentRepositoryInterface->paginate($paginationPayload);
+			$departments = $this->departmentRepositoryInterface->paginate($paginationPayload);
+			return $departments;
 		}catch(\Exception $e){
 			return false;
 		}
