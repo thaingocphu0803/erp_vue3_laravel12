@@ -79,8 +79,15 @@
 				"code": "Department code",
 				"numberEmployees": "Number of employees"
 			},
+			"role": {
+				"name": "Role name",
+				"numberEmployees": "Number of employees"
+			},
 			"position": {
 				"name": "Position name"
+			},
+			"commonColumn": {
+				"createdAt": "Created at"
 			}
 		},
 		"status": {

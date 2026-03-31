@@ -15,11 +15,13 @@ class AuthService
     }
 
 	public function login( array $credentials, bool $rememberMe ){
-		return Auth::attempt($credentials, $rememberMe);
+		$result = Auth::attempt($credentials, $rememberMe);
+		return $result;
 	}
 
 	public function me(){
-		return Auth::user()->only(['name','email']);
+		$auth = collect(Auth::user())->only(['name','email'])->toArray();
+		return $auth;
 	}
 
 	public function logout(){

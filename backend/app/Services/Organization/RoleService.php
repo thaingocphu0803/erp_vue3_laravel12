@@ -31,7 +31,17 @@ class RoleService
 		}
 	}
 
-	public function getNewPermissionPayload(array $permissionPayload){
+	public function paginate(array $paginationPayload){
+		try{
+			$roles =  $this->roleRepositoryInterface->paginate($paginationPayload);
+			return $roles;
+		}catch(\Exception $e){
+			echo $e->getMessage();
+			return false;
+		}
+	}
+
+	private function getNewPermissionPayload(array $permissionPayload){
 
 		$newPermissionPayload = [];
 

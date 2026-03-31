@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
@@ -29,11 +29,12 @@ const toast = useToastStore();
 
 const loading = ref<boolean>(false)
 
-const departmentStatus = ref(route.query.status as "A" | "X" | undefined)
+const departmentStatus = ref(route.query.status as commonStatus | undefined)
 
 const tempSearch = ref((route.query.search as string) || '')
 
 const search = ref((route.query.search as string) || '')
+
 const itemsPerPage = ref(Number(route.query.itemsPerPage) || defaultConfig.itemPerPage)
 const page = ref(Number(route.query.page) || defaultConfig.page)
 
@@ -45,7 +46,7 @@ const totalPage = ref<number>(0)
 
 const { updateQueryParams, replaceQueryParams } = useRouteQuery()
 const { statuses } = useFilterModule()
-const { positionHeaders } = useTableModule()
+const { roleHeaders } = useTableModule()
 
 const resetURLToDefault = () => {
 	page.value = defaultConfig.page
@@ -105,7 +106,7 @@ const handleDepartmentPaginate = async (options: any) => {
 const fetchDepartmentIndex = async (params: object) => {
 	try {
 		loading.value = true
-		const response = await api.get('department/index', { params });
+		const response = await api.get('role/index', { params });
 
 		if (response.status === 200) {
 			const data = response?.data
@@ -151,7 +152,7 @@ const fetchDepartmentIndex = async (params: object) => {
 					<v-col cols="12" sm="6" lg="4">
 						<base-search-btn
 							v-model="tempSearch"
-							:label="$t('common.filter.departmentNameOrCode')"
+							:label="$t('common.filter.name')"
 							@update:model-value="handleUpdateSearchValue"
 						>
 						</base-search-btn>
@@ -173,7 +174,7 @@ const fetchDepartmentIndex = async (params: object) => {
 		<v-card class="elevation-1">
 			<v-data-table-server
 				:page
-				:headers="positionHeaders"
+				:headers="roleHeaders"
 				:items="departmentItems"
 				:items-per-page="itemsPerPage"
 				item-value="id"

@@ -40,11 +40,12 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
 		$itemsPerPage = $paginationPayload['itemsPerPage'] ?? $defaultPerpage;
 
-		return $this->model
-			->query()
+		$result = $this->model
 			->filter($filters)
 			->search($search)
 			->sortOrder($sort)
 			->paginate($itemsPerPage);
+
+		return $result;
 	}
 }

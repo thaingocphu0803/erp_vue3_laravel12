@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 interface Department {
-	code: string
+	id: number
 	name: string
 }
 
@@ -13,13 +13,13 @@ export const useDepartmentStore = defineStore('deparment', () => {
 	const isFetched = ref<boolean>(false)
 
 	const departmentsFetch = async () => {
-		const params = { model: 'department' }
+		const params = { model: 'departments' }
 
 		try {
 			if (isFetched.value) return
 
 			const response = await api.get('lookup/list', { params })
-			departments.value = response.data.data.list
+			departments.value = response.data.data
 
 			isFetched.value = true
 		} catch (error: any) {

@@ -42,9 +42,7 @@
 			"listRole": "Danh sách vai trò"
 		},
 		"filter": {
-			"employeeNameOrCode": "Tìm theo tên hoặc mã nhân viên",
-			"departmentNameOrCode": "Tìm theo tên hoặc mã phòng ban",
-			"permissionModule": "Tìm theo nhóm quyền",
+			"name": "Tìm theo tên",
 			"position": "Chức vụ",
 			"status": "Trạng thái",
 			"department": "Phòng Ban",
@@ -79,8 +77,15 @@
 				"code": "Mã phòng ban",
 				"numberEmployees": "Số Lượng nhân viên"
 			},
+			"role": {
+				"name": "Tên vai trò",
+				"numberEmployees": "Số Lượng nhân viên"
+			},
 			"position": {
 				"name": "Tên chức vụ"
+			},
+			"commonColumn": {
+				"createdAt": "Ngày tạo"
 			}
 		},
 		"status": {

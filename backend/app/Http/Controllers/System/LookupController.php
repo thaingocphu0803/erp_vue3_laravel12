@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\System;
 
 use App\Http\Controllers\Controller;
-use App\Models\Department;
+use App\Http\Resources\System\LookupResource;
+use App\Services\System\LookupService;
 use App\Trait\HasResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,30 +13,30 @@ class LookupController extends Controller
 {
 	use HasResponse;
 
+	public function __construct(
+		protected LookupService $lookupService
+	){}
+
 	public function list(Request $request)
 	{
 		$allowed = [
-			'department' => Department::class
+			'departments'
 		];
 
 		$modelName = $request->input('model');
 
-		if (!isset($allowed[$modelName])) {
+		if (!in_array($modelName, $allowed)) {
 			$message = 'common-list.alert.error.badRequest';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_BAD_REQUEST);
 		}
 
-		try {
-			$model = $allowed[$modelName];
-			$list = $model::select('name', 'id')->get();
+		$list = $this->lookupService->list($modelName);
 
-			$message = 'common-list.alert.success.getList';
-			$data['list'] = $list->toArray();
-
-			return $this->jsonResponse($message, JsonResponse::HTTP_OK, $data);
-		} catch (\Exception $e) {
+		if(!$list){
 			$message = 'common-list.alert.error.getList';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
+
+		return LookupResource::collection($list)->response();
 	}
 }

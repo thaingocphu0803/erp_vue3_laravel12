@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
@@ -151,7 +151,7 @@ const fetchDepartmentIndex = async (params: object) => {
 					<v-col cols="12" sm="6" lg="4">
 						<base-search-btn
 							v-model="tempSearch"
-							:label="$t('common.filter.departmentNameOrCode')"
+							:label="$t('common.filter.name')"
 							@update:model-value="handleUpdateSearchValue"
 						>
 						</base-search-btn>

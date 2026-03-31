@@ -73,7 +73,7 @@ const pageCount = computed(() => {
 					<v-col cols="12" sm="6" md="3" lg="3">
 						<base-search-btn
 							v-model="search"
-							:label="$t('common.filter.employeeNameOrCode')">
+							:label="$t('common.filter.name')">
 						</base-search-btn>
 					</v-col>
 

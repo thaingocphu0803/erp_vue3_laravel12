@@ -29,8 +29,7 @@ trait FilterableScope
 	public function scopeSearch(Builder $query, string|null $search){
 		$query->when(!is_null($search), function ($q) use ($search) {
 			$q->where(function ($sq) use ($search) {
-				$sq->where('name', 'LIKE', "%$search%")
-				   ->orWhere('code', 'LIKE', "%$search%");
+				$sq->where('name', 'LIKE', "%$search%");
 			});
 		});
 

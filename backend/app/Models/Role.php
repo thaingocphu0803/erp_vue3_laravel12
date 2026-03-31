@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\QueryScope\FilterableScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Role extends Model
 {
-	use SoftDeletes;
+	use SoftDeletes, FilterableScope;
 
 	protected $fillable = [
 		'name',
