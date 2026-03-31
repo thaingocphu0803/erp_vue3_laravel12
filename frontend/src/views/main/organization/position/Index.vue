@@ -16,10 +16,9 @@ import { useToastStore } from '@/stores/toast'
 import type { commonStatus } from '@/types/common'
 
 
-interface DepartmentItem {
+interface PositionItem {
 	id: number,
 	name: string,
-	code: string,
 	description: string,
 	status: commonStatus
 }
@@ -29,7 +28,7 @@ const toast = useToastStore();
 
 const loading = ref<boolean>(false)
 
-const departmentStatus = ref(route.query.status as commonStatus | undefined)
+const positionStatus = ref(route.query.status as commonStatus | undefined)
 
 const tempSearch = ref((route.query.search as string) || '')
 
@@ -38,7 +37,7 @@ const itemsPerPage = ref(Number(route.query.itemsPerPage) || defaultConfig.itemP
 const page = ref(Number(route.query.page) || defaultConfig.page)
 
 
-const departmentItems = ref<DepartmentItem[]>([]);
+const positionItems = ref<PositionItem[]>();
 const totalItemLength = ref<number>(0)
 const totalPage = ref<number>(0)
 
@@ -52,7 +51,7 @@ const resetURLToDefault = () => {
 	itemsPerPage.value = defaultConfig.itemPerPage
 	search.value = ''
 	tempSearch.value = ''
-	departmentStatus.value = undefined
+	positionStatus.value = undefined
 
 	replaceQueryParams({
 		page: page.value,
@@ -60,7 +59,7 @@ const resetURLToDefault = () => {
 	})
 }
 
-watch(departmentStatus, async () => {
+watch(positionStatus, async () => {
 
 	let isPageChanged = false;
 
@@ -71,13 +70,13 @@ watch(departmentStatus, async () => {
 
 	const params = {
 		page: page.value,
-		status: departmentStatus.value,
+		status: positionStatus.value,
 	}
 
 	const newQueryParams = updateQueryParams(params)
 
 	if (!isPageChanged) {
-		await fetchDepartmentIndex(newQueryParams)
+		await fetchPositionIndex(newQueryParams)
 	}
 })
 
@@ -85,7 +84,7 @@ const handleUpdateSearchValue = (debounce((val: string) => {
 	search.value = val
 }, defaultConfig.debounceTimeout))
 
-const handleDepartmentPaginate = async (options: any) => {
+const handlePositionPaginate = async (options: any) => {
 
 	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
 
@@ -99,10 +98,10 @@ const handleDepartmentPaginate = async (options: any) => {
 
 	const newQueryParams = updateQueryParams(params)
 
-	await fetchDepartmentIndex(newQueryParams)
+	await fetchPositionIndex(newQueryParams)
 }
 
-const fetchDepartmentIndex = async (params: object) => {
+const fetchPositionIndex = async (params: object) => {
 	try {
 		loading.value = true
 		const response = await api.get('position/index', { params });
@@ -110,7 +109,7 @@ const fetchDepartmentIndex = async (params: object) => {
 		if (response.status === 200) {
 			const data = response?.data
 
-			departmentItems.value = data.data
+			positionItems.value = data.data
 			totalItemLength.value = data.meta.total
 			totalPage.value = data.meta.last_page
 		}
@@ -159,7 +158,7 @@ const fetchDepartmentIndex = async (params: object) => {
 
 					<v-col cols="12" sm="6" lg="3">
 						<list-filter
-							v-model="departmentStatus"
+							v-model="positionStatus"
 							:items="statuses"
 							item-title="name"
 							item-value="id"
@@ -174,13 +173,13 @@ const fetchDepartmentIndex = async (params: object) => {
 			<v-data-table-server
 				:page
 				:headers="positionHeaders"
-				:items="departmentItems"
+				:items="positionItems"
 				:items-per-page="itemsPerPage"
 				item-value="id"
 				:items-length="totalItemLength"
 				:search
 				:loading
-				@update:options="handleDepartmentPaginate"
+				@update:options="handlePositionPaginate"
 			>
 				<template v-slot:item.name="{ item }">
 					<v-btn variant="text" color="primary" class="text-none custom-link-btn" > {{ item.name }}</v-btn>

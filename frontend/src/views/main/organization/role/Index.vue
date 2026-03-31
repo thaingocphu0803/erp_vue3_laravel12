@@ -16,10 +16,9 @@ import { useToastStore } from '@/stores/toast'
 import type { commonStatus } from '@/types/common'
 
 
-interface DepartmentItem {
+interface RoleItem {
 	id: number,
 	name: string,
-	code: string,
 	description: string,
 	status: commonStatus
 }
@@ -29,7 +28,7 @@ const toast = useToastStore();
 
 const loading = ref<boolean>(false)
 
-const departmentStatus = ref(route.query.status as commonStatus | undefined)
+const roleStatus = ref(route.query.status as commonStatus | undefined)
 
 const tempSearch = ref((route.query.search as string) || '')
 
@@ -39,7 +38,7 @@ const itemsPerPage = ref(Number(route.query.itemsPerPage) || defaultConfig.itemP
 const page = ref(Number(route.query.page) || defaultConfig.page)
 
 
-const departmentItems = ref<DepartmentItem[]>([]);
+const roleItems = ref<RoleItem[]>([]);
 const totalItemLength = ref<number>(0)
 const totalPage = ref<number>(0)
 
@@ -53,7 +52,7 @@ const resetURLToDefault = () => {
 	itemsPerPage.value = defaultConfig.itemPerPage
 	search.value = ''
 	tempSearch.value = ''
-	departmentStatus.value = undefined
+	roleStatus.value = undefined
 
 	replaceQueryParams({
 		page: page.value,
@@ -61,7 +60,7 @@ const resetURLToDefault = () => {
 	})
 }
 
-watch(departmentStatus, async () => {
+watch(roleStatus, async () => {
 
 	let isPageChanged = false;
 
@@ -72,13 +71,13 @@ watch(departmentStatus, async () => {
 
 	const params = {
 		page: page.value,
-		status: departmentStatus.value,
+		status: roleStatus.value,
 	}
 
 	const newQueryParams = updateQueryParams(params)
 
 	if (!isPageChanged) {
-		await fetchDepartmentIndex(newQueryParams)
+		await fetchRoleIndex(newQueryParams)
 	}
 })
 
@@ -86,7 +85,7 @@ const handleUpdateSearchValue = (debounce((val: string) => {
 	search.value = val
 }, defaultConfig.debounceTimeout))
 
-const handleDepartmentPaginate = async (options: any) => {
+const handleRolePaginate = async (options: any) => {
 
 	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
 
@@ -100,10 +99,10 @@ const handleDepartmentPaginate = async (options: any) => {
 
 	const newQueryParams = updateQueryParams(params)
 
-	await fetchDepartmentIndex(newQueryParams)
+	await fetchRoleIndex(newQueryParams)
 }
 
-const fetchDepartmentIndex = async (params: object) => {
+const fetchRoleIndex = async (params: object) => {
 	try {
 		loading.value = true
 		const response = await api.get('role/index', { params });
@@ -111,7 +110,7 @@ const fetchDepartmentIndex = async (params: object) => {
 		if (response.status === 200) {
 			const data = response?.data
 
-			departmentItems.value = data.data
+			roleItems.value = data.data
 			totalItemLength.value = data.meta.total
 			totalPage.value = data.meta.last_page
 		}
@@ -160,7 +159,7 @@ const fetchDepartmentIndex = async (params: object) => {
 
 					<v-col cols="12" sm="6" lg="3">
 						<list-filter
-							v-model="departmentStatus"
+							v-model="roleStatus"
 							:items="statuses"
 							item-title="name"
 							item-value="id"
@@ -175,13 +174,13 @@ const fetchDepartmentIndex = async (params: object) => {
 			<v-data-table-server
 				:page
 				:headers="roleHeaders"
-				:items="departmentItems"
+				:items="roleItems"
 				:items-per-page="itemsPerPage"
 				item-value="id"
 				:items-length="totalItemLength"
 				:search
 				:loading
-				@update:options="handleDepartmentPaginate"
+				@update:options="handleRolePaginate"
 			>
 				<template v-slot:item.name="{ item }">
 					<v-btn variant="text" color="primary" class="text-none custom-link-btn" > {{ item.name }}</v-btn>
