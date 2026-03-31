@@ -34,11 +34,12 @@ class DepartmentService
 		}
 	}
 
-	public function paginate(array $paginationPayload){
-		try{
+	public function paginate(array $paginationPayload)
+	{
+		try {
 			$departments = $this->departmentRepositoryInterface->paginate($paginationPayload);
 			return $departments;
-		}catch(\Exception $e){
+		} catch (\Exception $e) {
 			return false;
 		}
 	}

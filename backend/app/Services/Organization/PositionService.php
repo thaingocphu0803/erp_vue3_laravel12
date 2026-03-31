@@ -17,7 +17,7 @@ class PositionService
 
 	public function create(array $positionPayload)
 	{
-		$payload['created_by'] = Auth::id();
+		$positionPayload['created_by'] = Auth::id();
 
 		try {
 			return DB::transaction(function () use ($positionPayload) {
@@ -29,11 +29,12 @@ class PositionService
 		}
 	}
 
-	public function paginate(array $paginationPayload){
-		try{
+	public function paginate(array $paginationPayload)
+	{
+		try {
 			$positions = $this->positionRepositoryInterface->paginate($paginationPayload);
 			return $positions;
-		}catch(\Exception $e){
+		} catch (\Exception $e) {
 			return false;
 		}
 	}

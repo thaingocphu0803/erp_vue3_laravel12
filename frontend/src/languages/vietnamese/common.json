@@ -85,7 +85,8 @@
 				"name": "Tên chức vụ"
 			},
 			"commonColumn": {
-				"createdAt": "Ngày tạo"
+				"createdAt": "Ngày tạo",
+				"createdBy": "Người tạo"
 			}
 		},
 		"status": {

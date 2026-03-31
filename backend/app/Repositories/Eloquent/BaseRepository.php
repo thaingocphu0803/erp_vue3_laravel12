@@ -7,26 +7,28 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class BaseRepository implements BaseRepositoryInterface
 {
-    public function __construct(
+	public function __construct(
 		protected Model $model
-	){}
+	) {}
 
 	public function create(array $payload)
 	{
 		return $this->model->create($payload);
 	}
 
-	public function createWithPivote(array $payload, string $relation, array $pivotPayload){
+	public function createWithPivote(array $payload, string $relation, array $pivotPayload)
+	{
 		$model = $this->create($payload);
 
-		if(!empty($pivotPayload)){
+		if (!empty($pivotPayload)) {
 			$model->$relation()->attach($pivotPayload);
 		}
 
 		return $model;
 	}
 
-	public function paginate(array $paginationPayload){
+	public function paginate(array $paginationPayload, string $relation = '')
+	{
 		$defaultPerpage = 10;
 
 		$filters = collect($paginationPayload)->except(['sortKey', 'sortOrder', 'search', 'itemsPerPage', 'page'])->toArray();
@@ -41,6 +43,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
 		$itemsPerPage = $paginationPayload['itemsPerPage'] ?? $defaultPerpage;
 
 		$result = $this->model
+			->withRelation($relation)
 			->filter($filters)
 			->search($search)
 			->sortOrder($sort)

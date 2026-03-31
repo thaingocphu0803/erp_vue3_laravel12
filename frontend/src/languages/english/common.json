@@ -87,7 +87,8 @@
 				"name": "Position name"
 			},
 			"commonColumn": {
-				"createdAt": "Created at"
+				"createdAt": "Created at",
+				"createdBy": "Created by"
 			}
 		},
 		"status": {

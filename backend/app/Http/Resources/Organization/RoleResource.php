@@ -8,18 +8,19 @@ use Illuminate\Support\Carbon;
 
 class RoleResource extends JsonResource
 {
-    /**
-     * Transform the resource into an array.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(Request $request): array
-    {
-        return [
+	/**
+	 * Transform the resource into an array.
+	 *
+	 * @return array<string, mixed>
+	 */
+	public function toArray(Request $request): array
+	{
+		return [
 			'id' => $this->id,
 			'name' => $this->name,
-            'created_at' => Carbon::parse($this->created_at)->format('Y/m/d'),
+			'created_by' => $this->creator->name,
+			'created_at' => Carbon::parse($this->created_at)->format('Y/m/d'),
 			'status' => $this->status
 		];
-    }
+	}
 }
