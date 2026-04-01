@@ -34,6 +34,7 @@ const router = createRouter({
 				{
 					path: '',
 					redirect: { name: 'org.department' },
+					name: 'org',
 					meta: { title: 'common.module.organization' },
 					children: [
 						{
@@ -107,6 +108,7 @@ const router = createRouter({
 				{
 					path: '',
 					redirect: { name: 'hr.employee' },
+					name: 'hr',
 					meta: { title: 'common.module.humanResource' },
 					children: [
 						{

@@ -136,7 +136,7 @@ const fetchRoleIndex = async (params: object) => {
 	<v-container fluid class="employee-list">
 		<list-header title="common.header.listRole">
 			<template v-slot:prepend>
-				<v-btn color="primary" class="text-none" :to="{ name: 'hr.employee.create' }">
+				<v-btn color="primary" class="text-none" :to="{ name: 'org.role.create' }">
 					<v-icon icon="mdi-plus"></v-icon>
 					<span class="d-none d-sm-inline ml-sm-2">{{
 						$t('common.button.addRole')

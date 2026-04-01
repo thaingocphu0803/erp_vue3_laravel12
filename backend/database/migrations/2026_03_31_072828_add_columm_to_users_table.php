@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
-			$table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
+			$table->string('code',20)->unique();
         });
     }
 
@@ -24,7 +24,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('department_id');
-			$table->dropColumn('position_id');
+			$table->dropColumn('code');
         });
     }
 };

@@ -164,6 +164,30 @@
 			}
 		}
 	},
+	"employee": {
+		"title": {
+			"create": "Thêm nhân viên mới"
+		},
+		"section": {
+			"account": "Thông tin tài khoản",
+			"profile": "Thông tin định danh cá nhân",
+			"organization": "Tổ chức & Vị trí"
+		},
+		"input": {
+			"email": "Email (Tên đăng nhập)",
+			"password": "Mật khẩu",
+			"autoGeneratePassword": "Tự động tạo mật khẩu và gửi qua Email",
+			"role": "Vai trò",
+			"fullName": "Họ và tên",
+			"employeeCode": "Mã nhân viên",
+			"address": "Địa chỉ",
+			"phone": "Số điện thoại",
+			"avatar": "Ảnh đại diện",
+			"department": "Phòng ban",
+			"position": "Chức vụ",
+			"reportTo": "Người quản lý trực tiếp"
+		}
+	},
 	"common-list": {
 		"alert": {
 			"error": {
