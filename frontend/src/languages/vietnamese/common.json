@@ -24,7 +24,7 @@
 			"language": "Ngôn Ngữ",
 			"logout": "Đăng Xuất",
 			"seeAll": "Xem tất cả",
-			"addEmployee": "Tạo hợp đồng mới",
+			"addEmployee": "Tạo mới nhân viên",
 			"addDepartment": "Tạo phòng ban",
 			"addPosition": "Tạo chức vụ",
 			"addRole": "Tạo vai trò"
@@ -63,6 +63,9 @@
 			},
 			"role": {
 				"create": "Thêm Vai Trò"
+			},
+			"employee": {
+				"create": "Thêm Nhân Viên"
 			}
 		},
 		"btn": {

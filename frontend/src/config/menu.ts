@@ -11,6 +11,12 @@ const navMenu = [
 		icon: 'mdi-domain',
 		children: [
 			{
+				title: 'common.subModule.role',
+				value: 'role',
+				icon: 'mdi-shield-account',
+				routeName: 'org.role',
+			},
+			{
 				title: 'common.subModule.department',
 				value: 'department',
 				icon: 'mdi mdi-sitemap',
@@ -21,13 +27,7 @@ const navMenu = [
 				value: 'position',
 				icon: 'mdi-badge-account-horizontal',
 				routeName: 'org.position',
-			},
-			{
-				title: 'common.subModule.role',
-				value: 'role',
-				icon: 'mdi-shield-account',
-				routeName: 'org.role',
-			},
+			}
 		],
 	},
 	{

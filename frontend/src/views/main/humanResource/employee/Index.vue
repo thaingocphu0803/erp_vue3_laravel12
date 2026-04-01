@@ -60,7 +60,7 @@ const pageCount = computed(() => {
 	<v-container :fluid="true" class="employee-list">
 		<list-header title="common.header.listEmployee">
 			<template v-slot:prepend>
-				<v-btn color="primary" class="text-none">
+				<v-btn color="primary" class="text-none" :to="{ name: 'hr.employee.create' }">
 					<v-icon icon="mdi-plus"></v-icon>
 					<span class="d-none d-sm-inline ml-sm-2">{{ $t('common.button.addEmployee') }}</span>
 				</v-btn>

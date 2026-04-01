@@ -24,7 +24,7 @@
 			"language": "Languages",
 			"logout": "Logout",
 			"seeAll": "See all",
-			"addEmployee": "Create a new contract",
+			"addEmployee": "Create a new user",
 			"addDepartment": "Create a department",
 			"addPosition": "Create a position",
 			"addRole": "Create a role"
@@ -65,6 +65,9 @@
 			},
 			"role": {
 				"create": "Add Role"
+			},
+			"employee": {
+				"create": "Add Employee"
 			}
 		},
 		"btn": {

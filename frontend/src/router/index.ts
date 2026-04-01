@@ -34,7 +34,7 @@ const router = createRouter({
 				{
 					path: '',
 					redirect: { name: 'org.department' },
-					meta: { title: 'common.module.organization', disabled: true },
+					meta: { title: 'common.module.organization' },
 					children: [
 						{
 							path: 'position',
@@ -107,14 +107,29 @@ const router = createRouter({
 				{
 					path: '',
 					redirect: { name: 'hr.employee' },
-					meta: { title: 'common.module.humanResource', disabled: true },
+					meta: { title: 'common.module.humanResource' },
 					children: [
 						{
 							path: 'employee',
 							name: 'hr.employee',
-							component: () => import('@/views/main/humanResource/employee/List.vue'),
+							redirect: { name: 'hr.employee.index' },
+							component: RouteViewLayout,
 							meta: { title: 'common.subModule.employee' },
-						},
+							children: [
+								{
+									path: '',
+									name: 'hr.employee.index',
+									component: () => import('@/views/main/humanResource/employee/Index.vue')
+								},
+								{
+									path: 'create',
+									name: 'hr.employee.create',
+									component: () => import('@/views/main/humanResource/employee/Create.vue'),
+									meta: { title: 'common.action.employee.create' },
+
+								}
+							]
+						}
 					],
 				},
 				{

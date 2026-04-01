@@ -15,6 +15,7 @@ interface permissionScopeHeaders {
 }
 
 export const useTableModule = () => {
+	// department table header
 	const departmentHeaders = computed<TableHeader[]>(() => [
 		{
 			title: t('common.table.department.name'),
@@ -42,6 +43,7 @@ export const useTableModule = () => {
 		},
 	])
 
+	// position table header
 	const positionHeaders = computed<TableHeader[]>(() => [
 		{
 			title: t('common.table.position.name'),
@@ -69,6 +71,7 @@ export const useTableModule = () => {
 		},
 	])
 
+	// role table header
 	const roleHeaders = computed<TableHeader[]>(() => [
 		{
 			title: t('common.table.role.name'),
@@ -96,6 +99,7 @@ export const useTableModule = () => {
 		},
 	])
 
+	//permission scope table header
 	const permissionScopeHeaders = computed<permissionScopeHeaders[]>(() => [
 		{ title: t('common.permission.scope.all'), key: 'ALL' },
 		{ title: t('common.permission.scope.dept'), key: 'DEPT' },
