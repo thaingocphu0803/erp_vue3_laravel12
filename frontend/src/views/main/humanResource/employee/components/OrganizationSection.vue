@@ -9,20 +9,12 @@ const position = defineModel('position')
 </script>
 
 <template>
-	<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t('employee.section.organization') }}</h4>
 	<v-row dense>
 		<v-col cols="12" sm="6" class="mb-3">
 			<v-row dense>
 				<v-col class="flex-grow-1">
-					<list-filter
-						:hide-details="false"
-						v-model="department"
-						:items="[]"
-						searchable
-						item-title="name"
-						item-value="id"
-						:rules="employeeValidation.department"
-					>
+					<list-filter :hide-details="false" v-model="department" :items="[]" searchable item-title="name"
+						item-value="id" :rules="employeeValidation.department">
 						<template #prepend-item>
 							<!-- <create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true"/> -->
 							<v-divider />
@@ -37,15 +29,8 @@ const position = defineModel('position')
 		<v-col cols="12" sm="6">
 			<v-row dense>
 				<v-col class="flex-grow-1">
-					<list-filter
-						:hide-details="false"
-						v-model="position"
-						:items="[]"
-						searchable
-						item-title="name"
-						item-value="id"
-						:rules="employeeValidation.position"
-					>	
+					<list-filter :hide-details="false" v-model="position" :items="[]" searchable item-title="name"
+						item-value="id" :rules="employeeValidation.position">
 						<template #prepend-item>
 							<!-- <create-prepend-item title="position.title.create" @open-model="showPositionDialog = true"/> -->
 							<v-divider />

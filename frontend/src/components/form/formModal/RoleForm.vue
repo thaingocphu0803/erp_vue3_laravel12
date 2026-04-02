@@ -60,7 +60,7 @@ const isDisabled = computed(() => {
 	return false
 })
 
-const stepItems = [
+const steps = [
 	{ id: 1, title: 'role.step.info' },
 	{ id: 2, title: 'role.step.permission' },
 ]
@@ -100,7 +100,7 @@ const handlePrevStep = () => {
 }
 
 const hasNext = (currentStep: number) => {
-	if (currentStep < Object.keys(stepItems).length) return true
+	if (currentStep < Object.keys(steps).length) return true
 
 	return false
 }
@@ -128,7 +128,7 @@ watch(() => roleData.permissions, (newPermissions) => {
 
 		<v-stepper v-model="currentStep" class="elevation-0">
 			<v-stepper-header class="elevation-0">
-				<template v-for="step in stepItems" :key="step.id">
+				<template v-for="step in steps" :key="step.id">
 					<v-stepper-item :value="step.id" :complete="handleComplete(step.id)" color="primary"
 						:title="$t(step.title)">
 					</v-stepper-item>
@@ -140,20 +140,13 @@ watch(() => roleData.permissions, (newPermissions) => {
 				<!-- errror alert -->
 				<error-alert :messages="errorMessage"></error-alert>
 
-				<v-stepper-window-item v-for="step in stepItems" :key="step.id" :value="step.id">
+				<v-stepper-window-item v-for="step in steps" :key="step.id" :value="step.id">
 					<!-- content for step 1: Add information -->
-					<information-step 
-						v-if="step.id === 1" 
-						v-model:role-name="roleData.name"
-						v-model:role-description="roleData.description" 
-						class="mt-2"
-					/>
+					<information-step v-if="step.id === 1" v-model:role-name="roleData.name"
+						v-model:role-description="roleData.description" class="mt-2" />
 
 					<!-- content for step 2: select role -->
-					<permission-step
-						v-else 
-						@update:selected-permissions="updatePermision"
-					/>
+					<permission-step v-else @update:selected-permissions="updatePermision" />
 				</v-stepper-window-item>
 			</v-stepper-window>
 

@@ -109,3 +109,4 @@ export const useTableModule = () => {
 
 	return { departmentHeaders, positionHeaders, roleHeaders, permissionScopeHeaders }
 }
+
