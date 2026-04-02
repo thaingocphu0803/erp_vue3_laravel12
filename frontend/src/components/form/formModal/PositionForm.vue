@@ -16,6 +16,7 @@ import { useToastStore } from '@/stores/toast'
 import positionValidation from '@/composables/validation/usePositionValidation'
 import defaultConfig from '@/config/default'
 import { usePositionStore } from '@/stores/position'
+import requiredLabel from './requiredLabel.vue'
 
 interface PositionForm {
 	name: string
@@ -108,8 +109,7 @@ const handleCancel = () => {
 				<Input name="name" :rules="positionValidation.name" v-model="positionData.name"
 					:maxlength="defaultConfig.maxLengthName" counter>
 					<template #label>
-						{{ $t('position.input.positionName') }}
-						<span class="text-error">*</span>
+						<required-label :label="$t('position.input.positionName')"></required-label>
 					</template>
 				</Input>
 			</v-col>

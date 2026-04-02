@@ -164,6 +164,103 @@
 			}
 		}
 	},
+	"employee": {
+		"title": {
+			"create": "Add new employee"
+		},
+		"section": {
+			"account": "Account Information",
+			"profile": "Personal Information",
+			"organization": "Organization & Position"
+		},
+		"tooltip": {
+			"uploadAvatar": "Format: JPG, JPEG, PNG, max 2MB",
+			"autoSendAuthEmail": "Authentication email will be sent to the employee's email after successful creation!",
+			"codeAutoGenerate": "The system will automatically generate an employee code if left blank"
+		},
+		"input": {
+			"uploadAvatar": "Upload Avatar",
+			"email": "Email (Username)",
+			"password": "Password",
+			"role": "Role",
+			"fullName": "Full Name",
+			"employeeCode": "Employee Code",
+			"address": "Address",
+			"phone": "Phone Number",
+			"gender": "Gender",
+			"province": "Province/City",
+			"ward": "Ward/Commune",
+			"department": "Department",
+			"position": "Position",
+			"birthDate": "Date of Birth"
+		},
+		"placeholder": {
+			"phoneExample": "0987654321",
+			"addressExample": "123 Nguyen Van A Street"
+		},
+		"validate": {
+			"avatar": {
+				"format": "Invalid file format. Please upload JPG, JPEG, PNG files only",
+				"size": "File size must not exceed 2MB"
+			},
+			"email": {
+				"required": "Email is required",
+				"format": "Invalid email format",
+				"unique": "Email already exists"
+			},
+			"password": {
+				"required": "Password is required",
+				"hasUpperLetter": "Password must contain at least one uppercase letter",
+				"hasLowerLetter": "Password must contain at least one lowercase letter",
+				"min": "Password must be at least 8 characters",
+				"hasNumber": "Password must contain at least one number",
+				"hasSpecialChar": "Password must contain at least one special character"
+			},
+			"role_id": {
+				"format": "Invalid role format",
+				"exists": "Role does not exist"
+			},
+			"full_name": {
+				"required": "Full name is required",
+				"max": "Full name must not exceed 255 characters",
+				"noSpecialChars": "Full name must not contain special characters"
+			},
+			"employee_code": {
+				"max": "Employee code must not exceed 20 characters",
+				"unique": "Employee code already exists"
+			},
+			"address": {
+				"max": "Address must not exceed 255 characters"
+			},
+			"phone": {
+				"format": "Invalid phone number format",
+				"unique": "Phone number already exists"
+			},
+			"gender": {
+				"format": "Invalid gender format"
+			},
+			"province_id": {
+				"format": "Invalid province format",
+				"exists": "Province does not exist"
+			},
+			"ward_id": {
+				"format": "Invalid ward format",
+				"exists": "Ward does not exist"
+			},
+			"department_id": {
+				"format": "Invalid department format",
+				"exists": "Department does not exist"
+			},
+			"position_id": {
+				"format": "Invalid position format",
+				"exists": "Position does not exist"
+			},
+			"birth_date": {
+				"format": "Invalid date format",
+				"notFuture": "Date of birth cannot be in the future"
+			}
+		}
+	},
 	"common-list": {
 		"alert": {
 			"error": {

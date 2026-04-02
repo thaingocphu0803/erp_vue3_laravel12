@@ -5,6 +5,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import { aliases, mdi } from 'vuetify/iconsets/mdi'
 import { i18nLocale } from './vueI18n'
+import { VDateInput } from 'vuetify/labs/VDateInput'
 
 const icons = {
 	defaultSet: 'mdi',
@@ -26,7 +27,10 @@ const theme = {
 }
 
 const vuetify = createVuetify({
-	components,
+	components: {
+		...components,
+		VDateInput,
+	},
 	directives,
 	icons,
 	theme,

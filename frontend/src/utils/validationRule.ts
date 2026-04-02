@@ -1,6 +1,5 @@
 import { t } from "@/plugins/vueI18n"
 
-
 // required rule
 export const required = (msg: string) => (v: any) => !!v || msg
 
@@ -32,4 +31,18 @@ export const noSpecialChars = (msg: string) => (v: any) =>
 
 // match target rule
 export const sameAs = (msg: string, target: any) => (v: any) => v === target || msg
+
+// valid phone rule
+export const phone = (msg: string) => (v: any) => /^0\d{9}$/.test(v) || msg
+
+export const imageSize = (msg: string, maxSize: number) => (v: File | null) => {
+	return !v || v.size <= maxSize || msg
+}
+
+export const imageType = (msg: string, validTypes: string[]) => (v: File | null) => {
+	return !v || validTypes.includes(v.type) || msg
+}
+
+
+
 

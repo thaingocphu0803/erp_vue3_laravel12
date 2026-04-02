@@ -4,8 +4,8 @@ import ErrorAlert from '../ErrorAlert.vue'
 import { computed, reactive, ref, watch } from 'vue'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useRoleStore } from '@/stores/role'
-import PermissionForm from '@/views/main/organization/role/components/PermissionForm.vue'
-import InformationForm from '@/views/main/organization/role/components/InformationForm.vue'
+import PermissionStep from '@/views/main/organization/role/components/PermissionStep.vue'
+import InformationStep from '@/views/main/organization/role/components/InformationStep.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import roleValidation from '@/composables/validation/useRoleValidation'
 import type { RolePermission } from '@/stores/permission'
@@ -21,6 +21,7 @@ interface RoleForm {
 interface ValidateMessage {
 	name: string
 	permissions: string
+	description: string
 }
 
 const emit = defineEmits(['save', 'cancel'])
@@ -37,6 +38,7 @@ const roleData = reactive<RoleForm>({
 const errorMessage = reactive<ValidateMessage>({
 	name: '',
 	permissions: '',
+	description: ''
 })
 
 const currentStep = ref<number>(1)
@@ -140,11 +142,18 @@ watch(() => roleData.permissions, (newPermissions) => {
 
 				<v-stepper-window-item v-for="step in stepItems" :key="step.id" :value="step.id">
 					<!-- content for step 1: Add information -->
-					<information-form v-if="step.id === 1" v-model:role-name="roleData.name"
-						v-model:role-description="roleData.description" class="mt-2"></information-form>
+					<information-step 
+						v-if="step.id === 1" 
+						v-model:role-name="roleData.name"
+						v-model:role-description="roleData.description" 
+						class="mt-2"
+					/>
 
 					<!-- content for step 2: select role -->
-					<permission-form v-else @update:selected-permissions="updatePermision"></permission-form>
+					<permission-step
+						v-else 
+						@update:selected-permissions="updatePermision"
+					/>
 				</v-stepper-window-item>
 			</v-stepper-window>
 

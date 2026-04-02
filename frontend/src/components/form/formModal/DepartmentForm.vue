@@ -13,6 +13,7 @@ import { storeToRefs } from 'pinia'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
 import defaultConfig from '@/config/default'
+import RequiredLabel from './requiredLabel.vue'
 
 
 interface DepartmentForm {
@@ -25,7 +26,8 @@ interface DepartmentForm {
 interface ValidateMessage {
 	name: string,
 	code: string,
-	parent_id: string
+	parent_id: string,
+	description: string
 }
 
 const title = 'department.title.create'
@@ -52,7 +54,8 @@ const departmentData = reactive<DepartmentForm>({
 const errorMessage = reactive<ValidateMessage>({
 	name: '',
 	code: '',
-	parent_id: ''
+	parent_id: '',
+	description: ''
 })
 
 const getParentErrorMessage = ref<string>('')
@@ -107,8 +110,7 @@ const handleCancel = () => {
 				<Input name="name" :rules="departmentValidation.name" v-model="departmentData.name"
 					:maxlength="defaultConfig.maxLengthName" counter>
 					<template #label>
-						{{ $t('department.input.departmentName') }}
-						<span class="text-error">*</span>
+						<required-label :label="$t('department.input.departmentName')"></required-label>
 					</template>
 				</Input>
 			</v-col>

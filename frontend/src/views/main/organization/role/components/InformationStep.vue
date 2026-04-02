@@ -3,6 +3,7 @@ import Input from '@/components/form/Input.vue'
 import Textarea from '@/components/form/Textarea.vue'
 import roleValidation from '@/composables/validation/useRoleValidation'
 import defaultConfig from '@/config/default'
+import requiredLabel from '@/components/form/formModal/requiredLabel.vue'
 
 const roleName = defineModel('roleName')
 const roleDescription = defineModel('roleDescription')
@@ -20,8 +21,7 @@ const roleDescription = defineModel('roleDescription')
 				counter
 			>
 				<template #label>
-					{{ $t('role.input.roleName') }}
-					<span class="text-error">*</span>
+					<required-label :label="$t('role.input.roleName')"></required-label>
 				</template>
 			</Input>
 		</v-col>

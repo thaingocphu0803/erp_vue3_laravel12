@@ -15,6 +15,8 @@ const props = defineProps<Props>()
 		hide-details
 		clearable
 	>
+		<template v-slot:message="{ message }">{{ $t(message) }}</template>
+
 		<template v-for="(_, name) in $slots" #[name]="slotProps">
 			<slot :name="name" v-bind="slotProps ?? {}" />
 		</template>
@@ -27,6 +29,8 @@ const props = defineProps<Props>()
 		hide-details
 		clearable
 	>
+		<template v-slot:message="{ message }">{{ $t(message) }}</template>
+
 		<template v-for="(_, name) in $slots" #[name]="slotProps">
 			<slot :name="name" v-bind="slotProps ?? {}" />
 		</template>
