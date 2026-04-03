@@ -7,11 +7,13 @@ use App\Repositories\Eloquent\Organization\DepartmentRepository;
 use App\Repositories\Eloquent\Organization\PositionRepository;
 use App\Repositories\Eloquent\Organization\RoleRepository;
 use App\Repositories\Eloquent\System\LookupRepository;
+use App\Repositories\Eloquent\System\NestedRepository;
 use App\Repositories\Interfaces\BaseRepositoryInterface;
 use App\Repositories\Interfaces\Organization\DepartmentRepositoryInterface;
 use App\Repositories\Interfaces\Organization\PositionRepositoryInterface;
 use App\Repositories\Interfaces\Organization\RoleRepositoryInterface;
 use App\Repositories\Interfaces\System\LookupRepositoryInterface;
+use App\Repositories\Interfaces\System\NestedRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -22,6 +24,8 @@ class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
 		$this->app->bind(LookupRepositoryInterface::class, LookupRepository::class);
+
+		$this->app->bind(NestedRepositoryInterface::class, NestedRepository::class);
 
         $this->app->bind(BaseRepositoryInterface::class, BaseRepository::class);
 

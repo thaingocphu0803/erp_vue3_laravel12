@@ -16,6 +16,8 @@ class Position extends Model
 		'description',
 		'created_by',
 		'updated_by',
-		'status'
+		'status',
+		'path',
+		'level'
 	];
 }

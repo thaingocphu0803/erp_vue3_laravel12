@@ -20,7 +20,9 @@ class Department extends Model
 		'parent_id',
 		'created_by',
 		'updated_by',
-		'status'
+		'status',
+		'path',
+		'level'
 	];
 
 
