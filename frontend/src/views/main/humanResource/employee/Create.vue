@@ -126,7 +126,7 @@ const cancel = () => {
 					v-model:role="employeeData.role" />
 
 				<!-- Section: Basic Profile -->
-				<profile-section v-if="section.id === 2" v-model:full-name="employeeData.fullName"
+				<profile-section v-else-if="section.id === 2" v-model:full-name="employeeData.fullName"
 					v-model:code="employeeData.code" v-model:gender="employeeData.gender"
 					v-model:birth-date="employeeData.birthDate" v-model:phone="employeeData.phone"
 					v-model:address="employeeData.address" v-model:ward="employeeData.ward"

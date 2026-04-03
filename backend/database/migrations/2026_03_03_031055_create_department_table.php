@@ -16,8 +16,10 @@ return new class extends Migration
 			$table->string('name', 100);
 			$table->string('code',20)->unique();
 			$table->text('description')->nullable();
-			$table->foreignId('parent_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->enum('status', ['A', 'X'])->default('A');
+			$table->string('path',100)->index();
+			$table->tinyInteger('level')->default(1);
+			$table->foreignId('parent_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->foreignId('leader_id')->nullable()->constrained('users')->nullOnDelete();
 			$table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();

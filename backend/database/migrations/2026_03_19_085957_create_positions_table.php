@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('positions', function (Blueprint $table) {
             $table->id();
 			$table->string('name', 100)->unique();
-			$table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->text('description')->nullable();
 			$table->enum('status', ['A', 'X'])->default('A');
+			$table->string('path',100)->index();
+			$table->tinyInteger('level')->default(1);
+			$table->foreignId('parent_id')->nullable()->constrained('positions')->nullOnDelete();
+			$table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->softDeletes();

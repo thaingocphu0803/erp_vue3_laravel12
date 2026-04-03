@@ -42,6 +42,7 @@
 			"listRole": "Danh sách vai trò"
 		},
 		"filter": {
+			"permissionModule": "Tìm theo danh mục quyền",
 			"name": "Tìm theo tên",
 			"position": "Chức vụ",
 			"status": "Trạng thái",

@@ -42,9 +42,8 @@
 			"listRole": "Role List"
 		},
 		"filter": {
-			"employeeNameOrCode": "Search by employee name or code",
-			"departmentNameOrCode": "Search by department name or code",
 			"permissionModule": "Search by permission module",
+			"name": "tìm theo tên",
 			"position": "Position",
 			"status": "Status",
 			"department": "Department",
