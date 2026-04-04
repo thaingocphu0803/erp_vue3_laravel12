@@ -24,7 +24,7 @@ class StoreCommonRequest extends FormRequest
     {
         return [
             'name' => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('roles', 'name')->ignore($this->id)],
-			'description' => ['bail', 'nullable', 'string']
+            'description' => ['bail', 'nullable', 'string']
         ];
     }
 }

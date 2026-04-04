@@ -3,12 +3,13 @@
 namespace App\Models;
 
 use App\QueryScope\FilterableScope;
+use App\Trait\NestedTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Position extends Model
 {
-    use SoftDeletes, FilterableScope;
+	use SoftDeletes, FilterableScope, NestedTrait;
 
 	protected $fillable = [
 		'name',
@@ -18,6 +19,7 @@ class Position extends Model
 		'updated_by',
 		'status',
 		'path',
-		'level'
+		'level',
+		'parent_id'
 	];
 }

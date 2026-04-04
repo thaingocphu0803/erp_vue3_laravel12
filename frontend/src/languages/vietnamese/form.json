@@ -93,10 +93,12 @@
 		"input": {
 			"positionName": "Tên chức vụ",
 			"selectDepartment": "Chọn phòng ban",
-			"positionDesc": "Mô tả chức vụ"
+			"positionDesc": "Mô tả chức vụ",
+			"supervisor": "Người giám sát"
 		},
 		"tooltip": {
-			"unselectDepartment": "Nếu không chọn phòng ban, chức vụ sẽ áp dụng cho tất cả phòng ban"
+			"unselectDepartment": "Nếu không chọn phòng ban, chức vụ sẽ áp dụng cho tất cả phòng ban",
+			"unselectSupervisor": "Nếu không chọn người giám sát, chức vụ sẽ không có người giám sát"
 		},
 		"validate": {
 			"name": {
@@ -111,6 +113,10 @@
 			},
 			"description": {
 				"format": "Sai định dạng mô tả chức vụ"
+			},
+			"parent_id": {
+				"format": "Sai định dạng thông tin người giám sát",
+				"exists": "Không tìm thấy người giám sát"
 			}
 		},
 		"alert": {
@@ -278,3 +284,4 @@
 		}
 	}
 }
+

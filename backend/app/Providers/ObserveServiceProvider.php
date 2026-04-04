@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Department;
+use App\Models\Position;
 use App\Observers\System\NestedObserver;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,5 +24,6 @@ class ObserveServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Department::observe(NestedObserver::class);
+        Position::observe(NestedObserver::class);
     }
 }

@@ -93,10 +93,12 @@
 		"input": {
 			"positionName": "Position Name",
 			"selectDepartment": "Department",
-			"positionDescription": "Position Description"
+			"positionDescription": "Position Description",
+			"supervisor": "Supervisor"
 		},
 		"tooltip": {
-			"unselectDepartment": "If no department is selected, this position will apply to all departments."
+			"unselectDepartment": "If no department is selected, this position will apply to all departments.",
+			"unselectSupervisor": "If no supervisor is selected, this position will not have a supervisor."
 		},
 		"validate": {
 			"name": {
@@ -111,6 +113,10 @@
 			},
 			"description": {
 				"format": "Position's description format is incorrect"
+			},
+			"parent_id": {
+				"format": "Supervisor information format is incorrect",
+				"exists": "Supervisor does not exist"
 			}
 		},
 		"alert": {
@@ -277,3 +283,4 @@
 		}
 	}
 }
+

@@ -15,12 +15,13 @@ class LookupController extends Controller
 
 	public function __construct(
 		protected LookupService $lookupService
-	){}
+	) {}
 
 	public function list(Request $request)
 	{
 		$allowed = [
-			'departments'
+			'departments',
+			'positions'
 		];
 
 		$modelName = $request->input('model');
@@ -32,7 +33,7 @@ class LookupController extends Controller
 
 		$list = $this->lookupService->list($modelName);
 
-		if(!$list){
+		if (!$list) {
 			$message = 'common-list.alert.error.getList';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}

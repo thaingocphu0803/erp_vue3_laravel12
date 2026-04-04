@@ -21,13 +21,20 @@ import requiredLabel from './requiredLabel.vue'
 interface PositionForm {
 	name: string
 	department_id: number | null
-	description: string
+	description: string,
+	parent_id: number | null
 }
 
 interface ValidateMessage {
 	name: string,
 	department_id: string,
-	description: string
+	description: string,
+	parent_id: string
+}
+
+interface FetchMessage {
+	department: string,
+	position: string
 }
 
 const emit = defineEmits(['save', 'cancel'])
@@ -37,24 +44,32 @@ const toast = useToastStore()
 const { departmentsFetch } = useDepartmentStore()
 const { departments } = storeToRefs(useDepartmentStore())
 
-const {positionCreate} = usePositionStore()
+const { positionCreate, positionFetch } = usePositionStore()
+const { positions } = storeToRefs(usePositionStore())
 
 const loadingDepartment = ref<boolean>(false)
+const loadingPosition = ref<boolean>(false)
 
-const disabledSelect = ref<boolean>(false)
+const disabledDepartmentSelect = ref<boolean>(false)
+const disabledPositionSelect = ref<boolean>(false)
 
-const getDepartmentErrorMessage = ref<string>('')
+const fetchErrorMessage = reactive<FetchMessage>({
+	department: '',
+	position: ''
+})
 
 const positionData = reactive<PositionForm>({
 	name: '',
 	department_id: null,
 	description: '',
+	parent_id: null
 })
 
 const errorMessage = reactive<ValidateMessage>({
 	name: '',
 	department_id: '',
-	description: ''
+	description: '',
+	parent_id: ''
 })
 
 const showDepartmentDialog = ref<boolean>(false)
@@ -69,13 +84,29 @@ const getDepartmentList = async () => {
 		await departmentsFetch()
 	} catch (error: any) {
 		if (error.status === 400 || error.status === 500) {
-			getDepartmentErrorMessage.value = error.response?.data?.messageCode
+			fetchErrorMessage.department = error.response?.data?.messageCode
 		}
 		if (error.status === 400) {
-			disabledSelect.value = true
+			disabledDepartmentSelect.value = true
 		}
 	} finally {
 		loadingDepartment.value = false
+	}
+}
+
+const getPositionList = async () => {
+	try {
+		loadingPosition.value = true
+		await positionFetch()
+	} catch (error: any) {
+		if (error.status === 400 || error.status === 500) {
+			fetchErrorMessage.position = error.response?.data?.messageCode
+		}
+		if (error.status === 400) {
+			disabledPositionSelect.value = true
+		}
+	} finally {
+		loadingPosition.value = false
 	}
 }
 
@@ -117,12 +148,12 @@ const handleCancel = () => {
 
 		<!-- Row 2: Department Select with tooltip inside (append-inner) -->
 		<v-row dense>
-			<v-col cols="12">
-				<list-filter :label="getDepartmentErrorMessage.length
-					? $t(getDepartmentErrorMessage)
+			<v-col cols="12" sm="6">
+				<list-filter :label="fetchErrorMessage.department.length
+					? $t(fetchErrorMessage.department)
 					: $t('position.input.selectDepartment')
 					" v-model="positionData.department_id" :items="departments" searchable item-title="name" item-value="id"
-					:loading="loadingDepartment" :disabled="disabledSelect" @click="getDepartmentList">
+					:loading="loadingDepartment" :disabled="disabledDepartmentSelect" @click="getDepartmentList">
 					<template #prepend-item>
 						<create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true">
 						</create-prepend-item>
@@ -130,6 +161,19 @@ const handleCancel = () => {
 					</template>
 					<template #append-inner>
 						<annotation-tooltip text="position.tooltip.unselectDepartment">
+						</annotation-tooltip>
+					</template>
+				</list-filter>
+			</v-col>
+
+			<v-col cols="12" sm="6">
+				<list-filter :label="fetchErrorMessage.position.length
+					? $t(fetchErrorMessage.position)
+					: $t('position.input.supervisor')
+					" v-model="positionData.parent_id" :items="positions" searchable item-title="name" item-value="id"
+					:loading="loadingPosition" :disabled="disabledPositionSelect" @click="getPositionList">
+					<template #append-inner>
+						<annotation-tooltip text="position.tooltip.unselectSupervisor">
 						</annotation-tooltip>
 					</template>
 				</list-filter>
