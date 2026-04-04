@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import Form from '@/components/Form.vue'
 import ErrorAlert from '../ErrorAlert.vue'
-import { computed, reactive, ref, watch } from 'vue'
+import { reactive, watch } from 'vue'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useRoleStore } from '@/stores/role'
-import PermissionStep from '@/views/main/organization/role/components/PermissionStep.vue'
-import InformationStep from '@/views/main/organization/role/components/InformationStep.vue'
+import PermissionSection from '@/views/main/organization/role/components/PermissionSection.vue'
+import InformationSection from '@/views/main/organization/role/components/InformationSection.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
-import roleValidation from '@/composables/validation/useRoleValidation'
 import type { RolePermission } from '@/stores/permission'
 import { useToastStore } from '@/stores/toast'
 
@@ -17,6 +16,7 @@ interface RoleForm {
 	description: string
 	permissions: RolePermission
 }
+
 
 interface ValidateMessage {
 	name: string
@@ -41,26 +41,7 @@ const errorMessage = reactive<ValidateMessage>({
 	description: ''
 })
 
-const currentStep = ref<number>(1)
-
-const isDisabled = computed(() => {
-	if (currentStep.value === 1) {
-		const name = roleData.name
-		if (!name || name.trim() === '') return true
-
-		for (const rule of roleValidation.name) {
-			if (typeof rule(name) === 'string') return true
-		}
-	}
-
-	if (currentStep.value === 2) {
-		if (Object.keys(roleData.permissions).length === 0) return true
-	}
-
-	return false
-})
-
-const steps = [
+const sections = [
 	{ id: 1, title: 'role.step.info' },
 	{ id: 2, title: 'role.step.permission' },
 ]
@@ -79,31 +60,6 @@ const handleSubmit = async () => {
 	}
 }
 
-const handleComplete = (itemStep: number) => {
-	return itemStep < currentStep.value ? true : false
-}
-
-const handleNextStep = async () => {
-	if (hasNext(currentStep.value)) {
-		currentStep.value++
-	} else {
-		await handleSubmit()
-	}
-}
-
-const handlePrevStep = () => {
-	if (hasNext(currentStep.value)) {
-		emit('cancel')
-	} else {
-		currentStep.value--
-	}
-}
-
-const hasNext = (currentStep: number) => {
-	if (currentStep < Object.keys(steps).length) return true
-
-	return false
-}
 
 const updatePermision = (permissionsRecord: RolePermission) => {
 	const newPermissions = Object.fromEntries(
@@ -121,48 +77,37 @@ watch(() => roleData.permissions, (newPermissions) => {
 	}
 }, { deep: true })
 
+const handleCancel = () => {
+	emit('cancel')
+}
+
 </script>
 
 <template>
 	<Form title="role.title.create" @submit-form="handleSubmit">
 
-		<v-stepper v-model="currentStep" class="elevation-0">
-			<v-stepper-header class="elevation-0">
-				<template v-for="step in steps" :key="step.id">
-					<v-stepper-item :value="step.id" :complete="handleComplete(step.id)" color="primary"
-						:title="$t(step.title)">
-					</v-stepper-item>
-					<v-divider v-if="hasNext(step.id)"></v-divider>
-				</template>
-			</v-stepper-header>
+		<error-alert :messages="errorMessage"></error-alert>
 
-			<v-stepper-window>
-				<!-- errror alert -->
-				<error-alert :messages="errorMessage"></error-alert>
+		<template v-for="section in sections" :key="section.id">
+			<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
+			<information-section v-if="section.id === 1" v-model:role-name="roleData.name"
+				v-model:role-description="roleData.description" class="mt-2" />
 
-				<v-stepper-window-item v-for="step in steps" :key="step.id" :value="step.id">
-					<!-- content for step 1: Add information -->
-					<information-step v-if="step.id === 1" v-model:role-name="roleData.name"
-						v-model:role-description="roleData.description" class="mt-2" />
+			<!-- content for step 2: select role -->
+			<permission-section v-else @update:selected-permissions="updatePermision" />
 
-					<!-- content for step 2: select role -->
-					<permission-step v-else @update:selected-permissions="updatePermision" />
-				</v-stepper-window-item>
-			</v-stepper-window>
+			<v-divider v-if="section.id !== sections.length"></v-divider>
+		</template>
 
-			<v-stepper-actions>
-				<template #prev>
-					<base-btn @click.prevent="handlePrevStep"
-						:title="hasNext(currentStep) ? 'common.btn.cancel' : 'common.btn.back'"
-						:color="hasNext(currentStep) ? 'red-darken-1' : 'grey-darken-1'" :disabled="false"></base-btn>
-				</template>
+		<!-- Actions: Cancel (red) + Create (blue) -->
+		<v-row dense justify="space-between" class="mt-2">
+			<v-col cols="auto">
+				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
+			</v-col>
+			<v-col cols="auto">
+				<BaseBtn title="common.btn.create" color="primary" type="submit" />
+			</v-col>
+		</v-row>
 
-				<template #next>
-					<base-btn @click.prevent="handleNextStep"
-						:title="hasNext(currentStep) ? 'common.btn.next' : 'common.btn.create'" :disabled="isDisabled"
-						color="primary"></base-btn>
-				</template>
-			</v-stepper-actions>
-		</v-stepper>
 	</Form>
 </template>

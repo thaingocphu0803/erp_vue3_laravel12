@@ -9,10 +9,8 @@ const messages = {
 
 const roleValidation = {
 	// validation department name input (required + alphanumeric only)
-	name: [
-		required(messages.name.required),
-		noSpecialChars(messages.name.noSpecialChars),
-	],
+	name: [required(messages.name.required), noSpecialChars(messages.name.noSpecialChars)],
 }
 
 export default roleValidation
+
