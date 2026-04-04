@@ -5,4 +5,3 @@ return [
     App\Providers\ObserveServiceProvider::class,
     App\Providers\RepositoryServiceProvider::class,
 ];
-
