@@ -2,7 +2,10 @@
 
 namespace App\Models;
 
+use App\Observers\System\NestedObserver;
 use App\QueryScope\FilterableScope;
+use App\Trait\NestedTrait;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,7 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Department extends Model
 {
-    use HasFactory, SoftDeletes, FilterableScope;
+	use HasFactory, SoftDeletes, FilterableScope, NestedTrait;
 
 	protected $fillable = [
 		'name',
@@ -26,10 +29,12 @@ class Department extends Model
 	];
 
 
-	public function parent(): BelongsTo {
+	public function parent(): BelongsTo
+	{
 		return $this->belongsTo(self::class, 'parent_id');
 	}
-	public function children(): HasMany {
+	public function children(): HasMany
+	{
 		return $this->hasMany(self::class, 'parent_id');
 	}
 }

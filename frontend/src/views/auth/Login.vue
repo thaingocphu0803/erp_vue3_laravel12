@@ -56,6 +56,9 @@ const redirect = ref<RouteLocationRaw>('')
 
 const loading = ref<boolean>(false)
 
+const visible = ref<boolean>(false)
+
+
 const handleLogin = async () => {
 	try {
 		loading.value = true
@@ -92,10 +95,11 @@ const handleLogin = async () => {
 				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
 				<Input :label="$t('auth.input.email')" name="email" placeholder="example@gmail.com"
-					:rules="authValidation.email" v-model="LoginData.email"/>
+					:rules="authValidation.email" v-model="LoginData.email" />
 
-				<Input :label="$t('auth.input.password')" name="password" type="password"
-					:rules="authValidation.password" v-model="LoginData.password"/>
+				<Input :label="$t('auth.input.password')" name="password" :type="visible ? 'text' : 'password'"
+					:append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'" @click:append-inner="visible = !visible"
+					:rules="authValidation.password" v-model="LoginData.password" />
 
 				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="LoginData.rememberMe"
 					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
@@ -107,11 +111,12 @@ const handleLogin = async () => {
 </template>
 
 <style scoped>
-	:deep(ul){
-		list-style-type: none;
-		padding-left: unset;
-	}
-	:deep(li){
-		margin-left: unset;
-	}
+:deep(ul) {
+	list-style-type: none;
+	padding-left: unset;
+}
+
+:deep(li) {
+	margin-left: unset;
+}
 </style>
