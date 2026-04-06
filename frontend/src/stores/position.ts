@@ -13,27 +13,19 @@ export const usePositionStore = defineStore('position', () => {
 	const isFetched = ref<boolean>(false)
 
 	const positionCreate = async (payload: object) => {
-		try {
-			const response = await api.post('position/create', payload)
-			isFetched.value = false
-			return response
-		} catch (error: any) {
-			throw error
-		}
+		const response = await api.post('position/create', payload)
+		isFetched.value = false
+		return response
 	}
 
 	const positionFetch = async () => {
-		try {
-			if (isFetched.value) return
+		if (isFetched.value) return
 
-			const params = { model: 'positions' }
-			const response = await api.get('lookup/list', { params })
-			positions.value = response.data.data
-			isFetched.value = true
-			return response
-		} catch (error: any) {
-			throw error
-		}
+		const params = { model: 'positions' }
+		const response = await api.get('lookup/list', { params })
+		positions.value = response.data.data
+		isFetched.value = true
+		return response
 	}
 
 	return { positionCreate, positionFetch, positions, isFetched }

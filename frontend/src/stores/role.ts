@@ -6,15 +6,19 @@ export const useRoleStore = defineStore('role', () => {
 
 	const isFetched = ref<boolean>(false)
 
-	const roleCreate = async (payload: object) => {
-		try {
-			const response = await api.post('role/create', payload)
-			isFetched.value = false
-			return response
-		} catch (error: any) {
-			throw error
-		}
+	const roles = ref<any[]>([])
+
+	const rolesFetch = async () => {
+		const response = await api.get('lookup/list', { params: { model: 'roles' } })
+		roles.value = response.data.data
+		isFetched.value = true
 	}
 
-	return { roleCreate}
+	const roleCreate = async (payload: object) => {
+		const response = await api.post('role/create', payload)
+		isFetched.value = false
+		return response
+	}
+
+	return { roles, rolesFetch, roleCreate }
 })
