@@ -15,4 +15,9 @@ class PositionRepository extends BaseRepository implements PositionRepositoryInt
     {
         parent::__construct($model);
     }
+
+    public function listByDepartment($departmentId)
+    {
+        return $this->model->where('department_id', $departmentId)->orWhere('department_id', null)->orderBy('level', 'asc')->get();
+    }
 }

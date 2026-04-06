@@ -11,12 +11,12 @@ const messages = {
 	en: {
 		$vuetify: { ...en },
 		...formEn,
-		...commonEn
+		...commonEn,
 	},
 	vi: {
 		$vuetify: { ...vi },
 		...formVi,
-		...commonVi
+		...commonVi,
 	},
 }
 

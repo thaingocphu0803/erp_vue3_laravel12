@@ -97,6 +97,10 @@
 			"active": "Active",
 			"inActive": "Inactive"
 		},
+		"gender": {
+			"male": "Male",
+			"female": "Female"
+		},
 		"permission": {
 			"action": {
 				"show": "View",

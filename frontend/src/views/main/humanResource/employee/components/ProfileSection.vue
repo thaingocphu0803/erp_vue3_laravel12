@@ -5,16 +5,81 @@ import requiredLabel from '@/components/form/formModal/requiredLabel.vue'
 import employeeValidation from '@/composables/validation/useEmployeeValidation'
 import ListFilter from '@/components/list/ListFilter.vue'
 import AnnotationTooltip from '@/components/form/AnnotationTooltip.vue'
+import { useFilterModule } from '@/composables/useFilterModule'
+import { useAdministrativeUnitStore } from '@/stores/administrativeUnit'
+import { storeToRefs } from 'pinia'
+import { ref, watch } from 'vue'
+import i18n from '@/plugins/vueI18n'
 
-const fullName = defineModel('fullName')
-const code = defineModel('code')
-const gender = defineModel('gender')
-const birthDate = defineModel('birthDate')
-const phone = defineModel('phone')
-const address = defineModel('address')
-const ward = defineModel('ward')
-const province = defineModel('province')
+interface ErrorMessage {
+	province: string
+	ward: string
+}
 
+const fullName = defineModel<string>('fullName')
+const code = defineModel<string>('code')
+const gender = defineModel<string | null>('gender')
+const birthDate = defineModel<string>('birthDate')
+const phone = defineModel<string>('phone')
+const address = defineModel<string>('address')
+const ward = defineModel<string | null>('ward')
+const province = defineModel<string | null>('province')
+
+const { genders } = useFilterModule()
+
+const provinceLoading = ref<boolean>(false)
+const wardLoading = ref<boolean>(false)
+
+const errorMessage = ref<ErrorMessage>({
+	province: '',
+	ward: '',
+})
+
+const disableWard = ref<boolean>(true)
+
+const { provincesFetch, wardsFetchByProvinceCode, wardsReset } = useAdministrativeUnitStore()
+const { provinces, wards } = storeToRefs(useAdministrativeUnitStore())
+
+const getProvinces = async () => {
+	try {
+		provinceLoading.value = true
+		await provincesFetch()
+		errorMessage.value.province = ''
+	} catch (error: any) {
+		if (error.status === 400 || error.status === 500) {
+			errorMessage.value.province = error.response?.data?.messageCode
+			disableWard.value = true
+		}
+	} finally {
+		provinceLoading.value = false
+	}
+}
+
+const getWards = async (provinceCode: string | null) => {
+	if (!provinceCode) {
+		disableWard.value = true
+		return
+	}
+
+	try {
+		wardLoading.value = true
+		await wardsFetchByProvinceCode(provinceCode)
+		errorMessage.value.ward = ''
+	} catch (error: any) {
+		errorMessage.value.ward = error.response?.data?.messageCode
+	} finally {
+		wardLoading.value = false
+	}
+}
+
+watch(province, async (newVal) => {
+	if (!newVal) return
+
+	ward.value = null
+	disableWard.value = false
+	wardsReset()
+	await getWards(newVal)
+})
 </script>
 
 <template>
@@ -38,8 +103,8 @@ const province = defineModel('province')
 		</v-col>
 
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter :hide-details="false" v-model="gender" :items="[]" searchable item-title="name" item-value="id"
-				:rules="employeeValidation.gender">
+			<list-filter :hide-details="false" v-model="gender" :items="genders" searchable item-title="name"
+				item-value="id" :rules="employeeValidation.gender" :clearable="false">
 				<template #label>
 					<required-label :label="$t('employee.input.gender')"></required-label>
 				</template>
@@ -79,18 +144,22 @@ const province = defineModel('province')
 
 		<!-- Address Split (1 row) -->
 		<v-col cols="12" sm="4" class="mb-3">
-			<list-filter :hide-details="false" v-model="ward" :items="[]" searchable item-title="name" item-value="id"
-				:rules="employeeValidation.ward">
+			<list-filter :hide-details="false" v-model="province" :items="provinces" searchable
+				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'" item-value="code"
+				:rules="employeeValidation.province" :error-messages="errorMessage.province" :loading="provinceLoading"
+				:clearable="false" @click="getProvinces()">
 				<template #label>
-					<required-label :label="$t('employee.input.ward')"></required-label>
+					<required-label :label="$t('employee.input.province')"></required-label>
 				</template>
 			</list-filter>
 		</v-col>
 		<v-col cols="12" sm="4" class="mb-3">
-			<list-filter :hide-details="false" v-model="province" :items="[]" searchable item-title="name"
-				item-value="id" :rules="employeeValidation.province">
+			<list-filter :hide-details="false" v-model="ward" :items="wards" searchable
+				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'" item-value="code"
+				:rules="wards.length === 0 ? [] : employeeValidation.ward" :error-messages="errorMessage.ward"
+				:disabled="disableWard" :clearable="false" :loading="wardLoading" @click="getWards(province!)">
 				<template #label>
-					<required-label :label="$t('employee.input.province')"></required-label>
+					<required-label :label="$t('employee.input.ward')"></required-label>
 				</template>
 			</list-filter>
 		</v-col>

@@ -38,4 +38,14 @@ class PositionService
 			return false;
 		}
 	}
+
+	public function listByDepartment($departmentId)
+	{
+		try {
+			$positions = $this->positionRepositoryInterface->listByDepartment($departmentId);
+			return $positions;
+		} catch (\Exception $e) {
+			return false;
+		}
+	}
 }

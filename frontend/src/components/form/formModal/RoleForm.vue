@@ -10,15 +10,13 @@ import BaseBtn from '@/components/BaseBtn.vue'
 import type { RolePermission } from '@/stores/permission'
 import { useToastStore } from '@/stores/toast'
 
-
 interface RoleForm {
 	name: string
 	description: string
 	permissions: RolePermission
 }
 
-
-interface ValidateMessage {
+interface ErrorMessage {
 	name: string
 	permissions: string
 	description: string
@@ -32,13 +30,13 @@ const toast = useToastStore()
 const roleData = reactive<RoleForm>({
 	name: '',
 	description: '',
-	permissions: [],
+	permissions: {},
 })
 
-const errorMessage = reactive<ValidateMessage>({
+const errorMessage = reactive<ErrorMessage>({
 	name: '',
 	permissions: '',
-	description: ''
+	description: '',
 })
 
 const sections = [
@@ -60,7 +58,6 @@ const handleSubmit = async () => {
 	}
 }
 
-
 const updatePermision = (permissionsRecord: RolePermission) => {
 	const newPermissions = Object.fromEntries(
 		Object.entries(permissionsRecord).filter(([_, scope]) => scope !== 'NONE'),
@@ -69,29 +66,35 @@ const updatePermision = (permissionsRecord: RolePermission) => {
 	roleData.permissions = { ...newPermissions }
 }
 
-watch(() => roleData.permissions, (newPermissions) => {
-	if (Object.keys(newPermissions).length === 0) {
-		errorMessage.permissions = 'role.validate.permissions.atLeastOne'
-	} else {
-		errorMessage.permissions = ''
-	}
-}, { deep: true })
+watch(
+	() => roleData.permissions,
+	(newPermissions) => {
+		if (Object.keys(newPermissions).length === 0) {
+			errorMessage.permissions = 'role.validate.permissions.atLeastOne'
+		} else {
+			errorMessage.permissions = ''
+		}
+	},
+	{ deep: true },
+)
 
 const handleCancel = () => {
 	emit('cancel')
 }
-
 </script>
 
 <template>
 	<Form title="role.title.create" @submit-form="handleSubmit">
-
 		<error-alert :messages="errorMessage"></error-alert>
 
 		<template v-for="section in sections" :key="section.id">
 			<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
-			<information-section v-if="section.id === 1" v-model:role-name="roleData.name"
-				v-model:role-description="roleData.description" class="mt-2" />
+			<information-section
+				v-if="section.id === 1"
+				v-model:role-name="roleData.name"
+				v-model:role-description="roleData.description"
+				class="mt-2"
+			/>
 
 			<!-- content for step 2: select role -->
 			<permission-section v-else @update:selected-permissions="updatePermision" />
@@ -102,12 +105,16 @@ const handleCancel = () => {
 		<!-- Actions: Cancel (red) + Create (blue) -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
+				<BaseBtn
+					title="common.btn.cancel"
+					color="red-darken-1"
+					@click.prevent="handleCancel"
+				/>
 			</v-col>
 			<v-col cols="auto">
 				<BaseBtn title="common.btn.create" color="primary" type="submit" />
 			</v-col>
 		</v-row>
-
 	</Form>
 </template>
+

@@ -17,7 +17,7 @@ export type PermissionGroup = Record<string, Permission[]>
 export type RolePermission = Record<number, suportedScopes>
 
 export const usePermissionStore = defineStore('permission', () => {
-	const permissionGroup = ref<PermissionGroup>()
+	const permissionGroup = ref<PermissionGroup>({})
 
 	const isFetched = ref<boolean>(false)
 

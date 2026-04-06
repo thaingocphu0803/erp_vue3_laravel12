@@ -25,7 +25,7 @@ class StoreRoleRequest extends StoreCommonRequest
 		$parentRules = parent::rules();
 
 		$roleRules =  [
-			'permissions' => ['bail', 'required', 'array', 'min:1', 'distinct', new PermissionItemRule],
+			'permissions' => ['bail', 'required', 'array', 'min:1', new PermissionItemRule],
 		];
 
 		return array_merge($parentRules, $roleRules);
@@ -41,7 +41,6 @@ class StoreRoleRequest extends StoreCommonRequest
 			'name.regex' => 'role.validate.name.noSpecialChars',
 			'name.unique' => 'role.validate.name.unique',
 			'description.string' => 'role.validate.description.format',
-			'permissions.distinct' => 'role.validate.permissions.distinct',
 			'permissions.array' => 'role.validate.permissions.format',
 			'permissions.min' => $atLeastOne,
 			'permissions.required' => $atLeastOne

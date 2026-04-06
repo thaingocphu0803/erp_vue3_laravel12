@@ -10,11 +10,16 @@ interface Position {
 export const usePositionStore = defineStore('position', () => {
 	const positions = ref<Position[]>()
 
+	const positionByDepartment = ref<Position[]>()
+
+	const isFetchedByDepartment = ref<boolean>(false)
+
 	const isFetched = ref<boolean>(false)
 
 	const positionCreate = async (payload: object) => {
 		const response = await api.post('position/create', payload)
 		isFetched.value = false
+		isFetchedByDepartment.value = false
 		return response
 	}
 
@@ -28,6 +33,31 @@ export const usePositionStore = defineStore('position', () => {
 		return response
 	}
 
-	return { positionCreate, positionFetch, positions, isFetched }
+	const positionsFetchByDepartmentId = async (departmentId: number) => {
+		if (isFetchedByDepartment.value) return
+
+		const params = {
+			department_id: departmentId,
+		}
+		const response = await api.get('position/list-by-department', { params })
+		positionByDepartment.value = response.data.data
+		isFetchedByDepartment.value = true
+		return response
+	}
+
+	const positionReset = () => {
+		positionByDepartment.value = []
+		isFetchedByDepartment.value = false
+	}
+
+	return {
+		positions,
+		isFetched,
+		positionByDepartment,
+		positionCreate,
+		positionFetch,
+		positionsFetchByDepartmentId,
+		positionReset,
+	}
 })
 

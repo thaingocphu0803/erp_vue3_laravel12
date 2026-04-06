@@ -1,11 +1,10 @@
-import { t } from "@/plugins/vueI18n"
+import { t } from '@/plugins/vueI18n'
 
 // required rule
 export const required = (msg: string) => (v: any) => !!v || msg
 
 // valid email rule
-export const email = (msg: string) =>  (v: string) =>
-	/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || msg
+export const email = (msg: string) => (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) || msg
 
 // min length rule
 export const minLength = (msg: string, min: number) => (v: any) => v.length >= min || msg
@@ -42,7 +41,3 @@ export const imageSize = (msg: string, maxSize: number) => (v: File | null) => {
 export const imageType = (msg: string, validTypes: string[]) => (v: File | null) => {
 	return !v || validTypes.includes(v.type) || msg
 }
-
-
-
-

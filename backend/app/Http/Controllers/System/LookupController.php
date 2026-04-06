@@ -21,7 +21,8 @@ class LookupController extends Controller
 	{
 		$allowed = [
 			'departments',
-			'positions'
+			'positions',
+			'roles'
 		];
 
 		$modelName = $request->input('model');

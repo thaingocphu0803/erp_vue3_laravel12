@@ -12,7 +12,7 @@ const props = defineProps<Props>()
 		v-bind="$attrs"
 		variant="outlined"
 		density="compact"
-		hide-details
+		hide-details="auto"
 		clearable
 	>
 		<template v-slot:message="{ message }">{{ $t(message) }}</template>
@@ -26,7 +26,7 @@ const props = defineProps<Props>()
 		v-bind="$attrs"
 		variant="outlined"
 		density="compact"
-		hide-details
+		hide-details="auto"
 		clearable
 	>
 		<template v-slot:message="{ message }">{{ $t(message) }}</template>

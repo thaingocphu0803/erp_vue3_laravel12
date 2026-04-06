@@ -51,7 +51,7 @@ class RoleService
 		$newPermissionPayload = [];
 
 		foreach ($permissionPayload as $id => $scope) {
-			$newPermissionPayload[$id] = ['scope' => $scope];
+			$newPermissionPayload[$id] = ['scope' => strtoupper($scope)];
 		}
 
 		return $newPermissionPayload;

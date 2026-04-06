@@ -3,7 +3,6 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useRoleStore = defineStore('role', () => {
-
 	const isFetched = ref<boolean>(false)
 
 	const roles = ref<any[]>([])

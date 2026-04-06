@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { t } from '@/plugins/vueI18n'
-import type { suportedScopes } from '@/stores/permission'
+import type { suportedScopes } from '@/types/common'
 
 interface TableHeader {
 	title: string

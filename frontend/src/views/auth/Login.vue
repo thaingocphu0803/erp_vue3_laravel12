@@ -22,7 +22,7 @@ interface LoginForm {
 
 interface ErrorMessage {
 	unauthorized: string
-	email: string,
+	email: string
 	password: string
 	rememberMe: string
 }
@@ -42,7 +42,7 @@ const errorMessage = reactive<ErrorMessage>({
 	unauthorized: '',
 	email: '',
 	password: '',
-	rememberMe: ''
+	rememberMe: '',
 })
 
 const checkboxData = {
@@ -58,7 +58,6 @@ const loading = ref<boolean>(false)
 
 const visible = ref<boolean>(false)
 
-
 const handleLogin = async () => {
 	try {
 		loading.value = true
@@ -68,7 +67,6 @@ const handleLogin = async () => {
 
 		redirect.value = (route.query.redirect as string) || { name: 'dashboard' }
 		router.replace(redirect.value)
-
 	} catch (error: any) {
 		const status = error.response.status
 
@@ -94,15 +92,31 @@ const handleLogin = async () => {
 			<Form :title @submit-form="handleLogin">
 				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
-				<Input :label="$t('auth.input.email')" name="email" placeholder="example@gmail.com"
-					:rules="authValidation.email" v-model="LoginData.email" />
+				<Input
+					:label="$t('auth.input.email')"
+					name="email"
+					placeholder="example@gmail.com"
+					:rules="authValidation.email"
+					v-model="LoginData.email"
+				/>
 
-				<Input :label="$t('auth.input.password')" name="password" :type="visible ? 'text' : 'password'"
-					:append-inner-icon="visible ? 'mdi-eye' : 'mdi-eye-off'" @click:append-inner="visible = !visible"
-					:rules="authValidation.password" v-model="LoginData.password" />
+				<Input
+					:label="$t('auth.input.password')"
+					name="password"
+					:type="visible ? 'text' : 'password'"
+					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+					@click:append-inner="visible = !visible"
+					:rules="authValidation.password"
+					v-model="LoginData.password"
+				/>
 
-				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="LoginData.rememberMe"
-					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
+				<Checkbox
+					:label="$t('auth.input.rememberMe')"
+					name="remember_me"
+					v-model="LoginData.rememberMe"
+					:false-value="checkboxData.falseValue"
+					:true-value="checkboxData.trueValue"
+				/>
 
 				<base-btn :title :loading="loading" type="submit" block />
 			</Form>
@@ -120,3 +134,4 @@ const handleLogin = async () => {
 	margin-left: unset;
 }
 </style>
+

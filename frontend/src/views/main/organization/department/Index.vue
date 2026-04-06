@@ -15,21 +15,20 @@ import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
 import type { commonStatus } from '@/types/common'
 
-
 interface DepartmentItem {
-	id: number,
-	name: string,
-	code: string,
-	description: string,
+	id: number
+	name: string
+	code: string
+	description: string
 	status: commonStatus
 }
 
-const route = useRoute();
-const toast = useToastStore();
+const route = useRoute()
+const toast = useToastStore()
 
 const loading = ref<boolean>(false)
 
-const departmentStatus = ref(route.query.status as "A" | "X" | undefined)
+const departmentStatus = ref(route.query.status as 'A' | 'X' | undefined)
 
 const tempSearch = ref((route.query.search as string) || '')
 
@@ -37,11 +36,9 @@ const search = ref((route.query.search as string) || '')
 const itemsPerPage = ref(Number(route.query.itemsPerPage) || defaultConfig.itemPerPage)
 const page = ref(Number(route.query.page) || defaultConfig.page)
 
-
-const departmentItems = ref<DepartmentItem[]>([]);
+const departmentItems = ref<DepartmentItem[]>([])
 const totalItemLength = ref<number>(0)
 const totalPage = ref<number>(0)
-
 
 const { updateQueryParams, replaceQueryParams } = useRouteQuery()
 const { statuses } = useFilterModule()
@@ -56,17 +53,16 @@ const resetURLToDefault = () => {
 
 	replaceQueryParams({
 		page: page.value,
-		itemsPerPage: itemsPerPage.value
+		itemsPerPage: itemsPerPage.value,
 	})
 }
 
 watch(departmentStatus, async () => {
-
-	let isPageChanged = false;
+	let isPageChanged = false
 
 	if (page.value !== defaultConfig.page) {
-		page.value = defaultConfig.page;
-		isPageChanged = true;
+		page.value = defaultConfig.page
+		isPageChanged = true
 	}
 
 	const params = {
@@ -81,12 +77,11 @@ watch(departmentStatus, async () => {
 	}
 })
 
-const handleUpdateSearchValue = (debounce((val: string) => {
+const handleUpdateSearchValue = debounce((val: string) => {
 	search.value = val
-}, defaultConfig.debounceTimeout))
+}, defaultConfig.debounceTimeout)
 
 const handleDepartmentPaginate = async (options: any) => {
-
 	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
 
 	const params = {
@@ -94,7 +89,7 @@ const handleDepartmentPaginate = async (options: any) => {
 		search: newSearch,
 		itemsPerPage: newItemsPerPage,
 		sortKey: sortBy.length ? sortBy[0].key : undefined,
-		sortOrder: sortBy.length ? sortBy[0].order : undefined
+		sortOrder: sortBy.length ? sortBy[0].order : undefined,
 	}
 
 	const newQueryParams = updateQueryParams(params)
@@ -105,7 +100,7 @@ const handleDepartmentPaginate = async (options: any) => {
 const fetchDepartmentIndex = async (params: object) => {
 	try {
 		loading.value = true
-		const response = await api.get('department/index', { params });
+		const response = await api.get('department/index', { params })
 
 		if (response.status === 200) {
 			const data = response?.data
@@ -120,14 +115,13 @@ const fetchDepartmentIndex = async (params: object) => {
 		}
 
 		if (error.response?.status === 422 || error.response?.status === 500) {
-			const errorMesssage =  error.response.data.messageCode
+			const errorMesssage = error.response.data.messageCode
 			toast.show(errorMesssage, 'error')
 		}
 	} finally {
 		loading.value = false
 	}
 }
-
 </script>
 
 <template>
@@ -183,7 +177,9 @@ const fetchDepartmentIndex = async (params: object) => {
 				@update:options="handleDepartmentPaginate"
 			>
 				<template v-slot:item.name="{ item }">
-					<v-btn variant="text" color="primary" class="text-none custom-link-btn" > {{ item.name }}</v-btn>
+					<v-btn variant="text" color="primary" class="text-none custom-link-btn">
+						{{ item.name }}</v-btn
+					>
 				</template>
 
 				<template v-slot:item.status="{ value }">
@@ -220,9 +216,9 @@ const fetchDepartmentIndex = async (params: object) => {
 
 <style scoped>
 .custom-link-btn:deep(.v-btn__overlay) {
-  display: none;
+	display: none;
 }
 .custom-link-btn:hover {
-  text-decoration: underline;
+	text-decoration: underline;
 }
 </style>

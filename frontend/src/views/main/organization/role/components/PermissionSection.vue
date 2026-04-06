@@ -4,7 +4,8 @@ import { storeToRefs } from 'pinia'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import { useTableModule } from '@/composables/useTableModule'
 import { t } from '@/plugins/vueI18n'
-import { usePermissionStore, type RolePermission, type suportedScopes } from '@/stores/permission'
+import { usePermissionStore, type RolePermission } from '@/stores/permission'
+import type { suportedScopes } from '@/types/common'
 
 const emit = defineEmits(['update:selectedPermissions'])
 
@@ -12,7 +13,7 @@ const { permissionScopeHeaders } = useTableModule()
 const { permissionGroup } = storeToRefs(usePermissionStore())
 const { permissionFetch } = usePermissionStore()
 
-const selectedPermissions = ref<RolePermission>([])
+const selectedPermissions = ref<RolePermission>({})
 const loadingPermission = ref<boolean>(false)
 const searchModule = ref<string>('')
 
@@ -30,9 +31,13 @@ onMounted(async () => {
 	}
 })
 
-watch(selectedPermissions, () => {
-	emit('update:selectedPermissions', selectedPermissions.value)
-}, { deep: true })
+watch(
+	selectedPermissions,
+	() => {
+		emit('update:selectedPermissions', selectedPermissions.value)
+	},
+	{ deep: true },
+)
 
 const displayedModules = computed(() => {
 	if (!permissionGroup.value) return {}
@@ -65,7 +70,7 @@ const updateSelectedPermisions = (scope: suportedScopes = 'NONE') => {
 const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 	selectedPermissions.value = {
 		...selectedPermissions.value,
-		[permissionId]: scope
+		[permissionId]: scope,
 	}
 }
 </script>
@@ -79,16 +84,26 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 		<v-col cols="12" v-if="!loadingPermission">
 			<!-- Search Module Input -->
 			<div class="mt-3 mb-10">
-				<base-search-btn v-model="searchModule" :label="$t('common.filter.permissionModule')"></base-search-btn>
+				<base-search-btn
+					v-model="searchModule"
+					:label="$t('common.filter.permissionModule')"
+				></base-search-btn>
 			</div>
 
-			<template v-if="!!!permissionGroup">
+			<template v-if="!Object.entries(permissionGroup).length">
 				<div class="text-center text-body-1">
-					({{ $t('common-list.alert.error.getList') }})
+					({{ $t('common-list.alert.error.getPermissions') }})
 				</div>
 			</template>
 
-			<v-table v-else class="elevation-1 border" density="comfortable" hover height="50vh" fixed-header>
+			<v-table
+				v-else
+				class="elevation-1 border"
+				density="comfortable"
+				hover
+				height="50vh"
+				fixed-header
+			>
 				<thead>
 					<tr>
 						<th></th>
@@ -96,9 +111,13 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 						<th v-for="header in permissionScopeHeaders" class="text-center">
 							<v-tooltip :text="$t('role.tooltip.applyToAll')" location="top">
 								<template #activator="{ props }">
-									<v-btn v-bind="props" class="text-center font-weight-bold text-capitalize"
-										density="compact" variant="text"
-										@click.prevent="updateSelectedPermisions(header.key)">
+									<v-btn
+										v-bind="props"
+										class="text-center font-weight-bold text-capitalize"
+										density="compact"
+										variant="text"
+										@click.prevent="updateSelectedPermisions(header.key)"
+									>
 										{{ header.title }}
 									</v-btn>
 								</template>
@@ -124,12 +143,22 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 								{{ $t(permission.name) }}
 							</td>
 
-							<td v-for="header in permissionScopeHeaders" :key="header.key" class="text-center">
+							<td
+								v-for="header in permissionScopeHeaders"
+								:key="header.key"
+								class="text-center"
+							>
 								<v-radio
-									v-if="permission.supported_scopes.includes(header.key) || header.key === 'NONE'"
+									v-if="
+										permission.supported_scopes.includes(header.key) ||
+										header.key === 'NONE'
+									"
 									:model-value="selectedPermissions[permission.id] === header.key"
-									@click.prevent="selectPermisionScope(permission.id, header.key)" hide-details
-									color="primary" class="d-flex justify-center"></v-radio>
+									@click.prevent="selectPermisionScope(permission.id, header.key)"
+									hide-details
+									color="primary"
+									class="d-flex justify-center"
+								></v-radio>
 								<v-icon class="text-center" v-else>mdi-minus-thick</v-icon>
 							</td>
 						</tr>
@@ -139,3 +168,4 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 		</v-col>
 	</v-row>
 </template>
+

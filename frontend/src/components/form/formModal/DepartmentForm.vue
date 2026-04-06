@@ -15,7 +15,6 @@ import { useToastStore } from '@/stores/toast'
 import defaultConfig from '@/config/default'
 import RequiredLabel from './requiredLabel.vue'
 
-
 interface DepartmentForm {
 	name: string
 	code: string | null
@@ -23,26 +22,25 @@ interface DepartmentForm {
 	description: string
 }
 
-interface ValidateMessage {
-	name: string,
-	code: string,
-	parent_id: string,
+interface ErrorMessage {
+	name: string
+	code: string
+	parent_id: string
 	description: string
+	getDepartmentList: string
 }
 
 const title = 'department.title.create'
 
 const emit = defineEmits(['save', 'cancel'])
 
-const {departmentsFetch, departmentCreate} = useDepartmentStore()
+const { departmentsFetch, departmentCreate } = useDepartmentStore()
 
-const toast = useToastStore();
+const toast = useToastStore()
 
-const { departments } = storeToRefs( useDepartmentStore())
+const { departments } = storeToRefs(useDepartmentStore())
 
 const loading = ref<boolean>(false)
-
-const disabledSelect = ref<boolean>(false)
 
 const departmentData = reactive<DepartmentForm>({
 	name: '',
@@ -51,28 +49,23 @@ const departmentData = reactive<DepartmentForm>({
 	description: '',
 })
 
-const errorMessage = reactive<ValidateMessage>({
+const errorMessage = reactive<ErrorMessage>({
 	name: '',
 	code: '',
 	parent_id: '',
-	description: ''
+	description: '',
+	getDepartmentList: '',
 })
-
-const getParentErrorMessage = ref<string>('')
 
 const getDepartmentList = async () => {
 	try {
 		loading.value = true
-		await departmentsFetch();
+		await departmentsFetch()
+		errorMessage.getDepartmentList = ''
 	} catch (error: any) {
 		if (error.status === 400 || error.status === 500) {
-			getParentErrorMessage.value = error.response?.data?.messageCode
+			errorMessage.getDepartmentList = error.response?.data?.messageCode
 		}
-
-		if (error.status === 400) {
-			disabledSelect.value = true
-		}
-
 	} finally {
 		loading.value = false
 	}
@@ -97,20 +90,25 @@ const handleCreate = async () => {
 const handleCancel = () => {
 	emit('cancel')
 }
-
 </script>
 
 <template>
-
 	<Form :title @submit-form="handleCreate">
-		<error-alert :messages="errorMessage"></error-alert>
+		<error-alert :messages="errorMessage" :ignore="['getDepartmentList']"></error-alert>
 
 		<v-row dense>
 			<v-col cols="12">
-				<Input name="name" :rules="departmentValidation.name" v-model="departmentData.name"
-					:maxlength="defaultConfig.maxLengthName" counter>
+				<Input
+					name="name"
+					:rules="departmentValidation.name"
+					v-model="departmentData.name"
+					:maxlength="defaultConfig.maxLengthName"
+					counter
+				>
 					<template #label>
-						<required-label :label="$t('department.input.departmentName')"></required-label>
+						<required-label
+							:label="$t('department.input.departmentName')"
+						></required-label>
 					</template>
 				</Input>
 			</v-col>
@@ -118,33 +116,54 @@ const handleCancel = () => {
 
 		<v-row dense>
 			<v-col cols="12" md="6">
-				<Input :label="$t('department.input.departmentCode')" name="code" v-model="departmentData.code"
-					:maxlength="defaultConfig.maxLengthCode" counter>
+				<Input
+					:label="$t('department.input.departmentCode')"
+					name="code"
+					v-model="departmentData.code"
+					:maxlength="defaultConfig.maxLengthCode"
+					counter
+				>
 					<template #append-inner>
-						<annotation-tooltip text="department.tooltip.codeAutoGenerate"></annotation-tooltip>
+						<annotation-tooltip
+							text="department.tooltip.codeAutoGenerate"
+						></annotation-tooltip>
 					</template>
 				</Input>
 			</v-col>
 
 			<v-col cols="12" md="6">
 				<list-filter
-					:label="getParentErrorMessage.length ? $t(getParentErrorMessage) : $t('department.input.departmentParent')"
-					v-model="departmentData.parent_id" :items="departments" searchable item-title="name" item-value="id"
-					:loading :disabled="disabledSelect" @click="getDepartmentList" />
+					:label="$t('department.input.departmentParent')"
+					v-model="departmentData.parent_id"
+					:error-messages="errorMessage.getDepartmentList"
+					:items="departments"
+					searchable
+					item-title="name"
+					item-value="id"
+					:loading
+					@click="getDepartmentList"
+				/>
 			</v-col>
 		</v-row>
 
 		<v-row dense>
 			<v-col cols="12">
-				<Textarea :label="$t('department.input.departmentDesc')" name="description"
-					v-model="departmentData.description"></Textarea>
+				<Textarea
+					:label="$t('department.input.departmentDesc')"
+					name="description"
+					v-model="departmentData.description"
+				></Textarea>
 			</v-col>
 		</v-row>
 
 		<!-- Actions: Cancel (red) + Create (blue) -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
+				<BaseBtn
+					title="common.btn.cancel"
+					color="red-darken-1"
+					@click.prevent="handleCancel"
+				/>
 			</v-col>
 			<v-col cols="auto">
 				<BaseBtn title="common.btn.create" color="primary" type="submit" />

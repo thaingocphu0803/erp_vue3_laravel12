@@ -9,21 +9,28 @@ use Illuminate\Support\ServiceProvider;
 
 class ObserveServiceProvider extends ServiceProvider
 {
-    /**
-     * Register services.
-     */
-    public function register(): void
-    {
-        //
-    }
+	/**
+	 * Register services.
+	 */
+	public function register(): void
+	{
+		//
+	}
 
 
-    /**
-     * Bootstrap services.
-     */
-    public function boot(): void
-    {
-        Department::observe(NestedObserver::class);
-        Position::observe(NestedObserver::class);
-    }
+	/**
+	 * Bootstrap services.
+	 */
+	public function boot(): void
+	{
+		$observers = [
+			Department::class => NestedObserver::class,
+
+			Position::class => NestedObserver::class,
+		];
+
+		foreach ($observers as $model => $observer) {
+			$model::observe($observer);
+		}
+	}
 }

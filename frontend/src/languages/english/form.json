@@ -117,6 +117,9 @@
 			"parent_id": {
 				"format": "Supervisor information format is incorrect",
 				"exists": "Supervisor does not exist"
+			},
+			"position": {
+				"required": "Position is required"
 			}
 		},
 		"alert": {
@@ -198,7 +201,8 @@
 			"ward": "Ward/Commune",
 			"department": "Department",
 			"position": "Position",
-			"birthDate": "Date of Birth"
+			"birthDate": "Date of Birth",
+			"isLeader": "Appoint as Department Head"
 		},
 		"placeholder": {
 			"phoneExample": "0987654321",
@@ -270,8 +274,8 @@
 	"common-list": {
 		"alert": {
 			"error": {
-				"badRequest": "Invalid request",
-				"getList": "Failed to load the list. Please try again later",
+				"badRequest": "Invalid request. Click to try again",
+				"getList": "Failed to load the list. Click to try again",
 				"getTableData": "Failed to load the table data. Please try again later",
 				"badFilter": "Invalid the filter data",
 				"getPermissions": "Failed to load the permissions. Please try again later"

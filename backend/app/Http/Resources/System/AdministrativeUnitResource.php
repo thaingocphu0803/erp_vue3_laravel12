@@ -5,7 +5,7 @@ namespace App\Http\Resources\System;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LookupResource extends JsonResource
+class AdministrativeUnitResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -15,8 +15,9 @@ class LookupResource extends JsonResource
 	public function toArray(Request $request): array
 	{
 		return [
-			'id' => $this->id ?? $this->code,
-			'name' => $this->name,
+			'code' => $this->code,
+			'full_name' => $this->full_name,
+			'full_name_en' => $this->full_name_en,
 		];
 	}
 }

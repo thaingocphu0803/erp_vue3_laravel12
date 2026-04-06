@@ -97,6 +97,10 @@
 			"active": "Hoạt động",
 			"inActive": "Không hoạt động"
 		},
+		"gender": {
+			"male": "Nam",
+			"female": "Nữ"
+		},
 		"permission": {
 			"action": {
 				"show": "Xem",
