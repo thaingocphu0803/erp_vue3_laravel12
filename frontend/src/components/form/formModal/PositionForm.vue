@@ -119,8 +119,13 @@ const handleCancel = () => {
 		<!-- Row 1: Position Name -->
 		<v-row dense>
 			<v-col cols="12">
-				<Input name="name" :rules="positionValidation.name" v-model="positionData.name"
-					:maxlength="defaultConfig.maxLengthName" counter>
+				<Input
+					name="name"
+					:rules="positionValidation.name"
+					v-model="positionData.name"
+					:maxlength="defaultConfig.maxLengthName"
+					counter
+				>
 					<template #label>
 						<required-label :label="$t('position.input.positionName')"></required-label>
 					</template>
@@ -135,7 +140,10 @@ const handleCancel = () => {
 					:error-messages="errorMessage.getDepartmentList" :items="departments" searchable item-title="name"
 					item-value="id" :loading="loadingDepartment" @click="getDepartmentList">
 					<template #prepend-item>
-						<create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true">
+						<create-prepend-item
+							title="department.title.create"
+							@open-model="showDepartmentDialog = true"
+						>
 						</create-prepend-item>
 						<v-divider />
 					</template>
@@ -161,15 +169,22 @@ const handleCancel = () => {
 		<!-- Row 3: Description -->
 		<v-row dense>
 			<v-col cols="12">
-				<Textarea :label="$t('position.input.positionDesc')" name="description"
-					v-model="positionData.description"></Textarea>
+				<Textarea
+					:label="$t('position.input.positionDesc')"
+					name="description"
+					v-model="positionData.description"
+				></Textarea>
 			</v-col>
 		</v-row>
 
 		<!-- Actions: Cancel + Create -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
+				<BaseBtn
+					title="common.btn.cancel"
+					color="red-darken-1"
+					@click.prevent="handleCancel"
+				/>
 			</v-col>
 			<v-col cols="auto">
 				<BaseBtn title="common.btn.create" color="primary" type="submit" />
@@ -184,3 +199,4 @@ const handleCancel = () => {
 		</v-card>
 	</v-dialog>
 </template>
+

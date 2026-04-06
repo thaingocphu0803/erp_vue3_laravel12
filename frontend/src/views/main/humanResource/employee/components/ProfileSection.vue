@@ -85,8 +85,12 @@ watch(province, async (newVal) => {
 <template>
 	<v-row dense>
 		<v-col cols="12" sm="6" class="mb-3">
-			<Input v-model="fullName" :maxlength="defaultConfig.maxLengthName" counter
-				:rules="employeeValidation.fullName">
+			<Input
+				v-model="fullName"
+				:maxlength="defaultConfig.maxLengthName"
+				counter
+				:rules="employeeValidation.fullName"
+			>
 				<template #label>
 					<required-label :label="$t('employee.input.fullName')"></required-label>
 				</template>
@@ -94,10 +98,16 @@ watch(province, async (newVal) => {
 		</v-col>
 
 		<v-col cols="12" sm="6" class="mb-3">
-			<Input v-model="code" :label="$t('employee.input.employeeCode')" :maxlength="defaultConfig.maxLengthCode"
-				counter>
+			<Input
+				v-model="code"
+				:label="$t('employee.input.employeeCode')"
+				:maxlength="defaultConfig.maxLengthCode"
+				counter
+			>
 				<template #append-inner>
-					<annotation-tooltip text="employee.tooltip.codeAutoGenerate"></annotation-tooltip>
+					<annotation-tooltip
+						text="employee.tooltip.codeAutoGenerate"
+					></annotation-tooltip>
 				</template>
 			</Input>
 		</v-col>
@@ -111,9 +121,17 @@ watch(province, async (newVal) => {
 			</list-filter>
 		</v-col>
 		<v-col cols="12" sm="6" class="mb-3">
-			<v-date-input v-model="birthDate" density="compact" variant="outlined" input-format="yyyy/mm/dd"
-				prepend-inner-icon="mdi-calendar" prepend-icon="" :rules="employeeValidation.birthDate"
-				:max="defaultConfig.currentDate" @keydown.prevent>
+			<v-date-input
+				v-model="birthDate"
+				density="compact"
+				variant="outlined"
+				input-format="yyyy/mm/dd"
+				prepend-inner-icon="mdi-calendar"
+				prepend-icon=""
+				:rules="employeeValidation.birthDate"
+				:max="defaultConfig.currentDate"
+				@keydown.prevent
+			>
 				<template #label>
 					<required-label :label="$t('employee.input.birthDate')"></required-label>
 				</template>
@@ -123,8 +141,14 @@ watch(province, async (newVal) => {
 
 		<!-- Phone -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<Input v-model="phone" placeholder="0987654321" prefix="+84" :maxlength="defaultConfig.minLengthPhone"
-				counter :rules="employeeValidation.phone">
+			<Input
+				v-model="phone"
+				placeholder="0987654321"
+				prefix="+84"
+				:maxlength="defaultConfig.minLengthPhone"
+				counter
+				:rules="employeeValidation.phone"
+			>
 				<template #label>
 					<required-label :label="$t('employee.input.phone')"></required-label>
 				</template>
@@ -134,8 +158,13 @@ watch(province, async (newVal) => {
 		<v-col cols="12" sm="6"></v-col>
 
 		<v-col cols="12" sm="4" class="mb-3">
-			<Input v-model="address" :placeholder="$t('employee.placeholder.addressExample')"
-				:maxlength="defaultConfig.maxLengthAddress" counter :rules="employeeValidation.address">
+			<Input
+				v-model="address"
+				:placeholder="$t('employee.placeholder.addressExample')"
+				:maxlength="defaultConfig.maxLengthAddress"
+				counter
+				:rules="employeeValidation.address"
+			>
 				<template #label>
 					<required-label :label="$t('employee.input.address')"></required-label>
 				</template>
@@ -165,3 +194,4 @@ watch(province, async (newVal) => {
 		</v-col>
 	</v-row>
 </template>
+

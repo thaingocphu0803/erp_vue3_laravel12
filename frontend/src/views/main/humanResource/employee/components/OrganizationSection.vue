@@ -139,3 +139,4 @@ watch(department, (newValue) => {
 		<DepartmentForm @save="showDepartmentDialog = false" @cancel="showDepartmentDialog = false" />
 	</v-dialog>
 </template>
+

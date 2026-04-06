@@ -39,7 +39,11 @@ const getRoleList = async () => {
 <template>
 	<v-row dense>
 		<v-col cols="12" sm="6" class="mb-3">
-			<Input v-model="email" placeholder="example@company.com" :rules="employeeValidation.email">
+			<Input
+				v-model="email"
+				placeholder="example@company.com"
+				:rules="employeeValidation.email"
+			>
 				<template #label>
 					<required-label :label="$t('employee.input.email')"></required-label>
 				</template>
@@ -71,3 +75,4 @@ const getRoleList = async () => {
 		<RoleForm @save="showRoleDialog = false" @cancel="showRoleDialog = false" />
 	</v-dialog>
 </template>
+
