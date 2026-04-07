@@ -255,7 +255,8 @@
 			},
 			"wardCode": {
 				"required": "Please select a ward/commune",
-				"exists": "Ward does not exist"
+				"exists": "Ward does not exist",
+				"provinceInvalid": "Province information is invalid"
 			},
 			"departmentId": {
 				"required": "Department is required",

@@ -15,13 +15,13 @@ class PositionService
 		protected PositionRepositoryInterface $positionRepositoryInterface
 	) {}
 
-	public function create(array $positionPayload)
+	public function create(array $data)
 	{
-		$positionPayload['created_by'] = Auth::id();
+		$data['created_by'] = Auth::id();
 
 		try {
-			return DB::transaction(function () use ($positionPayload) {
-				$this->positionRepositoryInterface->create($positionPayload);
+			return DB::transaction(function () use ($data) {
+				$this->positionRepositoryInterface->create($data);
 				return true;
 			});
 		} catch (\Exception $e) {
@@ -29,10 +29,10 @@ class PositionService
 		}
 	}
 
-	public function paginate(array $paginationPayload)
+	public function paginate(array $data)
 	{
 		try {
-			$positions = $this->positionRepositoryInterface->paginate($paginationPayload);
+			$positions = $this->positionRepositoryInterface->paginate($data);
 			return $positions;
 		} catch (\Exception $e) {
 			return false;

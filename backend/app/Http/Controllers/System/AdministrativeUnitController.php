@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\System;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\System\ListByProvinceRequest;
 use App\Http\Resources\System\AdministrativeUnitResource;
 use App\Services\System\AdministrativeUnitService;
 use App\Trait\HasResponse;
@@ -29,8 +30,10 @@ class AdministrativeUnitController extends Controller
 		return AdministrativeUnitResource::collection($provinces)->response();
 	}
 
-	public function wards(string $provinceCode)
+	public function wards(ListByProvinceRequest $listByProvinceRequest)
 	{
+		$provinceCode = $listByProvinceRequest->validated()['province_code'];
+
 		$wards = $this->administrativeUnitService->wards($provinceCode);
 
 		if (!$wards) {

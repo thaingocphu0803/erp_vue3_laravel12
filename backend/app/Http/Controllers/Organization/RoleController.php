@@ -20,16 +20,9 @@ class RoleController extends Controller
 
 	public function create(StoreRoleRequest $storeRoleRequest)
 	{
-		$validatedData =  $storeRoleRequest->validated();
+		$data =  $storeRoleRequest->validated();
 
-		$rolePayload = [
-			'name' => $validatedData['name'],
-			'description' => $validatedData['description']
-		];
-
-		$permissionPayload = $validatedData['permissions'];
-
-		if ($this->roleService->create($rolePayload, $permissionPayload)) {
+		if ($this->roleService->create($data)) {
 			$message = 'role.alert.success.create';
 			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
 		}
@@ -40,9 +33,9 @@ class RoleController extends Controller
 
 	public function index(IndexCommonRequest $indexCommonRequest)
 	{
-		$paginatePayload = $indexCommonRequest->validated();
+		$data = $indexCommonRequest->validated();
 
-		$roles = $this->roleService->paginate($paginatePayload);
+		$roles = $this->roleService->paginate($data);
 
 		if (!$roles) {
 			$message = 'common-list.alert.error.getTableData';

@@ -20,16 +20,9 @@ class DepartmentController extends Controller
 
 	public function create(StoreDepartmentRequest $storeDepartmentRequest)
 	{
-		$validatedData = $storeDepartmentRequest->validated();
+		$data = $storeDepartmentRequest->validated();
 
-		$departmentPayload = [
-			'name' => $validatedData['name'],
-			'code' => $validatedData['code'],
-			'parent_id' => $validatedData['parent_id'],
-			'description' => $validatedData['description'],
-		];
-
-		if($this->departmentService->create($departmentPayload)){
+		if ($this->departmentService->create($data)) {
 			$message = 'department.alert.success.create';
 			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
 		}
@@ -40,11 +33,11 @@ class DepartmentController extends Controller
 
 	public function index(IndexCommonRequest $indexCommonRequest)
 	{
-		$paginatePayload = $indexCommonRequest->validated();
+		$data = $indexCommonRequest->validated();
 
-		$departments = $this->departmentService->paginate($paginatePayload);
+		$departments = $this->departmentService->paginate($data);
 
-		if(!$departments){
+		if (!$departments) {
 			$message = 'common-list.alert.error.getTableData';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}

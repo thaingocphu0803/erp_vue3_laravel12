@@ -53,7 +53,7 @@ const getDepartmentList = async () => {
 		await departmentsFetch()
 		errorMessage.value.getDepartmentList = ''
 	} catch (error: any) {
-		if (error.status === 400 || error.status === 500) {
+		if (error.status === 422 || error.status === 500) {
 			errorMessage.value.getDepartmentList = error.response?.data?.messageCode
 		}
 	} finally {

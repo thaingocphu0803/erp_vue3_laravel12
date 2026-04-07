@@ -13,17 +13,23 @@ class RoleService
 		protected RoleRepositoryInterface $roleRepositoryInterface
 	) {}
 
-	public function create(array $rolePayload, array $permissionPayload)
+	public function create(array $data)
 	{
-		$rolePayload['created_by'] = Auth::id();
+		$role = [
+			'name' => $data['name'],
+			'description' => $data['description'],
+			'created_by' => Auth::id(),
+		];
 
-		$newPermissionPayload = $this->getNewPermissionPayload($permissionPayload);
+		$permissions = $data['permissions'];
+
+		$newPermissions = $this->getNewPermissionPayload($permissions);
 
 		try {
-			return DB::transaction(function () use ($rolePayload, $newPermissionPayload) {
+			return DB::transaction(function () use ($role, $newPermissions) {
 				$relation = Table::PERMISSION->value;
 
-				$this->roleRepositoryInterface->createWithPivote($rolePayload, $relation, $newPermissionPayload);
+				$this->roleRepositoryInterface->createWithPivote($role, $relation, $newPermissions);
 
 				return true;
 			});
@@ -32,28 +38,27 @@ class RoleService
 		}
 	}
 
-	public function paginate(array $paginationPayload)
+	public function paginate(array $data)
 	{
 		try {
 			$relation = 'creator';
 
-			$roles =  $this->roleRepositoryInterface->paginate($paginationPayload, $relation);
+			$roles =  $this->roleRepositoryInterface->paginate($data, $relation);
 			return $roles;
 		} catch (\Exception $e) {
-			echo $e->getMessage();
 			return false;
 		}
 	}
 
-	private function getNewPermissionPayload(array $permissionPayload)
+	private function getNewPermissionPayload(array $permissions)
 	{
 
-		$newPermissionPayload = [];
+		$newPermissions = [];
 
-		foreach ($permissionPayload as $id => $scope) {
-			$newPermissionPayload[$id] = ['scope' => strtoupper($scope)];
+		foreach ($permissions as $id => $scope) {
+			$newPermissions[$id] = ['scope' => strtoupper($scope)];
 		}
 
-		return $newPermissionPayload;
+		return $newPermissions;
 	}
 }

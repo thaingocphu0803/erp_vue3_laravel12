@@ -17,29 +17,28 @@ class DepartmentService
 		protected DepartmentRepositoryInterface $departmentRepositoryInterface,
 	) {}
 
-	public function create(array $departmentPayload)
+	public function create(array $data)
 	{
-		$departmentPayload['created_by'] = Auth::id();
+		$data['created_by'] = Auth::id();
 
-		if (is_null($departmentPayload['code'])) {
-			$departmentPayload['code'] = $this->generateCode(Table::DEPARTMENT->value, 'DEPT');
+		if (is_null($data['code'])) {
+			$data['code'] = $this->generateCode(Table::DEPARTMENT->value, 'DEPT');
 		}
 
 		try {
-			return DB::transaction(function () use ($departmentPayload) {
-				$department = $this->departmentRepositoryInterface->create($departmentPayload);
+			return DB::transaction(function () use ($data) {
+				$department = $this->departmentRepositoryInterface->create($data);
 				return $department;
 			});
 		} catch (\Exception $e) {
-			echo $e->getMessage();
 			return false;
 		}
 	}
 
-	public function paginate(array $paginationPayload)
+	public function paginate(array $data)
 	{
 		try {
-			$departments = $this->departmentRepositoryInterface->paginate($paginationPayload);
+			$departments = $this->departmentRepositoryInterface->paginate($data);
 			return $departments;
 		} catch (\Exception $e) {
 			return false;

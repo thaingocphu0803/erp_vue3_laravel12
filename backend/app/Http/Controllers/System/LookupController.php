@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\System;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\System\LookupByModelRequest;
 use App\Http\Resources\System\LookupResource;
 use App\Services\System\LookupService;
 use App\Trait\HasResponse;
@@ -17,22 +18,12 @@ class LookupController extends Controller
 		protected LookupService $lookupService
 	) {}
 
-	public function list(Request $request)
+	public function list(LookupByModelRequest $lookupByModelRequest)
 	{
-		$allowed = [
-			'departments',
-			'positions',
-			'roles'
-		];
 
-		$modelName = $request->input('model');
+		$model = $lookupByModelRequest->validated('model');
 
-		if (!in_array($modelName, $allowed)) {
-			$message = 'common-list.alert.error.badRequest';
-			return $this->exceptionResponse($message, JsonResponse::HTTP_BAD_REQUEST);
-		}
-
-		$list = $this->lookupService->list($modelName);
+		$list = $this->lookupService->list($model);
 
 		if (!$list) {
 			$message = 'common-list.alert.error.getList';

@@ -266,7 +266,8 @@
 			},
 			"wardCode": {
 				"required": "Vui lòng chọn phường/xã",
-				"exists": "Không tìm thấy phường/xã"
+				"exists": "Không tìm thấy phường/xã",
+				"provinceInvalid": "Thông tin tỉnh/thành phố không hợp lệ"
 			},
 			"isLeader": {
 				"format": "Định dạng chỉ định trưởng bộ phận không hợp lệ"

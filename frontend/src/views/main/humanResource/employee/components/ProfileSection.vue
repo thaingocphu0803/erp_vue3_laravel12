@@ -56,7 +56,7 @@ const getProvinces = async () => {
 		await provincesFetch()
 		errorMessage.value.province = ''
 	} catch (error: any) {
-		if (error.status === 400 || error.status === 500) {
+		if (error.status === 422 || error.status === 500) {
 			errorMessage.value.province = error.response?.data?.messageCode
 		}
 	} finally {

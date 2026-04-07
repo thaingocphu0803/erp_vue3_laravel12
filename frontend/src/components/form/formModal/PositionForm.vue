@@ -71,7 +71,7 @@ const getDepartmentList = async () => {
 		await departmentsFetch()
 		errorMessage.getDepartmentList = ''
 	} catch (error: any) {
-		if (error.status === 400 || error.status === 500) {
+		if (error.status === 422 || error.status === 500) {
 			errorMessage.getDepartmentList = error.response?.data?.messageCode
 		}
 	} finally {
@@ -85,7 +85,7 @@ const getPositionList = async () => {
 		await positionFetch()
 		errorMessage.getPositionList = ''
 	} catch (error: any) {
-		if (error.status === 400 || error.status === 500) {
+		if (error.status === 422 || error.status === 500) {
 			errorMessage.getPositionList = error.response?.data?.messageCode
 		}
 	} finally {
@@ -114,7 +114,10 @@ const handleCancel = () => {
 
 <template>
 	<Form title="position.title.create" @submit-form="handleSubmit">
-		<error-alert :messages="errorMessage" :ignore="['getDepartmentList', 'getPositionList']"></error-alert>
+		<error-alert
+			:messages="errorMessage"
+			:ignore="['getDepartmentList', 'getPositionList']"
+		></error-alert>
 
 		<!-- Row 1: Position Name -->
 		<v-row dense>
@@ -136,9 +139,17 @@ const handleCancel = () => {
 		<!-- Row 2: Department Select with tooltip inside (append-inner) -->
 		<v-row dense>
 			<v-col cols="12" sm="6">
-				<list-filter :label="$t('position.input.selectDepartment')" v-model="positionData.department_id"
-					:error-messages="errorMessage.getDepartmentList" :items="departments" searchable item-title="name"
-					item-value="id" :loading="loadingDepartment" @click="getDepartmentList">
+				<list-filter
+					:label="$t('position.input.selectDepartment')"
+					v-model="positionData.department_id"
+					:error-messages="errorMessage.getDepartmentList"
+					:items="departments"
+					searchable
+					item-title="name"
+					item-value="id"
+					:loading="loadingDepartment"
+					@click="getDepartmentList"
+				>
 					<template #prepend-item>
 						<create-prepend-item
 							title="department.title.create"
@@ -155,9 +166,17 @@ const handleCancel = () => {
 			</v-col>
 
 			<v-col cols="12" sm="6">
-				<list-filter :label="$t('position.input.supervisor')" v-model="positionData.parent_id"
-					:error-messages="errorMessage.getPositionList" :items="positions" searchable item-title="name"
-					item-value="id" :loading="loadingPosition" @click="getPositionList">
+				<list-filter
+					:label="$t('position.input.supervisor')"
+					v-model="positionData.parent_id"
+					:error-messages="errorMessage.getPositionList"
+					:items="positions"
+					searchable
+					item-title="name"
+					item-value="id"
+					:loading="loadingPosition"
+					@click="getPositionList"
+				>
 					<template #append-inner>
 						<annotation-tooltip text="position.tooltip.unselectSupervisor">
 						</annotation-tooltip>
@@ -195,8 +214,10 @@ const handleCancel = () => {
 	<!-- Dialog Create Department -->
 	<v-dialog v-model="showDepartmentDialog" :max-width="defaultConfig.maxWidthForm" persistent>
 		<v-card class="pa-4 rounded-lg">
-			<DepartmentForm @save="showDepartmentDialog = false" @cancel="showDepartmentDialog = false" />
+			<DepartmentForm
+				@save="showDepartmentDialog = false"
+				@cancel="showDepartmentDialog = false"
+			/>
 		</v-card>
 	</v-dialog>
 </template>
-

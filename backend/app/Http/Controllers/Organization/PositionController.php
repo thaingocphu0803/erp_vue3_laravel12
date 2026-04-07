@@ -11,7 +11,6 @@ use App\Http\Resources\System\LookupResource;
 use App\Services\Organization\PositionService;
 use App\Trait\HasResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class PositionController extends Controller
 {
@@ -23,9 +22,9 @@ class PositionController extends Controller
 
 	public function create(StorePositionRequest $request)
 	{
-		$positionPayload = $request->validated();
+		$data = $request->validated();
 
-		if ($this->positionService->create($positionPayload)) {
+		if ($this->positionService->create($data)) {
 			$message = 'position.alert.success.create';
 			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
 		}
@@ -36,8 +35,9 @@ class PositionController extends Controller
 
 	public function index(IndexCommonRequest $indexCommonRequest)
 	{
-		$positionPayload = $indexCommonRequest->validated();
-		$positions = $this->positionService->paginate($positionPayload);
+		$data = $indexCommonRequest->validated();
+
+		$positions = $this->positionService->paginate($data);
 
 		if (!$positions) {
 			$message = 'common-list.alert.error.getTableData';
@@ -49,9 +49,9 @@ class PositionController extends Controller
 
 	public function listByDepartment(ListByDepartmentRequest $listByDepartmentRequest)
 	{
-		$listByDepartmentPayload = $listByDepartmentRequest->validated('department_id');
+		$departmentId = $listByDepartmentRequest->validated('department_id');
 
-		$positions = $this->positionService->listByDepartment($listByDepartmentPayload);
+		$positions = $this->positionService->listByDepartment($departmentId);
 
 		if (!$positions) {
 			$message = 'position.alert.error.getTableData';

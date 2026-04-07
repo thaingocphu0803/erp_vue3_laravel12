@@ -6,37 +6,36 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('employees', function (Blueprint $table) {
-            $table->id();
+	/**
+	 * Run the migrations.
+	 */
+	public function up(): void
+	{
+		Schema::create('employees', function (Blueprint $table) {
+			$table->id();
 			$table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
 			$table->string('code', 20)->unique();
-			$table->string('address',255);
+			$table->string('address', 255);
 			$table->string('phone_number', 12)->unique();
 			$table->enum('gender', ['male', 'female']);
 			$table->date('birthday');
 			$table->text('avatar_url')->nullable();
-			$table->string('avatar_color',10)->nullable();
 			$table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
-			$table->string('province_code',20)->nullable();
-			$table->string('ward_code',20)->nullable();
+			$table->string('province_code', 20)->nullable();
+			$table->string('ward_code', 20)->nullable();
 			$table->foreign('province_code')->references('code')->on('provinces')->nullOnDelete();
 			$table->foreign('ward_code')->references('code')->on('wards')->nullOnDelete();
 			$table->softDeletes();
-            $table->timestamps();
-        });
-    }
+			$table->timestamps();
+		});
+	}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('employees');
-    }
+	/**
+	 * Reverse the migrations.
+	 */
+	public function down(): void
+	{
+		Schema::dropIfExists('employees');
+	}
 };
