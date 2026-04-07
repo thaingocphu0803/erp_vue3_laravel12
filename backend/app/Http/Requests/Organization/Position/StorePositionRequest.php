@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Organization\Position;
 
+use App\Enum\Status;
 use App\Http\Requests\StoreCommonRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,8 +26,8 @@ class StorePositionRequest extends StoreCommonRequest
 		$parentRules = parent::rules();
 
 		$positionRules =  [
-			'department_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')],
-			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('positions', 'id')],
+			'department_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
+			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('positions', 'id')->where('status', Status::ACTIVE->value)],
 		];
 
 		return array_merge($parentRules, $positionRules);

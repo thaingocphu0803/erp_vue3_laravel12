@@ -60,4 +60,3 @@ export const usePositionStore = defineStore('position', () => {
 		positionReset,
 	}
 })
-

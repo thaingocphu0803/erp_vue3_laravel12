@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Organization\Position;
 
+use App\Enum\Status;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreCommonRequest extends FormRequest
+class ListByDepartmentRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -23,8 +24,14 @@ class StoreCommonRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'name' => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('roles', 'name')->ignore($this->id)],
-			'description' => ['bail', 'nullable', 'string']
+			'department_id' => ['bail', 'required', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
+		];
+	}
+
+	public function messages(): array
+	{
+		return [
+			'department_id.*' => 'employee.validate.position.departmentInvalid',
 		];
 	}
 }

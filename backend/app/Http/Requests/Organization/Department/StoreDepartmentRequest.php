@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Organization\Department;
 
+use App\Enum\Status;
 use App\Http\Requests\StoreCommonRequest;
 use Illuminate\Validation\Rule;
 
@@ -26,7 +27,7 @@ class StoreDepartmentRequest extends StoreCommonRequest
 
 		$departmentRules = [
 			'code'      => ['bail', 'nullable', 'max:20', Rule::unique('departments', 'code')->ignore($this->id)],
-			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')],
+			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
 		];
 
 		return array_merge($parentRules, $departmentRules);

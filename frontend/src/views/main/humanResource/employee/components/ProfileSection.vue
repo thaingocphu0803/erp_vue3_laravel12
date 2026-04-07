@@ -48,7 +48,6 @@ const getProvinces = async () => {
 	} catch (error: any) {
 		if (error.status === 400 || error.status === 500) {
 			errorMessage.value.province = error.response?.data?.messageCode
-			disableWard.value = true
 		}
 	} finally {
 		provinceLoading.value = false
@@ -113,8 +112,16 @@ watch(province, async (newVal) => {
 		</v-col>
 
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter :hide-details="false" v-model="gender" :items="genders" searchable item-title="name"
-				item-value="id" :rules="employeeValidation.gender" :clearable="false">
+			<list-filter
+				:hide-details="false"
+				v-model="gender"
+				:items="genders"
+				searchable
+				item-title="name"
+				item-value="id"
+				:rules="employeeValidation.gender"
+				:clearable="false"
+			>
 				<template #label>
 					<required-label :label="$t('employee.input.gender')"></required-label>
 				</template>
@@ -157,6 +164,46 @@ watch(province, async (newVal) => {
 
 		<v-col cols="12" sm="6"></v-col>
 
+		<!-- Address Split (1 row) -->
+		<v-col cols="12" sm="4" class="mb-3">
+			<list-filter
+				:hide-details="false"
+				v-model="province"
+				:items="provinces"
+				searchable
+				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
+				item-value="code"
+				:rules="employeeValidation.province"
+				:error-messages="errorMessage.province"
+				:loading="provinceLoading"
+				:clearable="false"
+				@click="getProvinces()"
+			>
+				<template #label>
+					<required-label :label="$t('employee.input.province')"></required-label>
+				</template>
+			</list-filter>
+		</v-col>
+		<v-col cols="12" sm="4" class="mb-3">
+			<list-filter
+				:hide-details="false"
+				v-model="ward"
+				:items="wards"
+				searchable
+				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
+				item-value="code"
+				:rules="wards.length === 0 ? [] : employeeValidation.ward"
+				:error-messages="errorMessage.ward"
+				:disabled="disableWard"
+				:clearable="false"
+				:loading="wardLoading"
+				@click="getWards(province!)"
+			>
+				<template #label>
+					<required-label :label="$t('employee.input.ward')"></required-label>
+				</template>
+			</list-filter>
+		</v-col>
 		<v-col cols="12" sm="4" class="mb-3">
 			<Input
 				v-model="address"
@@ -170,28 +217,5 @@ watch(province, async (newVal) => {
 				</template>
 			</Input>
 		</v-col>
-
-		<!-- Address Split (1 row) -->
-		<v-col cols="12" sm="4" class="mb-3">
-			<list-filter :hide-details="false" v-model="province" :items="provinces" searchable
-				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'" item-value="code"
-				:rules="employeeValidation.province" :error-messages="errorMessage.province" :loading="provinceLoading"
-				:clearable="false" @click="getProvinces()">
-				<template #label>
-					<required-label :label="$t('employee.input.province')"></required-label>
-				</template>
-			</list-filter>
-		</v-col>
-		<v-col cols="12" sm="4" class="mb-3">
-			<list-filter :hide-details="false" v-model="ward" :items="wards" searchable
-				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'" item-value="code"
-				:rules="wards.length === 0 ? [] : employeeValidation.ward" :error-messages="errorMessage.ward"
-				:disabled="disableWard" :clearable="false" :loading="wardLoading" @click="getWards(province!)">
-				<template #label>
-					<required-label :label="$t('employee.input.ward')"></required-label>
-				</template>
-			</list-filter>
-		</v-col>
 	</v-row>
 </template>
-

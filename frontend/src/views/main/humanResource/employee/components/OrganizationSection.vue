@@ -18,15 +18,15 @@ interface ErrorMessage {
 }
 
 const department = defineModel<number | null>('department', {
-	default: null
+	default: null,
 })
 
 const position = defineModel<number | null>('position', {
-	default: null
+	default: null,
 })
 
 const isLeader = defineModel<boolean>('isLeader', {
-	default: false
+	default: false,
 })
 const disablePosition = ref<boolean>(true)
 
@@ -72,9 +72,13 @@ const getPositionList = async (departmentId: number | null) => {
 		await positionsFetchByDepartmentId(departmentId)
 		errorMessage.value.getPositionList = ''
 	} catch (error: any) {
-		if (error.status === 400 || error.status === 500) {
+		console.log(error)
+		if (error.status === 500) {
 			errorMessage.value.getPositionList = error.response?.data?.messageCode
-			disablePosition.value = true
+		}
+
+		if (error.status === 422) {
+			errorMessage.value.getPositionList = error.response?.data?.message
 		}
 	} finally {
 		loadingPositions.value = false
@@ -94,11 +98,24 @@ watch(department, (newValue) => {
 <template>
 	<v-row dense>
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter :hide-details="false" v-model="department" :items="departments" searchable item-title="name"
-				item-value="id" :loading="loadingDepartments" :rules="employeeValidation.department"
-				:error-messages="errorMessage.getDepartmentList" @click="getDepartmentList" :clearable="false">
+			<list-filter
+				:hide-details="false"
+				v-model="department"
+				:items="departments"
+				searchable
+				item-title="name"
+				item-value="id"
+				:loading="loadingDepartments"
+				:rules="employeeValidation.department"
+				:error-messages="errorMessage.getDepartmentList"
+				@click="getDepartmentList"
+				:clearable="false"
+			>
 				<template #prepend-item>
-					<create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true">
+					<create-prepend-item
+						title="department.title.create"
+						@open-model="showDepartmentDialog = true"
+					>
 					</create-prepend-item>
 					<v-divider />
 				</template>
@@ -108,12 +125,25 @@ watch(department, (newValue) => {
 			</list-filter>
 		</v-col>
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter :hide-details="false" v-model="position" :items="positionByDepartment" searchable
-				item-title="name" item-value="id" :loading="loadingPositions" :disabled="disablePosition"
-				:rules="employeeValidation.position" :error-messages="errorMessage.getPositionList"
-				@click="getPositionList(department)" :clearable="false">
+			<list-filter
+				:hide-details="false"
+				v-model="position"
+				:items="positionByDepartment"
+				searchable
+				item-title="name"
+				item-value="id"
+				:loading="loadingPositions"
+				:disabled="disablePosition"
+				:rules="employeeValidation.position"
+				:error-messages="errorMessage.getPositionList"
+				@click="getPositionList(department)"
+				:clearable="false"
+			>
 				<template #prepend-item>
-					<create-prepend-item title="position.title.create" @open-model="showPositionDialog = true">
+					<create-prepend-item
+						title="position.title.create"
+						@open-model="showPositionDialog = true"
+					>
 					</create-prepend-item>
 					<v-divider />
 				</template>
@@ -124,8 +154,13 @@ watch(department, (newValue) => {
 		</v-col>
 
 		<v-col cols="12" class="mt-n4">
-			<Checkbox :style="{ visibility: department ? 'visible' : 'hidden' }" color="primary" v-model="isLeader"
-				:label="$t('employee.input.isLeader')" name="is_leader" />
+			<Checkbox
+				:style="{ visibility: department ? 'visible' : 'hidden' }"
+				color="primary"
+				v-model="isLeader"
+				:label="$t('employee.input.isLeader')"
+				name="is_leader"
+			/>
 		</v-col>
 	</v-row>
 
@@ -136,7 +171,9 @@ watch(department, (newValue) => {
 
 	<!-- Dialog Create Department -->
 	<v-dialog v-model="showDepartmentDialog" :max-width="defaultConfig.maxWidthForm" persistent>
-		<DepartmentForm @save="showDepartmentDialog = false" @cancel="showDepartmentDialog = false" />
+		<DepartmentForm
+			@save="showDepartmentDialog = false"
+			@cancel="showDepartmentDialog = false"
+		/>
 	</v-dialog>
 </template>
-

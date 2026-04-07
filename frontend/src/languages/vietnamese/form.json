@@ -243,7 +243,8 @@
 			"position": {
 				"required": "Vui lòng chọn chức vụ",
 				"format": "Sai định dạng chức vụ",
-				"exists": "Không tìm thấy chức vụ"
+				"exists": "Không tìm thấy chức vụ",
+				"departmentInvalid": "Thông tin phòng ban không hợp lệ"
 			},
 			"birthDate": {
 				"required": "Vui lòng chọn ngày sinh",

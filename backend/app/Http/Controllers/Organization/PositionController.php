@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Organization;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexCommonRequest;
+use App\Http\Requests\Organization\Position\ListByDepartmentRequest;
 use App\Http\Requests\Organization\Position\StorePositionRequest;
 use App\Http\Resources\Organization\PositionResource;
 use App\Http\Resources\System\LookupResource;
@@ -46,12 +47,11 @@ class PositionController extends Controller
 		return PositionResource::collection($positions)->response();
 	}
 
-	public function listByDepartment(Request $request)
+	public function listByDepartment(ListByDepartmentRequest $listByDepartmentRequest)
 	{
-		$validated = $request->validate([
-			'department_id' => 'required|integer|exists:departments,id',
-		]);
-		$positions = $this->positionService->listByDepartment($validated['department_id']);
+		$listByDepartmentPayload = $listByDepartmentRequest->validated('department_id');
+
+		$positions = $this->positionService->listByDepartment($listByDepartmentPayload);
 
 		if (!$positions) {
 			$message = 'position.alert.error.getTableData';
