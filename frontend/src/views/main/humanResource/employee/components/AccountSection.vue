@@ -11,8 +11,8 @@ import { ref } from 'vue'
 import { useRoleStore } from '@/stores/role'
 import { storeToRefs } from 'pinia'
 
-const email = defineModel('email')
-const role = defineModel('role')
+const email = defineModel<string>('email')
+const role_ids = defineModel<number[]>('role_ids', { default: [] })
 
 const { rolesFetch } = useRoleStore()
 const { roles } = storeToRefs(useRoleStore())
@@ -51,11 +51,25 @@ const getRoleList = async () => {
 		</v-col>
 
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter :hide-details="false" v-model="role" :items="roles" searchable item-title="name"
-				item-value="id" :rules="employeeValidation.role" :error-messages="getRolesErrorMessage"
-				:loading="loadingRole" :clearable="false" @click="getRoleList">
+			<list-filter
+				:hide-details="false"
+				v-model="role_ids"
+				:items="roles"
+				searchable
+				item-title="name"
+				item-value="id"
+				:rules="employeeValidation.role"
+				:error-messages="getRolesErrorMessage"
+				:loading="loadingRole"
+				:clearable="false"
+				multiple
+				@click="getRoleList"
+			>
 				<template #prepend-item>
-					<create-prepend-item title="role.title.create" @open-model="showRoleDialog = true" />
+					<create-prepend-item
+						title="role.title.create"
+						@open-model="showRoleDialog = true"
+					/>
 					<v-divider />
 				</template>
 				<template #label>
@@ -75,4 +89,3 @@ const getRoleList = async () => {
 		<RoleForm @save="showRoleDialog = false" @cancel="showRoleDialog = false" />
 	</v-dialog>
 </template>
-

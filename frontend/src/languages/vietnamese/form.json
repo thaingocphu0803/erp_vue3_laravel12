@@ -207,6 +207,7 @@
 		},
 		"validate": {
 			"avatar": {
+				"image": "Ảnh đại diện phải là ảnh",
 				"format": "Sai định dạng file. Vui lòng tải lên file JPG, JPEG, PNG",
 				"size": "Kích thước file không vượt quá 2MB"
 			},
@@ -215,58 +216,60 @@
 				"format": "Email không đúng định dạng",
 				"unique": "Email đã tồn tại"
 			},
-			"fullName": {
+			"name": {
 				"required": "Vui lòng nhập họ và tên",
 				"max": "Họ và tên không được vượt quá 100 ký tự",
 				"noSpecialChars": "Họ và tên không được chứa ký tự đặc biệt"
 			},
-			"employeeCode": {
+			"code": {
 				"max": "Mã nhân viên không được vượt quá 20 ký tự",
 				"unique": "Mã nhân viên đã tồn tại"
 			},
-			"phone": {
+			"phoneNumber": {
 				"required": "Vui lòng nhập số điện thoại",
-				"min": "Số điện thoại tối thiểu 10 ký tự",
+				"size": "Số điện thoại phải có 10 ký tự",
 				"format": "Số điện thoại không đúng định dạng",
 				"unique": "Số điện thoại đã tồn tại"
 			},
-			"role": {
+			"roleId": {
 				"required": "Vui lòng chọn vai trò",
+				"exists": "Không tìm thấy vai trò",
+				"atLeastOne": "Vui lòng chọn ít nhất một vai trò",
 				"format": "Sai định dạng vai trò",
-				"exists": "Không tìm thấy vai trò"
+				"distinct": "Không được chọn vai trò trùng lặp"
 			},
-			"department": {
+			"departmentId": {
 				"required": "Vui lòng chọn phòng ban",
-				"format": "Sai định dạng phòng ban",
 				"exists": "Không tìm thấy phòng ban"
 			},
-			"position": {
+			"positionId": {
 				"required": "Vui lòng chọn chức vụ",
-				"format": "Sai định dạng chức vụ",
 				"exists": "Không tìm thấy chức vụ",
 				"departmentInvalid": "Thông tin phòng ban không hợp lệ"
 			},
-			"birthDate": {
+			"birthdate": {
 				"required": "Vui lòng chọn ngày sinh",
 				"format": "Sai định dạng ngày sinh",
-				"after": "Ngày sinh phải sau ngày hiện tại"
+				"before": "Ngày sinh phải trước ngày hiện tại"
 			},
 			"address": {
-				"required": "Vui lòng nhập địa chỉ"
+				"required": "Vui lòng nhập địa chỉ",
+				"format": "Sai định dạng địa chỉ"
 			},
 			"gender": {
 				"required": "Vui lòng chọn giới tính",
 				"format": "Sai định dạng giới tính"
 			},
-			"province": {
+			"provinceCode": {
 				"required": "Vui lòng chọn tỉnh/thành phố",
-				"format": "Sai định dạng tỉnh/thành phố",
 				"exists": "Không tìm thấy tỉnh/thành phố"
 			},
-			"ward": {
+			"wardCode": {
 				"required": "Vui lòng chọn phường/xã",
-				"format": "Sai định dạng phường/xã",
 				"exists": "Không tìm thấy phường/xã"
+			},
+			"isLeader": {
+				"format": "Định dạng chỉ định trưởng bộ phận không hợp lệ"
 			}
 		}
 	},

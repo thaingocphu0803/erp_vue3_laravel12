@@ -41,3 +41,11 @@ export const imageSize = (msg: string, maxSize: number) => (v: File | null) => {
 export const imageType = (msg: string, validTypes: string[]) => (v: File | null) => {
 	return !v || validTypes.includes(v.type) || msg
 }
+
+export const size = (msg: string, size: number) => (v: any) => v.length === size || msg
+
+export const isArray = (msg: string) => (v: any) => Array.isArray(v) || msg
+
+export const atLeastOne = (msg: string) => (v: any) => v.length >= 1 || msg
+
+export const distinct = (msg: string) => (v: any) => new Set(v).size === v.length || msg

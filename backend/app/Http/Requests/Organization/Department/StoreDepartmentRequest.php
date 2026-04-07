@@ -26,7 +26,7 @@ class StoreDepartmentRequest extends StoreCommonRequest
 		$parentRules = parent::rules();
 
 		$departmentRules = [
-			'code'      => ['bail', 'nullable', 'max:20', Rule::unique('departments', 'code')->ignore($this->id)],
+			'code'      => ['bail', 'nullable', 'max:20', Rule::unique('departments', 'code')->ignore($this->id)->where('status', Status::ACTIVE->value)],
 			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
 		];
 

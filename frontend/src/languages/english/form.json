@@ -210,6 +210,7 @@
 		},
 		"validate": {
 			"avatar": {
+				"image": "Invalid file format. Please upload JPG, JPEG, PNG files only",
 				"format": "Invalid file format. Please upload JPG, JPEG, PNG files only",
 				"size": "File size must not exceed 2MB"
 			},
@@ -218,56 +219,60 @@
 				"format": "Invalid email format",
 				"unique": "Email already exists"
 			},
-			"password": {
-				"required": "Password is required",
-				"hasUpperLetter": "Password must contain at least one uppercase letter",
-				"hasLowerLetter": "Password must contain at least one lowercase letter",
-				"min": "Password must be at least 8 characters",
-				"hasNumber": "Password must contain at least one number",
-				"hasSpecialChar": "Password must contain at least one special character"
-			},
-			"role_id": {
+			"roleId": {
+				"required": "Role is required",
+				"exists": "Role does not exist",
+				"atLeastOne": "Please select at least one role",
 				"format": "Invalid role format",
-				"exists": "Role does not exist"
+				"distinct": "Duplicate roles are not allowed"
 			},
-			"full_name": {
+			"name": {
 				"required": "Full name is required",
 				"max": "Full name must not exceed 255 characters",
 				"noSpecialChars": "Full name must not contain special characters"
 			},
-			"employee_code": {
+			"code": {
 				"max": "Employee code must not exceed 20 characters",
 				"unique": "Employee code already exists"
 			},
 			"address": {
-				"max": "Address must not exceed 255 characters"
+				"required": "Address is required",
+				"format": "Invalid address format"
 			},
-			"phone": {
-				"format": "Invalid phone number format",
+			"phoneNumber": {
+				"required": "Phone number is required",
+				"size": "Phone number must be 10 digits",
+				"regex": "Invalid phone number format",
 				"unique": "Phone number already exists"
 			},
 			"gender": {
+				"required": "Gender is required",
 				"format": "Invalid gender format"
 			},
-			"province_id": {
-				"format": "Invalid province format",
+			"provinceCode": {
+				"required": "Please select a province/city",
 				"exists": "Province does not exist"
 			},
-			"ward_id": {
-				"format": "Invalid ward format",
+			"wardCode": {
+				"required": "Please select a ward/commune",
 				"exists": "Ward does not exist"
 			},
-			"department_id": {
-				"format": "Invalid department format",
+			"departmentId": {
+				"required": "Department is required",
 				"exists": "Department does not exist"
 			},
-			"position_id": {
-				"format": "Invalid position format",
-				"exists": "Position does not exist"
+			"positionId": {
+				"required": "Position is required",
+				"exists": "Position does not exist",
+				"departmentInvalid": "Department information is invalid"
 			},
-			"birth_date": {
+			"birthdate": {
+				"required": "Date of birth is required",
 				"format": "Invalid date format",
-				"notFuture": "Date of birth cannot be in the future"
+				"before": "Date of birth must be before today"
+			},
+			"isLeader": {
+				"format": "Invalid appoint as department head format"
 			}
 		}
 	},

@@ -9,68 +9,79 @@ import AccountSection from '@/views/main/humanResource/employee/components/Accou
 import ProfileSection from '@/views/main/humanResource/employee/components/ProfileSection.vue'
 import OrganizationSection from '@/views/main/humanResource/employee/components/OrganizationSection.vue'
 import ErrorAlert from '@/components/form/ErrorAlert.vue'
+import { useEmployeeStore } from '@/stores/employee'
+import { mapLaravelError } from '@/utils/errorHandler'
+import { useToastStore } from '@/stores/toast'
+import router from '@/router'
 
 interface EmployeeForm {
 	avatar: File | null
 	email: string
-	role: number | null
-	fullName: string
+	role_ids: number[]
+	name: string
 	code: string
 	gender: string | null
-	birthDate: string
-	phone: string
-	province: string | null
-	ward: string | null
+	birthdate: string | null
+	phone_number: string
+	province_code: string | null
+	ward_code: string | null
 	address: string
-	department: number | null
-	position: number | null
-	isLeader: boolean
+	department_id: number | null
+	position_id: number | null
+	is_leader: boolean
 }
 
 interface ValidateMessage {
+	avatar: string
 	email: string
-	fullName: string
-	role: string
-	department: string
-	position: string
+	name: string
+	role_ids: string
+	department_id: string
+	position_id: string
 	gender: string
-	birthDate: string
-	phone: string
-	province: string
-	ward: string
+	birthdate: string
+	phone_number: string
+	province_code: string
+	ward_code: string
 	address: string
+	is_leader: string
 }
+
+const { employeeCreate } = useEmployeeStore()
+const toast = useToastStore()
 
 const employeeData = reactive<EmployeeForm>({
 	avatar: null,
 	email: '',
-	role: null,
-	fullName: '',
+	role_ids: [],
+	name: '',
 	code: '',
 	gender: null,
-	birthDate: '',
-	phone: '',
-	province: null,
-	ward: null,
+	birthdate: '',
+	phone_number: '',
+	province_code: null,
+	ward_code: null,
 	address: '',
-	department: null,
-	position: null,
-	isLeader: false,
+	department_id: null,
+	position_id: null,
+	is_leader: false,
 })
 
 // Validation states (Mock)
 const errorMessage = reactive<ValidateMessage>({
+	avatar: '',
 	email: '',
-	fullName: '',
-	role: '',
-	department: '',
-	position: '',
+	name: '',
+	role_ids: '',
+	department_id: '',
+	position_id: '',
 	gender: '',
-	birthDate: '',
-	phone: '',
-	province: '',
-	ward: '',
+	birthdate: '',
+	phone_number: '',
+	province_code: '',
+	ward_code: '',
 	address: '',
+	is_leader: '',
 })
 
 const sections = [
@@ -79,23 +90,29 @@ const sections = [
 	{ id: 3, title: 'employee.section.organization' },
 ]
 
-const computedAvatarPreview = computed<string>(() => {
+const avatarReview = computed<string>(() => {
 	if (employeeData.avatar) {
 		return URL.createObjectURL(employeeData.avatar)
 	}
 	return defaultConfig.avatar
 })
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
 	try {
-		console.log(employeeData)
+		const response = await employeeCreate(employeeData)
+		toast.show(response.data.messageCode, 'success')
+		router.push({ name: 'hr.employee' })
 	} catch (error: any) {
-		console.log(error)
+		if (error.status === 422) {
+			mapLaravelError(errorMessage, error)
+			return
+		}
+		toast.show(error.response?.data?.messageCode, 'error')
 	}
 }
 
 const cancel = () => {
-	console.log('Cancel clicked')
+	router.back()
 }
 </script>
 
@@ -112,9 +129,9 @@ const cancel = () => {
 					color="primary"
 					size="150"
 					class="mb-3 text-h3 text-white font-weight-bold"
-					:image="computedAvatarPreview"
-				>
-				</v-avatar>
+					:image="avatarReview"
+				/>
+
 				<v-file-input
 					v-model="employeeData.avatar"
 					accept="image/png, image/jpeg, image/jpg"
@@ -144,28 +161,28 @@ const cancel = () => {
 				<account-section
 					v-if="section.id === 1"
 					v-model:email="employeeData.email"
-					v-model:role="employeeData.role"
+					v-model:role_ids="employeeData.role_ids"
 				/>
 
 				<!-- Section: Basic Profile -->
 				<profile-section
 					v-else-if="section.id === 2"
-					v-model:full-name="employeeData.fullName"
+					v-model:name="employeeData.name"
 					v-model:code="employeeData.code"
 					v-model:gender="employeeData.gender"
-					v-model:birth-date="employeeData.birthDate"
-					v-model:phone="employeeData.phone"
+					v-model:birthdate="employeeData.birthdate"
+					v-model:phone_number="employeeData.phone_number"
 					v-model:address="employeeData.address"
-					v-model:ward="employeeData.ward"
-					v-model:province="employeeData.province"
+					v-model:ward_code="employeeData.ward_code"
+					v-model:province_code="employeeData.province_code"
 				/>
 
 				<!-- Section: Organization & Position -->
 				<organization-section
 					v-else
-					v-model:department="employeeData.department"
-					v-model:position="employeeData.position"
-					v-model:is-leader="employeeData.isLeader"
+					v-model:department_id="employeeData.department_id"
+					v-model:position_id="employeeData.position_id"
+					v-model:is_leader="employeeData.is_leader"
 				/>
 
 				<v-divider v-if="section.id !== sections.length" class="my-6"></v-divider>

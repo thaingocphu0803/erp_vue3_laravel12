@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\HumanResource\Employee\EmployeeController;
 use App\Http\Controllers\Organization\DepartmentController;
 use App\Http\Controllers\Organization\PositionController;
 use App\Http\Controllers\Organization\RoleController;
@@ -49,4 +50,9 @@ Route::controller(RoleController::class)->prefix('role')->middleware('auth:sanct
 Route::controller(AdministrativeUnitController::class)->prefix('administrative-units')->middleware('auth:sanctum')->group(function () {
 	Route::get('provinces', 'provinces');
 	Route::get('provinces/{provinceCode}/wards', 'wards');
+});
+
+// EmployeeController
+Route::controller(EmployeeController::class)->prefix('employee')->middleware('auth:sanctum')->group(function () {
+	Route::post('create', 'create');
 });

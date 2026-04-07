@@ -8,24 +8,34 @@ import AnnotationTooltip from '@/components/form/AnnotationTooltip.vue'
 import { useFilterModule } from '@/composables/useFilterModule'
 import { useAdministrativeUnitStore } from '@/stores/administrativeUnit'
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import i18n from '@/plugins/vueI18n'
+import { formatDate } from '@/utils/dateFormat'
 
 interface ErrorMessage {
 	province: string
 	ward: string
 }
 
-const fullName = defineModel<string>('fullName')
+const name = defineModel<string>('name')
 const code = defineModel<string>('code')
-const gender = defineModel<string | null>('gender')
-const birthDate = defineModel<string>('birthDate')
-const phone = defineModel<string>('phone')
+const gender = defineModel<string | null>('gender', { default: null })
+const birthdate = defineModel<string | null>('birthdate')
+const phone_number = defineModel<string>('phone_number')
 const address = defineModel<string>('address')
-const ward = defineModel<string | null>('ward')
-const province = defineModel<string | null>('province')
+const ward_code = defineModel<string | null>('ward_code', { default: null })
+const province_code = defineModel<string | null>('province_code', { default: null })
 
 const { genders } = useFilterModule()
+
+const formatBirthdate = computed({
+	get() {
+		return birthdate.value ? new Date(birthdate.value) : null
+	},
+	set(value: Date | null) {
+		birthdate.value = formatDate(value)
+	},
+})
 
 const provinceLoading = ref<boolean>(false)
 const wardLoading = ref<boolean>(false)
@@ -71,10 +81,10 @@ const getWards = async (provinceCode: string | null) => {
 	}
 }
 
-watch(province, async (newVal) => {
+watch(province_code, async (newVal) => {
 	if (!newVal) return
 
-	ward.value = null
+	ward_code.value = null
 	disableWard.value = false
 	wardsReset()
 	await getWards(newVal)
@@ -85,10 +95,10 @@ watch(province, async (newVal) => {
 	<v-row dense>
 		<v-col cols="12" sm="6" class="mb-3">
 			<Input
-				v-model="fullName"
+				v-model="name"
 				:maxlength="defaultConfig.maxLengthName"
 				counter
-				:rules="employeeValidation.fullName"
+				:rules="employeeValidation.name"
 			>
 				<template #label>
 					<required-label :label="$t('employee.input.fullName')"></required-label>
@@ -129,7 +139,7 @@ watch(province, async (newVal) => {
 		</v-col>
 		<v-col cols="12" sm="6" class="mb-3">
 			<v-date-input
-				v-model="birthDate"
+				v-model="formatBirthdate"
 				density="compact"
 				variant="outlined"
 				input-format="yyyy/mm/dd"
@@ -149,10 +159,10 @@ watch(province, async (newVal) => {
 		<!-- Phone -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<Input
-				v-model="phone"
+				v-model="phone_number"
 				placeholder="0987654321"
 				prefix="+84"
-				:maxlength="defaultConfig.minLengthPhone"
+				:maxlength="defaultConfig.sizePhone"
 				counter
 				:rules="employeeValidation.phone"
 			>
@@ -168,7 +178,7 @@ watch(province, async (newVal) => {
 		<v-col cols="12" sm="4" class="mb-3">
 			<list-filter
 				:hide-details="false"
-				v-model="province"
+				v-model="province_code"
 				:items="provinces"
 				searchable
 				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
@@ -187,7 +197,7 @@ watch(province, async (newVal) => {
 		<v-col cols="12" sm="4" class="mb-3">
 			<list-filter
 				:hide-details="false"
-				v-model="ward"
+				v-model="ward_code"
 				:items="wards"
 				searchable
 				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
@@ -197,7 +207,7 @@ watch(province, async (newVal) => {
 				:disabled="disableWard"
 				:clearable="false"
 				:loading="wardLoading"
-				@click="getWards(province!)"
+				@click="getWards(province_code)"
 			>
 				<template #label>
 					<required-label :label="$t('employee.input.ward')"></required-label>

@@ -17,15 +17,15 @@ interface ErrorMessage {
 	getPositionList: string
 }
 
-const department = defineModel<number | null>('department', {
+const department_id = defineModel<number | null>('department_id', {
 	default: null,
 })
 
-const position = defineModel<number | null>('position', {
+const position_id = defineModel<number | null>('position_id', {
 	default: null,
 })
 
-const isLeader = defineModel<boolean>('isLeader', {
+const is_leader = defineModel<boolean>('is_leader', {
 	default: false,
 })
 const disablePosition = ref<boolean>(true)
@@ -85,10 +85,10 @@ const getPositionList = async (departmentId: number | null) => {
 	}
 }
 
-watch(department, (newValue) => {
+watch(department_id, (newValue) => {
 	if (!newValue) return
 
-	position.value = null
+	position_id.value = null
 	disablePosition.value = false
 	positionReset()
 	getPositionList(newValue)
@@ -100,7 +100,7 @@ watch(department, (newValue) => {
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
 				:hide-details="false"
-				v-model="department"
+				v-model="department_id"
 				:items="departments"
 				searchable
 				item-title="name"
@@ -127,7 +127,7 @@ watch(department, (newValue) => {
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
 				:hide-details="false"
-				v-model="position"
+				v-model="position_id"
 				:items="positionByDepartment"
 				searchable
 				item-title="name"
@@ -136,7 +136,7 @@ watch(department, (newValue) => {
 				:disabled="disablePosition"
 				:rules="employeeValidation.position"
 				:error-messages="errorMessage.getPositionList"
-				@click="getPositionList(department)"
+				@click="getPositionList(department_id)"
 				:clearable="false"
 			>
 				<template #prepend-item>
@@ -155,9 +155,9 @@ watch(department, (newValue) => {
 
 		<v-col cols="12" class="mt-n4">
 			<Checkbox
-				:style="{ visibility: department ? 'visible' : 'hidden' }"
+				:style="{ visibility: department_id ? 'visible' : 'hidden' }"
 				color="primary"
-				v-model="isLeader"
+				v-model="is_leader"
 				:label="$t('employee.input.isLeader')"
 				name="is_leader"
 			/>
