@@ -23,27 +23,25 @@ class EmployeeService
 	public function create(array $data)
 	{
 		$avatar = 'url';
-		$phoneNumber = preg_replace('/^0/', PhoneCode::VIETNAM->value, $data['phone_number']);
-		dd($phoneNumber);
+		dd($data);
+		// try {
+		// 	return DB::transaction(function () use ($data, $avatar) {
+		// 		$credentialPayload = $this->getCredentialPayload($data);
+		// 		$user = $this->userRepository->create($credentialPayload);
 
-		try {
-			return DB::transaction(function () use ($data, $avatar) {
-				$credentialPayload = $this->getCredentialPayload($data);
-				$user = $this->userRepository->create($credentialPayload);
+		// 		$user->roles()->attach($data['role_ids']);
 
-				$user->roles()->attach($data['role_ids']);
+		// 		$employeePayload = $this->getEmployeePayload($data, $user->id, $avatar);
+		// 		$this->employeeRepository->create($employeePayload);
 
-				$employeePayload = $this->getEmployeePayload($data, $user->id, $avatar);
-				$this->employeeRepository->create($employeePayload);
-
-				if ($data['is_leader']) {
-					$departmentPayload = ['leader_id' => $user->id];
-					$this->departmentRepositoryInterface->update($data['department_id'], $departmentPayload);
-				}
-			});
-		} catch (\Exception $e) {
-			return false;
-		}
+		// 		if ($data['is_leader']) {
+		// 			$departmentPayload = ['leader_id' => $user->id];
+		// 			$this->departmentRepositoryInterface->update($data['department_id'], $departmentPayload);
+		// 		}
+		// 	});
+		// } catch (\Exception $e) {
+		// 	return false;
+		// }
 	}
 
 	private function getCredentialPayload(array $data)
