@@ -3,14 +3,17 @@
 namespace App\Providers;
 
 use App\Repositories\Eloquent\BaseRepository;
+use App\Repositories\Eloquent\HumanResource\EmployeeRepository;
+use App\Repositories\Eloquent\HumanResource\UserRepository;
 use App\Repositories\Eloquent\Organization\DepartmentRepository;
 use App\Repositories\Eloquent\Organization\PositionRepository;
 use App\Repositories\Eloquent\Organization\RoleRepository;
 use App\Repositories\Eloquent\System\AdministrativeUnitRepository;
 use App\Repositories\Eloquent\System\LookupRepository;
 
-
 use App\Repositories\Interfaces\BaseRepositoryInterface;
+use App\Repositories\Interfaces\HumanResource\EmployeeRepositoryInterface;
+use App\Repositories\Interfaces\HumanResource\UserRepositoryInterface;
 use App\Repositories\Interfaces\Organization\DepartmentRepositoryInterface;
 use App\Repositories\Interfaces\Organization\PositionRepositoryInterface;
 use App\Repositories\Interfaces\Organization\RoleRepositoryInterface;
@@ -38,6 +41,10 @@ class RepositoryServiceProvider extends ServiceProvider
 			DepartmentRepositoryInterface::class => DepartmentRepository::class,
 
 			PositionRepositoryInterface::class => PositionRepository::class,
+
+			EmployeeRepositoryInterface::class => EmployeeRepository::class,
+
+			UserRepositoryInterface::class => UserRepository::class,
 		];
 
 		foreach ($bindings as $interface => $repository) {

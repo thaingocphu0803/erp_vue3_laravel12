@@ -19,13 +19,15 @@ return new class extends Migration
 			$table->string('phone_number', 12)->unique();
 			$table->enum('gender', ['male', 'female']);
 			$table->date('birthday');
-			$table->text('avatar_url')->nullable();
+			$table->text('avatar')->nullable();
 			$table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();
 			$table->string('province_code', 20)->nullable();
 			$table->string('ward_code', 20)->nullable();
 			$table->foreign('province_code')->references('code')->on('provinces')->nullOnDelete();
 			$table->foreign('ward_code')->references('code')->on('wards')->nullOnDelete();
+			$table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+			$table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->softDeletes();
 			$table->timestamps();
 		});

@@ -27,6 +27,11 @@ abstract class BaseRepository implements BaseRepositoryInterface
 		return $model;
 	}
 
+	public function update(int $id, array $payload)
+	{
+		return $this->model->where('id', $id)->update($payload);
+	}
+
 	public function paginate(array $paginationPayload, string $relation = '')
 	{
 		$defaultPerpage = 10;

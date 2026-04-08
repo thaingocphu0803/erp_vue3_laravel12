@@ -8,5 +8,7 @@ interface BaseRepositoryInterface
 
 	public function createWithPivote(array $payload, string $relation, array $pivotPayload);
 
+	public function update(int $id, array $payload);
+
 	public function paginate(array $paginationPayload, string $relation = '');
 }

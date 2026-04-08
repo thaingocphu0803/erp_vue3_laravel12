@@ -6,7 +6,9 @@ export const useEmployeeStore = defineStore('employee', () => {
 		let formData = new FormData()
 
 		Object.entries(payload).forEach(([key, value]) => {
-			formData.append(key, value)
+			if (value !== null && value !== undefined) {
+				formData.append(key, value)
+			}
 		})
 
 		const response = await api.post('employee/create', formData, {

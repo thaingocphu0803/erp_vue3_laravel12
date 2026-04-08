@@ -275,6 +275,14 @@
 			"isLeader": {
 				"format": "Invalid appoint as department head format"
 			}
+		},
+		"alert": {
+			"error": {
+				"create": "Failed to create employee"
+			},
+			"success": {
+				"create": "Employee created successfully"
+			}
 		}
 	},
 	"common-list": {

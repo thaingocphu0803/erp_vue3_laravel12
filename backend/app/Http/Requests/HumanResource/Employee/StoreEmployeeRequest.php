@@ -21,6 +21,7 @@ class StoreEmployeeRequest extends FormRequest
 		$this->merge([
 			'gender' => strtolower($this->gender),
 			'is_leader' => (bool) $this->is_leader,
+			'role_ids' => explode(',', $this->role_ids),
 		]);
 	}
 
@@ -55,10 +56,9 @@ class StoreEmployeeRequest extends FormRequest
 			'avatar.image' => 'employee.validate.avatar.image',
 			'avatar.max' => 'employee.validate.avatar.size',
 			'avatar.mimes' => 'employee.validate.avatar.format',
-			'role_ids.required' => 'employee.validate.roleId.required',
+			'role_ids.array' => 'employee.validate.roleId.format',
+			'role_ids.min' => 'employee.validate.roleId.atLeastOne',
 			'role_ids.exists' => 'employee.validate.roleId.exists',
-			'role_ids.atLeastOne' => 'employee.validate.roleId.atLeastOne',
-			'role_ids.format' => 'employee.validate.roleId.format',
 			'role_ids.distinct' => 'employee.validate.roleId.distinct',
 			'email.required' => 'employee.validate.email.required',
 			'email.email' => 'employee.validate.email.format',

@@ -9,18 +9,19 @@ use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
+	use WithoutModelEvents;
 
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
-    {
-        User::firstOrCreate(
-        ['name' => env('ADMIN_NAME')],
-        [
-            'email' => env('ADMIN_EMAIL'),
-            'password' => Hash::make(env('ADMIN_PASSWORD')),
-        ]);
-    }
+	/**
+	 * Seed the application's database.
+	 */
+	public function run(): void
+	{
+		User::firstOrCreate(
+			['name' => env('ADMIN_NAME')],
+			[
+				'email' => env('ADMIN_EMAIL'),
+				'password' => Hash::make(env('ADMIN_PASSWORD')),
+			]
+		);
+	}
 }

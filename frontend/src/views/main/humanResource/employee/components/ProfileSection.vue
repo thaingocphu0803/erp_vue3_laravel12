@@ -204,7 +204,7 @@ watch(province_code, async (newVal) => {
 				searchable
 				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
 				item-value="code"
-				:rules="wards.length === 0 ? [] : employeeValidation.ward"
+				:rules="employeeValidation.ward"
 				:error-messages="errorMessage.ward"
 				:disabled="disableWard"
 				:clearable="false"

@@ -272,6 +272,14 @@
 			"isLeader": {
 				"format": "Định dạng chỉ định trưởng bộ phận không hợp lệ"
 			}
+		},
+		"alert": {
+			"error": {
+				"create": "Tạo mới nhân viên thất bại"
+			},
+			"success": {
+				"create": "Tạo mới nhân viên thành công"
+			}
 		}
 	},
 	"common-list": {
