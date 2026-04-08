@@ -115,7 +115,7 @@ const fetchDepartmentIndex = async (params: object) => {
 		}
 
 		if (error.response?.status === 422 || error.response?.status === 500) {
-			const errorMesssage = error.response.data.messageCode
+			const errorMesssage = error.response.data.message
 			toast.show(errorMesssage, 'error')
 		}
 	} finally {

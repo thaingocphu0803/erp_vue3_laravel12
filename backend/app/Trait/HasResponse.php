@@ -6,40 +6,39 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 trait HasResponse
 {
-    public function exceptionResponse($messageCode, $status_code, $errors= [])
-    {
-        $dataResponse = $this->initValidationResponseData($messageCode, $errors);
+	public function exceptionResponse($message, $status_code, $errors = [])
+	{
+		$dataResponse = $this->initValidationResponseData($message, $errors);
 
-        throw new HttpResponseException(
-            response()->json($dataResponse, (int) $status_code)
-        );
-    }
+		throw new HttpResponseException(
+			response()->json($dataResponse, (int) $status_code)
+		);
+	}
 
-    public function jsonResponse($messageCode, $status_code = 200, $data = [])
-    {
-        $dataResponse = $this->initResponseData($messageCode, $data);
+	public function jsonResponse($message, $status_code = 200, $data = [])
+	{
+		$dataResponse = $this->initResponseData($message, $data);
 
-        return response()->json($dataResponse, (int) $status_code);
-    }
+		return response()->json($dataResponse, (int) $status_code);
+	}
 
-    private function initResponseData($messageCode = '', $dataResponse = [])
-    {
-        $data = [
-            'messageCode' => (string) $messageCode,
-            'data' => (array) $dataResponse
-        ];
+	private function initResponseData($message = '', $dataResponse = [])
+	{
+		$data = [
+			'message' => (string) $message,
+			'data' => (array) $dataResponse
+		];
 
-        return $data;
-    }
+		return $data;
+	}
 
-    private function initValidationResponseData($messageCode = '', $errors = [])
-    {
-        $data = [
-            'messageCode' => (string) $messageCode,
-            'errors' => (array) $errors
-        ];
+	private function initValidationResponseData($message = '', $errors = [])
+	{
+		$data = [
+			'message' => (string) $message,
+			'errors' => (array) $errors
+		];
 
-        return $data;
-    }
-
+		return $data;
+	}
 }

@@ -100,14 +100,14 @@ const avatarReview = computed<string>(() => {
 const handleSubmit = async () => {
 	try {
 		const response = await employeeCreate(employeeData)
-		toast.show(response.data.messageCode, 'success')
+		toast.show(response.data.message, 'success')
 		router.push({ name: 'hr.employee' })
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)
 			return
 		}
-		toast.show(error.response?.data?.messageCode, 'error')
+		toast.show(error.response?.data?.message, 'error')
 	}
 }
 

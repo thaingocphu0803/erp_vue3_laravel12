@@ -28,7 +28,7 @@ const getRoleList = async () => {
 		getRolesErrorMessage.value = ''
 	} catch (error: any) {
 		if (error.status === 422 || error.status === 500) {
-			getRolesErrorMessage.value = error.response?.data?.messageCode
+			getRolesErrorMessage.value = error.response?.data?.message
 		}
 	} finally {
 		loadingRole.value = false

@@ -54,7 +54,7 @@ const getDepartmentList = async () => {
 		errorMessage.value.getDepartmentList = ''
 	} catch (error: any) {
 		if (error.status === 422 || error.status === 500) {
-			errorMessage.value.getDepartmentList = error.response?.data?.messageCode
+			errorMessage.value.getDepartmentList = error.response?.data?.message
 		}
 	} finally {
 		loadingDepartments.value = false
@@ -72,12 +72,7 @@ const getPositionList = async (departmentId: number | null) => {
 		await positionsFetchByDepartmentId(departmentId)
 		errorMessage.value.getPositionList = ''
 	} catch (error: any) {
-		console.log(error)
-		if (error.status === 500) {
-			errorMessage.value.getPositionList = error.response?.data?.messageCode
-		}
-
-		if (error.status === 422) {
+		if (error.status === 422 || error.status === 500) {
 			errorMessage.value.getPositionList = error.response?.data?.message
 		}
 	} finally {

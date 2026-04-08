@@ -71,7 +71,7 @@ const handleLogin = async () => {
 		const status = error.response.status
 
 		if (status === 401) {
-			errorMessage.unauthorized = error.response.data.messageCode
+			errorMessage.unauthorized = error.response.data.message
 		} else if (status == 422) {
 			mapLaravelError(errorMessage, error)
 		}

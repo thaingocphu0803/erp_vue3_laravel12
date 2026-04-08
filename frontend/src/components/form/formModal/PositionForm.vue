@@ -72,7 +72,7 @@ const getDepartmentList = async () => {
 		errorMessage.getDepartmentList = ''
 	} catch (error: any) {
 		if (error.status === 422 || error.status === 500) {
-			errorMessage.getDepartmentList = error.response?.data?.messageCode
+			errorMessage.getDepartmentList = error.response?.data?.message
 		}
 	} finally {
 		loadingDepartment.value = false
@@ -86,7 +86,7 @@ const getPositionList = async () => {
 		errorMessage.getPositionList = ''
 	} catch (error: any) {
 		if (error.status === 422 || error.status === 500) {
-			errorMessage.getPositionList = error.response?.data?.messageCode
+			errorMessage.getPositionList = error.response?.data?.message
 		}
 	} finally {
 		loadingPosition.value = false
@@ -96,14 +96,14 @@ const getPositionList = async () => {
 const handleSubmit = async () => {
 	try {
 		const response = await positionCreate(positionData)
-		toast.show(response.data.messageCode, 'success')
+		toast.show(response.data.message, 'success')
 		emit('save')
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)
 			return
 		}
-		toast.show(error.response?.data?.messageCode, 'error')
+		toast.show(error.response?.data?.message, 'error')
 	}
 }
 
