@@ -5,7 +5,7 @@ import employeeValidation from '@/composables/validation/useEmployeeValidation'
 import { useDepartmentStore } from '@/stores/department'
 import { usePositionStore } from '@/stores/position'
 import { storeToRefs } from 'pinia'
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import Checkbox from '@/components/form/CheckBox.vue'
 import defaultConfig from '@/config/default'
 import DepartmentForm from '@/components/form/formModal/DepartmentForm.vue'
@@ -35,6 +35,11 @@ const { positionsFetchByDepartmentId, positionReset } = usePositionStore()
 
 const { departments } = storeToRefs(useDepartmentStore())
 const { positionByDepartment } = storeToRefs(usePositionStore())
+
+const showIsLeader = computed(() => {
+	const department = departments.value.find((department) => department.id === department_id.value)
+	return department ? department.leader_id === null : false
+})
 
 const loadingDepartments = ref<boolean>(false)
 const loadingPositions = ref<boolean>(false)
@@ -150,7 +155,7 @@ watch(department_id, (newValue) => {
 
 		<v-col cols="12" class="mt-n4">
 			<Checkbox
-				:style="{ visibility: department_id ? 'visible' : 'hidden' }"
+				:style="{ visibility: showIsLeader ? 'visible' : 'hidden' }"
 				color="primary"
 				v-model="is_leader"
 				:label="$t('employee.input.isLeader')"

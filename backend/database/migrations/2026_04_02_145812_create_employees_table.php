@@ -18,7 +18,7 @@ return new class extends Migration
 			$table->string('address', 255);
 			$table->string('phone_number', 12)->unique();
 			$table->enum('gender', ['male', 'female']);
-			$table->date('birthday');
+			$table->date('birth_date');
 			$table->text('avatar')->nullable();
 			$table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->foreignId('position_id')->nullable()->constrained('positions')->nullOnDelete();

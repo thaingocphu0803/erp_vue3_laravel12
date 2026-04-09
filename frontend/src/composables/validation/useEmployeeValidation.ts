@@ -41,7 +41,7 @@ const messages = {
 		required: 'employee.validate.gender.required',
 	},
 	birthDate: {
-		required: 'employee.validate.birthdate.required',
+		required: 'employee.validate.birthDate.required',
 	},
 	province: {
 		required: 'employee.validate.provinceCode.required',

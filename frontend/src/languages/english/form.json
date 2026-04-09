@@ -267,7 +267,7 @@
 				"exists": "Position does not exist",
 				"departmentInvalid": "Department information is invalid"
 			},
-			"birthdate": {
+			"birthDate": {
 				"required": "Date of birth is required",
 				"format": "Invalid date format",
 				"before": "Date of birth must be before today"

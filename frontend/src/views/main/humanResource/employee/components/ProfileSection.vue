@@ -20,7 +20,7 @@ interface ErrorMessage {
 const name = defineModel<string>('name')
 const code = defineModel<string>('code')
 const gender = defineModel<string | null>('gender', { default: null })
-const birthdate = defineModel<string | null>('birthdate')
+const birth_date = defineModel<string | null>('birth_date')
 const phone_number = defineModel<string>('phone_number')
 const address = defineModel<string>('address')
 const ward_code = defineModel<string | null>('ward_code', { default: null })
@@ -30,10 +30,10 @@ const { genders } = useFilterModule()
 
 const formatBirthdate = computed({
 	get() {
-		return birthdate.value ? new Date(birthdate.value) : null
+		return birth_date.value ? new Date(birth_date.value) : null
 	},
 	set(value: Date | null) {
-		birthdate.value = formatDate(value)
+		birth_date.value = formatDate(value)
 	},
 })
 

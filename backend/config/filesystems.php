@@ -1,5 +1,7 @@
 <?php
 
+use League\Flysystem\GoogleCloudStorage\UniformBucketLevelAccessVisibility;
+
 return [
 
 	/*
@@ -66,6 +68,10 @@ return [
 			'project_id' => env('GCP_PROJECT_ID'),
 			'bucket' => env('GCP_STORAGE_BUCKET'),
 			'storage_api_url' => env('GCP_STORAGE_API_URL', null),
+			'visibility' => 'public',
+			'visibility_handler' =>  UniformBucketLevelAccessVisibility::class, //Avoid Laravel using 
+			'throw' => false,
+			'report' => false,
 		],
 
 	],

@@ -6,6 +6,7 @@ use App\Enum\PhoneCode;
 use App\Repositories\Interfaces\HumanResource\EmployeeRepositoryInterface;
 use App\Repositories\Interfaces\HumanResource\UserRepositoryInterface;
 use App\Repositories\Interfaces\Organization\DepartmentRepositoryInterface;
+use App\Services\System\FileService;
 use App\Trait\HasAutoGenerate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,31 +18,41 @@ class EmployeeService
 	public function __construct(
 		protected UserRepositoryInterface $userRepository,
 		protected EmployeeRepositoryInterface $employeeRepository,
-		protected DepartmentRepositoryInterface $departmentRepositoryInterface
+		protected DepartmentRepositoryInterface $departmentRepositoryInterface,
+		protected FileService $fileService
 	) {}
 
 	public function create(array $data)
 	{
-		$avatar = 'url';
-		dd($data);
-		// try {
-		// 	return DB::transaction(function () use ($data, $avatar) {
-		// 		$credentialPayload = $this->getCredentialPayload($data);
-		// 		$user = $this->userRepository->create($credentialPayload);
+		$avatarPath = null;
 
-		// 		$user->roles()->attach($data['role_ids']);
+		if (!empty($data['avatar'])) {
+			$filename = Str::uuid() . '.webp';
+			$path = 'avatars';
+			$avatarPath = $this->fileService->upload($data['avatar'], $path, $filename);
+		}
 
-		// 		$employeePayload = $this->getEmployeePayload($data, $user->id, $avatar);
-		// 		$this->employeeRepository->create($employeePayload);
+		try {
+			return DB::transaction(function () use ($data, $avatarPath) {
+				$credentialPayload = $this->getCredentialPayload($data);
+				$user = $this->userRepository->create($credentialPayload);
 
-		// 		if ($data['is_leader']) {
-		// 			$departmentPayload = ['leader_id' => $user->id];
-		// 			$this->departmentRepositoryInterface->update($data['department_id'], $departmentPayload);
-		// 		}
-		// 	});
-		// } catch (\Exception $e) {
-		// 	return false;
-		// }
+				$user->roles()->attach($data['role_ids']);
+
+				$employeePayload = $this->getEmployeePayload($data, $user->id, $avatarPath);
+				$this->employeeRepository->create($employeePayload);
+
+				if ($data['is_leader']) {
+					$departmentPayload = ['leader_id' => $user->id];
+					$this->departmentRepositoryInterface->update($data['department_id'], $departmentPayload);
+				}
+
+				return true;
+			});
+		} catch (\Exception $e) {
+			$this->fileService->delete($avatarPath);
+			return false;
+		}
 	}
 
 	private function getCredentialPayload(array $data)
@@ -55,7 +66,7 @@ class EmployeeService
 		];
 	}
 
-	private function getEmployeePayload(array $data, int $userId, string $avatar)
+	private function getEmployeePayload(array $data, int $userId, ?string $avatar)
 	{
 
 		$code = !is_null($data['code']) ? $data['code'] : $this->generateCode('employees', 'EMP');
@@ -68,12 +79,10 @@ class EmployeeService
 			'address' => $data['address'],
 			'phone_number' => $phoneNumber,
 			'gender' => $data['gender'],
-			'birthdate' => $data['birthdate'],
+			'birth_date' => $data['birth_date'],
 			'avatar' => $avatar,
 			'department_id' => $data['department_id'],
 			'position_id' => $data['position_id'],
-			'is_leader' => $data['is_leader'],
-			'name' => $data['name'],
 			'ward_code' => $data['ward_code'],
 			'province_code' => $data['province_code'],
 			'created_by' => Auth::id(),

@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexCommonRequest;
 use App\Http\Requests\Organization\Position\ListByDepartmentRequest;
 use App\Http\Requests\Organization\Position\StorePositionRequest;
+use App\Http\Resources\Lookup\DepartmentLookupResource;
 use App\Http\Resources\Organization\PositionResource;
-use App\Http\Resources\System\LookupResource;
 use App\Services\Organization\PositionService;
 use App\Trait\HasResponse;
 use Illuminate\Http\JsonResponse;
@@ -58,6 +58,6 @@ class PositionController extends Controller
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
-		return LookupResource::collection($positions)->response();
+		return DepartmentLookupResource::collection($positions)->response();
 	}
 }

@@ -5,10 +5,11 @@ import { ref } from 'vue'
 interface Department {
 	id: number
 	name: string
+	leader_id: number | null
 }
 
 export const useDepartmentStore = defineStore('deparment', () => {
-	const departments = ref<Department[]>()
+	const departments = ref<Department[]>([])
 
 	const isFetched = ref<boolean>(false)
 

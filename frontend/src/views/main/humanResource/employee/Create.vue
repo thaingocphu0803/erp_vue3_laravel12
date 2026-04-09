@@ -21,7 +21,7 @@ interface EmployeeForm {
 	name: string
 	code: string
 	gender: string | null
-	birthdate: string | null
+	birth_date: string | null
 	phone_number: string
 	province_code: string | null
 	ward_code: string | null
@@ -31,7 +31,7 @@ interface EmployeeForm {
 	is_leader: boolean
 }
 
-interface ValidateMessage {
+interface ErrorMessage {
 	avatar: string
 	email: string
 	name: string
@@ -39,12 +39,13 @@ interface ValidateMessage {
 	department_id: string
 	position_id: string
 	gender: string
-	birthdate: string
+	birth_date: string
 	phone_number: string
 	province_code: string
 	ward_code: string
 	address: string
 	is_leader: string
+	code: string
 }
 
 const { employeeCreate } = useEmployeeStore()
@@ -57,7 +58,7 @@ const employeeData = reactive<EmployeeForm>({
 	name: '',
 	code: '',
 	gender: null,
-	birthdate: '',
+	birth_date: '',
 	phone_number: '',
 	province_code: null,
 	ward_code: null,
@@ -68,7 +69,7 @@ const employeeData = reactive<EmployeeForm>({
 })
 
 // Validation states (Mock)
-const errorMessage = reactive<ValidateMessage>({
+const errorMessage = reactive<ErrorMessage>({
 	avatar: '',
 	email: '',
 	name: '',
@@ -76,12 +77,13 @@ const errorMessage = reactive<ValidateMessage>({
 	department_id: '',
 	position_id: '',
 	gender: '',
-	birthdate: '',
+	birth_date: '',
 	phone_number: '',
 	province_code: '',
 	ward_code: '',
 	address: '',
 	is_leader: '',
+	code: '',
 })
 
 const sections = [
@@ -170,7 +172,7 @@ const cancel = () => {
 					v-model:name="employeeData.name"
 					v-model:code="employeeData.code"
 					v-model:gender="employeeData.gender"
-					v-model:birthdate="employeeData.birthdate"
+					v-model:birth_date="employeeData.birth_date"
 					v-model:phone_number="employeeData.phone_number"
 					v-model:address="employeeData.address"
 					v-model:ward_code="employeeData.ward_code"

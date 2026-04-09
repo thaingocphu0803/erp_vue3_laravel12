@@ -4,7 +4,8 @@ namespace App\Http\Controllers\System;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\System\LookupByModelRequest;
-use App\Http\Resources\System\LookupResource;
+use App\Http\Resources\Lookup\DepartmentLookupResource;
+use App\Http\Resources\Lookup\LookupResource;
 use App\Services\System\LookupService;
 use App\Trait\HasResponse;
 use Illuminate\Http\JsonResponse;
@@ -23,6 +24,12 @@ class LookupController extends Controller
 
 		$model = $lookupByModelRequest->validated('model');
 
+		$resourceMap = [
+			'departments' => DepartmentLookupResource::class,
+			'positions' => LookupResource::class,
+			'roles' => LookupResource::class
+		];
+
 		$list = $this->lookupService->list($model);
 
 		if (!$list) {
@@ -30,6 +37,6 @@ class LookupController extends Controller
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
-		return LookupResource::collection($list)->response();
+		return $resourceMap[$model]::collection($list)->response();
 	}
 }

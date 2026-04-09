@@ -247,7 +247,7 @@
 				"exists": "Không tìm thấy chức vụ",
 				"departmentInvalid": "Thông tin phòng ban không hợp lệ"
 			},
-			"birthdate": {
+			"birthDate": {
 				"required": "Vui lòng chọn ngày sinh",
 				"format": "Sai định dạng ngày sinh",
 				"before": "Ngày sinh phải trước ngày hiện tại"
