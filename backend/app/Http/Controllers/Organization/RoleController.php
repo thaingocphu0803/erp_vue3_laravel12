@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Organization;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexCommonRequest;
 use App\Http\Requests\Organization\Role\StoreRoleRequest;
-use App\Http\Resources\Organization\RoleResource;
+use App\Http\Resources\Organization\Role\RoleListResource;
+use App\Http\Resources\Organization\Role\RolePaginateResource;
 use App\Services\Organization\RoleService;
 use App\Trait\HasResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,7 +23,7 @@ class RoleController extends Controller
 	{
 		$data =  $storeRoleRequest->validated();
 
-		if ($this->roleService->create($data)) {
+		if ($this->roleService->create($data) === false) {
 			$message = 'role.alert.success.create';
 			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
 		}
@@ -37,11 +38,23 @@ class RoleController extends Controller
 
 		$roles = $this->roleService->paginate($data);
 
-		if (!$roles) {
+		if ($roles === false) {
 			$message = 'common-list.alert.error.getTableData';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
-		return RoleResource::collection($roles)->response();
+		return RolePaginateResource::collection($roles)->response();
+	}
+
+	public function list()
+	{
+		$roles = $this->roleService->list();
+
+		if ($roles === false) {
+			$message = 'role.alert.error.getList';
+			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+		}
+
+		return RoleListResource::collection($roles)->response();
 	}
 }

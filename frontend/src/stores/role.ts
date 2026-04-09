@@ -9,7 +9,8 @@ export const useRoleStore = defineStore('role', () => {
 
 	const rolesFetch = async () => {
 		if (isFetched.value) return
-		const response = await api.get('lookup/list', { params: { model: 'roles' } })
+
+		const response = await api.get('role/list')
 		roles.value = response.data.data
 		isFetched.value = true
 	}

@@ -58,20 +58,22 @@ const loading = ref<boolean>(false)
 
 const visible = ref<boolean>(false)
 
+const { authLogin } = useAuthStore()
+
 const handleLogin = async () => {
 	try {
 		loading.value = true
 
-		const { authLogin } = useAuthStore()
-		const response = await authLogin(LoginData)
+		await authLogin(LoginData)
 
 		redirect.value = (route.query.redirect as string) || { name: 'dashboard' }
+
 		router.replace(redirect.value)
 	} catch (error: any) {
 		const status = error.response.status
 
 		if (status === 401) {
-			errorMessage.unauthorized = error.response.data.message
+			errorMessage.unauthorized = error.response.data.messageCode
 		} else if (status == 422) {
 			mapLaravelError(errorMessage, error)
 		}

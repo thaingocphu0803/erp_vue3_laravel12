@@ -56,8 +56,8 @@ const getProvinces = async () => {
 		await provincesFetch()
 		errorMessage.value.province = ''
 	} catch (error: any) {
-		if (error.status === 422 || error.status === 500) {
-			errorMessage.value.province = error.response?.data?.message
+		if (error.status === 500) {
+			errorMessage.value.province = error.response?.data?.messageCode
 		}
 	} finally {
 		provinceLoading.value = false
@@ -75,7 +75,11 @@ const getWards = async (provinceCode: string | null) => {
 		await wardsFetchByProvinceCode(provinceCode)
 		errorMessage.value.ward = ''
 	} catch (error: any) {
-		if (error.status === 422 || error.status === 500) {
+		if (error.status === 500) {
+			errorMessage.value.ward = error.response?.data?.messageCode
+		}
+
+		if (error.status === 422) {
 			errorMessage.value.ward = error.response?.data?.message
 		}
 	} finally {

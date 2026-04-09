@@ -19,7 +19,7 @@ class EmployeeController extends Controller
 	{
 		$data = $storeEmployeeRequest->validated();
 
-		if ($this->employeeService->create($data)) {
+		if ($this->employeeService->create($data) !== false) {
 			$message = 'employee.alert.success.create';
 			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
 		}

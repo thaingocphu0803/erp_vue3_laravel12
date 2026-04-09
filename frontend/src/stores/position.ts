@@ -26,8 +26,7 @@ export const usePositionStore = defineStore('position', () => {
 	const positionFetch = async () => {
 		if (isFetched.value) return
 
-		const params = { model: 'positions' }
-		const response = await api.get('lookup/list', { params })
+		const response = await api.get('position/list')
 		positions.value = response.data.data
 		isFetched.value = true
 		return response

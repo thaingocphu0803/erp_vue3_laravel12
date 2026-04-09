@@ -56,4 +56,9 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
 		return $result;
 	}
+
+	public function list()
+	{
+		return $this->model->all();
+	}
 }

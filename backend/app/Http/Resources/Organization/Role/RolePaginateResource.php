@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Lookup;
+namespace App\Http\Resources\Organization\Role;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
-class DepartmentLookupResource extends JsonResource
+class RolePaginateResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -17,7 +18,9 @@ class DepartmentLookupResource extends JsonResource
 		return [
 			'id' => $this->id,
 			'name' => $this->name,
-			'leader_id' => $this->leader_id,
+			'created_by' => $this->creator->name,
+			'created_at' => Carbon::parse($this->created_at)->format('Y/m/d'),
+			'status' => $this->status
 		];
 	}
 }

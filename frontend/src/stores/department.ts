@@ -14,11 +14,9 @@ export const useDepartmentStore = defineStore('deparment', () => {
 	const isFetched = ref<boolean>(false)
 
 	const departmentsFetch = async () => {
-		const params = { model: 'departments' }
-
 		if (isFetched.value) return
 
-		const response = await api.get('lookup/list', { params })
+		const response = await api.get('department/list')
 		departments.value = response.data.data
 
 		isFetched.value = true

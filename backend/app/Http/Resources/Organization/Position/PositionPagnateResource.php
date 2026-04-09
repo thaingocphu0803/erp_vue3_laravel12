@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Resources\Organization;
+namespace App\Http\Resources\Organization\Position;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Carbon;
 
-class DepartmentResource extends JsonResource
+class PositionPagnateResource extends JsonResource
 {
 	/**
 	 * Transform the resource into an array.
@@ -18,8 +18,7 @@ class DepartmentResource extends JsonResource
 		return [
 			'id'          => $this->id,
 			'name'        => $this->name,
-			'created_by'        => $this->name,
-			'created_at'  => Carbon::parse($this->created_at)->format('Y/m/d'),
+			'created_at'  	=> Carbon::parse($this->created_at)->format('Y/m/d'),
 			'status'      => $this->status,
 		];
 	}

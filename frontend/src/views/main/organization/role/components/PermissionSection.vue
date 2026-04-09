@@ -16,6 +16,7 @@ const { permissionFetch } = usePermissionStore()
 const selectedPermissions = ref<RolePermission>({})
 const loadingPermission = ref<boolean>(false)
 const searchModule = ref<string>('')
+const errorMessage = ref<string>('')
 
 onMounted(async () => {
 	try {
@@ -25,7 +26,9 @@ onMounted(async () => {
 
 		updateSelectedPermisions()
 	} catch (error: any) {
-		console.log(error)
+		if (error.status === 500) {
+			errorMessage.value = error.response.data.messageCode
+		}
 	} finally {
 		loadingPermission.value = false
 	}
@@ -91,9 +94,7 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 			</div>
 
 			<template v-if="!Object.entries(permissionGroup).length">
-				<div class="text-center text-body-1">
-					({{ $t('common-list.alert.error.getPermissions') }})
-				</div>
+				<div class="text-center text-body-1">({{ $t(errorMessage) }})</div>
 			</template>
 
 			<v-table

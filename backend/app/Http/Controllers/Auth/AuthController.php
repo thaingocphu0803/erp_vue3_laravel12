@@ -21,20 +21,20 @@ class AuthController extends Controller
 	{
 		$data =  $loginRequest->validated();
 
-		if ($this->authService->login($data)) {
+		if (!$this->authService->login($data)) {
 
-			$loginRequest->session()->regenerateToken();
+			$message = 'auth.alert.error.incorrectAuth';
 
-			$user = $this->authService->me();
-
-			$message = 'auth.alert.success.login';
-
-			return $this->jsonResponse($message, JsonResponse::HTTP_OK, compact('user'));
+			return  $this->jsonResponse($message, JsonResponse::HTTP_UNAUTHORIZED);
 		}
 
-		$message = 'auth.alert.error.incorrectAuth';
+		$loginRequest->session()->regenerateToken();
 
-		return  $this->jsonResponse($message, JsonResponse::HTTP_UNAUTHORIZED);
+		$user = $this->authService->me();
+
+		$message = 'auth.alert.success.login';
+
+		return $this->jsonResponse($message, JsonResponse::HTTP_OK, compact('user'));
 	}
 
 	public function me()

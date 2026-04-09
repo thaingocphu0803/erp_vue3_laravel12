@@ -121,17 +121,18 @@ const router = createRouter({
 								{
 									path: '',
 									name: 'hr.employee.index',
-									component: () => import('@/views/main/humanResource/employee/Index.vue')
+									component: () =>
+										import('@/views/main/humanResource/employee/Index.vue'),
 								},
 								{
 									path: 'create',
 									name: 'hr.employee.create',
-									component: () => import('@/views/main/humanResource/employee/Create.vue'),
+									component: () =>
+										import('@/views/main/humanResource/employee/Create.vue'),
 									meta: { title: 'common.action.employee.create' },
-
-								}
-							]
-						}
+								},
+							],
+						},
 					],
 				},
 				{

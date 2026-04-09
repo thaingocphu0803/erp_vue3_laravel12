@@ -24,14 +24,14 @@ class ListByDepartmentRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'department_id' => ['bail', 'required', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
+			'department_id' => ['bail', 'required', 'array', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
 		];
 	}
 
 	public function messages(): array
 	{
 		return [
-			'department_id.*' => 'employee.validate.position.departmentInvalid',
+			'department_id.*' => 'employee.validate.positionId.departmentInvalid',
 		];
 	}
 }

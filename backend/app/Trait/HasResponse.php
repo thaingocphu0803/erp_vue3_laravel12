@@ -25,7 +25,7 @@ trait HasResponse
 	private function initResponseData($message = '', $dataResponse = [])
 	{
 		$data = [
-			'message' => (string) $message,
+			'messageCode' => (string) $message,
 			'data' => (array) $dataResponse
 		];
 
@@ -35,7 +35,7 @@ trait HasResponse
 	private function initValidationResponseData($message = '', $errors = [])
 	{
 		$data = [
-			'message' => (string) $message,
+			'messageCode' => (string) $message,
 			'errors' => (array) $errors
 		];
 

@@ -39,6 +39,16 @@ class PositionService
 		}
 	}
 
+	public function list()
+	{
+		try {
+			$positions = $this->positionRepositoryInterface->list();
+			return $positions;
+		} catch (\Exception $e) {
+			return false;
+		}
+	}
+
 	public function listByDepartment($departmentId)
 	{
 		try {

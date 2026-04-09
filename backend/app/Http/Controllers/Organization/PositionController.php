@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexCommonRequest;
 use App\Http\Requests\Organization\Position\ListByDepartmentRequest;
 use App\Http\Requests\Organization\Position\StorePositionRequest;
-use App\Http\Resources\Lookup\DepartmentLookupResource;
-use App\Http\Resources\Organization\PositionResource;
+use App\Http\Resources\Organization\Position\PositionListResource;
+use App\Http\Resources\Organization\Position\PositionPagnateResource;
 use App\Services\Organization\PositionService;
 use App\Trait\HasResponse;
 use Illuminate\Http\JsonResponse;
@@ -24,7 +24,7 @@ class PositionController extends Controller
 	{
 		$data = $request->validated();
 
-		if ($this->positionService->create($data)) {
+		if ($this->positionService->create($data) !== false) {
 			$message = 'position.alert.success.create';
 			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
 		}
@@ -39,12 +39,24 @@ class PositionController extends Controller
 
 		$positions = $this->positionService->paginate($data);
 
-		if (!$positions) {
+		if ($positions === false) {
 			$message = 'common-list.alert.error.getTableData';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
-		return PositionResource::collection($positions)->response();
+		return PositionPagnateResource::collection($positions)->response();
+	}
+
+	public function list()
+	{
+		$positions = $this->positionService->list();
+
+		if ($positions === false) {
+			$message = 'position.alert.error.getList';
+			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+		}
+
+		return PositionListResource::collection($positions)->response();
 	}
 
 	public function listByDepartment(ListByDepartmentRequest $listByDepartmentRequest)
@@ -53,11 +65,11 @@ class PositionController extends Controller
 
 		$positions = $this->positionService->listByDepartment($departmentId);
 
-		if (!$positions) {
+		if ($positions === false) {
 			$message = 'position.alert.error.getTableData';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
-		return DepartmentLookupResource::collection($positions)->response();
+		return PositionListResource::collection($positions)->response();
 	}
 }

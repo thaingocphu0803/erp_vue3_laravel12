@@ -6,7 +6,6 @@ use App\Http\Controllers\Organization\DepartmentController;
 use App\Http\Controllers\Organization\PositionController;
 use App\Http\Controllers\Organization\RoleController;
 use App\Http\Controllers\System\AdministrativeUnitController;
-use App\Http\Controllers\System\LookupController;
 use App\Http\Controllers\System\PermissionController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,10 +20,6 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 Route::controller(DepartmentController::class)->prefix('department')->middleware('auth:sanctum')->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
-});
-
-// LookupController
-Route::controller(LookupController::class)->prefix('lookup')->middleware('auth:sanctum')->group(function () {
 	Route::get('list', 'list');
 });
 
@@ -37,6 +32,7 @@ Route::controller(PermissionController::class)->prefix('permission')->middleware
 Route::controller(PositionController::class)->prefix('position')->middleware('auth:sanctum')->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
+	Route::get('list', 'list');
 	Route::get('list-by-department', 'listByDepartment');
 });
 
@@ -44,6 +40,7 @@ Route::controller(PositionController::class)->prefix('position')->middleware('au
 Route::controller(RoleController::class)->prefix('role')->middleware('auth:sanctum')->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
+	Route::get('list', 'list');
 });
 
 // AdministrativeUnitController

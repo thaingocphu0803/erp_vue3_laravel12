@@ -79,7 +79,8 @@
 		},
 		"alert": {
 			"error": {
-				"create": "Failed to create department"
+				"create": "Failed to create department",
+				"getList": "Failed to load the department list. Click to try again"
 			},
 			"success": {
 				"create": "Department created successfully"
@@ -124,7 +125,8 @@
 		},
 		"alert": {
 			"error": {
-				"create": "Failed to create position"
+				"create": "Failed to create position",
+				"getList": "Failed to load the position list. Click to try again"
 			},
 			"success": {
 				"create": "Position created successfully"
@@ -166,7 +168,8 @@
 		},
 		"alert": {
 			"error": {
-				"create": "Failed to create role"
+				"create": "Failed to create role",
+				"getList": "Failed to load the role list. Click to try again"
 			},
 			"success": {
 				"create": "Role created successfully"

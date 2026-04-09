@@ -27,8 +27,8 @@ const getRoleList = async () => {
 		await rolesFetch()
 		getRolesErrorMessage.value = ''
 	} catch (error: any) {
-		if (error.status === 422 || error.status === 500) {
-			getRolesErrorMessage.value = error.response?.data?.message
+		if (error.status === 500) {
+			getRolesErrorMessage.value = error.response?.data?.messageCode
 		}
 	} finally {
 		loadingRole.value = false

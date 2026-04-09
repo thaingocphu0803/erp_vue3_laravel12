@@ -79,7 +79,8 @@
 		},
 		"alert": {
 			"error": {
-				"create": "Tạo mới phòng ban thất bại"
+				"create": "Tạo mới phòng ban thất bại",
+				"getList": "Lấy danh sách phòng ban thất bại. Vui lòng thử lại"
 			},
 			"success": {
 				"create": "Tạo mới phòng ban thành công"
@@ -121,7 +122,8 @@
 		},
 		"alert": {
 			"error": {
-				"create": "Tạo mới chức vụ thất bại"
+				"create": "Tạo mới chức vụ thất bại",
+				"getList": "Lấy danh sách chức vụ thất bại. Vui lòng thử lại"
 			},
 			"success": {
 				"create": "Tạo mới chức vụ thành công"
@@ -163,7 +165,8 @@
 		},
 		"alert": {
 			"error": {
-				"create": "Tạo mới vai trò thất bại"
+				"create": "Tạo mới vai trò thất bại",
+				"getList": "Lấy danh sách vai trò thất bại. Vui lòng thử lại"
 			},
 			"success": {
 				"create": "Tạo mới vai trò thành công"

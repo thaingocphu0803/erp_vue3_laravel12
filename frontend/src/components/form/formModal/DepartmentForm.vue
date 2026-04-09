@@ -63,8 +63,8 @@ const getDepartmentList = async () => {
 		await departmentsFetch()
 		errorMessage.getDepartmentList = ''
 	} catch (error: any) {
-		if (error.status === 500 || error.status === 422) {
-			errorMessage.getDepartmentList = error.response?.data?.message
+		if (error.status === 500) {
+			errorMessage.getDepartmentList = error.response?.data?.messageCode
 		}
 	} finally {
 		loading.value = false
@@ -75,7 +75,7 @@ const handleCreate = async () => {
 	try {
 		const response = await departmentCreate(departmentData)
 
-		toast.show(response.data.message, 'success')
+		toast.show(response.data.messageCode, 'success')
 
 		emit('save')
 	} catch (error: any) {
@@ -83,7 +83,7 @@ const handleCreate = async () => {
 			mapLaravelError(errorMessage, error)
 			return
 		}
-		toast.show(error.response?.data?.message, 'error')
+		toast.show(error.response?.data?.messageCode, 'error')
 	}
 }
 

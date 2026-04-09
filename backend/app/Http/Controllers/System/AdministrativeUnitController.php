@@ -22,7 +22,7 @@ class AdministrativeUnitController extends Controller
 	{
 		$provinces = $this->administrativeUnitService->provinces();
 
-		if (!$provinces) {
+		if ($provinces === false) {
 			$message = 'common-list.alert.error.getList';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}
@@ -36,7 +36,7 @@ class AdministrativeUnitController extends Controller
 
 		$wards = $this->administrativeUnitService->wards($provinceCode);
 
-		if (!$wards) {
+		if ($wards === false) {
 			$message = 'common-list.alert.error.getList';
 			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
 		}

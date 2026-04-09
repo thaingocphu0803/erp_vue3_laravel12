@@ -47,14 +47,14 @@ const sections = [
 const handleSubmit = async () => {
 	try {
 		const response = await roleCreate(roleData)
-		toast.show(response.data.message, 'success')
+		toast.show(response.data.messageCode, 'success')
 		emit('save')
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)
 			return
 		}
-		toast.show(error.response?.data?.message, 'error')
+		toast.show(error.response?.data?.messageCode, 'error')
 	}
 }
 

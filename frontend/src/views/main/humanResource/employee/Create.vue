@@ -102,14 +102,14 @@ const avatarReview = computed<string>(() => {
 const handleSubmit = async () => {
 	try {
 		const response = await employeeCreate(employeeData)
-		toast.show(response.data.message, 'success')
+		toast.show(response.data.messageCode, 'success')
 		router.push({ name: 'hr.employee' })
 	} catch (error: any) {
 		if (error.status === 422) {
 			mapLaravelError(errorMessage, error)
 			return
 		}
-		toast.show(error.response?.data?.message, 'error')
+		toast.show(error.response?.data?.messageCode, 'error')
 	}
 }
 
@@ -206,3 +206,4 @@ const cancel = () => {
 		</Form>
 	</v-container>
 </template>
+

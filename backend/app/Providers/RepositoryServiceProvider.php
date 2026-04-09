@@ -9,7 +9,6 @@ use App\Repositories\Eloquent\Organization\DepartmentRepository;
 use App\Repositories\Eloquent\Organization\PositionRepository;
 use App\Repositories\Eloquent\Organization\RoleRepository;
 use App\Repositories\Eloquent\System\AdministrativeUnitRepository;
-use App\Repositories\Eloquent\System\LookupRepository;
 
 use App\Repositories\Interfaces\BaseRepositoryInterface;
 use App\Repositories\Interfaces\HumanResource\EmployeeRepositoryInterface;
@@ -18,7 +17,6 @@ use App\Repositories\Interfaces\Organization\DepartmentRepositoryInterface;
 use App\Repositories\Interfaces\Organization\PositionRepositoryInterface;
 use App\Repositories\Interfaces\Organization\RoleRepositoryInterface;
 use App\Repositories\Interfaces\System\AdministrativeUnitRepositoryInterface;
-use App\Repositories\Interfaces\System\LookupRepositoryInterface;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -31,8 +29,6 @@ class RepositoryServiceProvider extends ServiceProvider
 	{
 		$bindings = [
 			BaseRepositoryInterface::class => BaseRepository::class,
-
-			LookupRepositoryInterface::class => LookupRepository::class,
 
 			AdministrativeUnitRepositoryInterface::class => AdministrativeUnitRepository::class,
 

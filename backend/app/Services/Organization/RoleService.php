@@ -50,6 +50,16 @@ class RoleService
 		}
 	}
 
+	public function list()
+	{
+		try {
+			$roles = $this->roleRepositoryInterface->list();
+			return $roles;
+		} catch (\Exception $e) {
+			return false;
+		}
+	}
+
 	private function getNewPermissionPayload(array $permissions)
 	{
 

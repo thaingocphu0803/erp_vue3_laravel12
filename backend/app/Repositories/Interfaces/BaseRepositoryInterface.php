@@ -11,4 +11,6 @@ interface BaseRepositoryInterface
 	public function update(int $id, array $payload);
 
 	public function paginate(array $paginationPayload, string $relation = '');
+
+	public function list();
 }
