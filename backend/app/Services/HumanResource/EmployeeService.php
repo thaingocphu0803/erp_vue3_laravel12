@@ -8,6 +8,7 @@ use App\Repositories\Interfaces\HumanResource\UserRepositoryInterface;
 use App\Repositories\Interfaces\Organization\DepartmentRepositoryInterface;
 use App\Services\System\FileService;
 use App\Trait\HasAutoGenerate;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -25,6 +26,7 @@ class EmployeeService
 	public function create(array $data)
 	{
 		$avatarPath = null;
+		$user = null;
 
 		if (!empty($data['avatar'])) {
 			$filename = Str::uuid() . '.webp';
@@ -33,7 +35,7 @@ class EmployeeService
 		}
 
 		try {
-			return DB::transaction(function () use ($data, $avatarPath) {
+			$user = DB::transaction(function () use ($data, $avatarPath) {
 				$credentialPayload = $this->getCredentialPayload($data);
 				$user = $this->userRepository->create($credentialPayload);
 
@@ -47,9 +49,16 @@ class EmployeeService
 					$this->departmentRepositoryInterface->update($data['department_id'], $departmentPayload);
 				}
 
-				return true;
+				return $user;
 			});
+
+			if (!is_null($user)) {
+				event(new Registered($user));
+			}
+
+			return true;
 		} catch (\Exception $e) {
+			echo $e->getMessage();
 			$this->fileService->delete($avatarPath);
 			return false;
 		}
