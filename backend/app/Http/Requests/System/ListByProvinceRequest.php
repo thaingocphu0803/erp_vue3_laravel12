@@ -29,7 +29,7 @@ class ListByProvinceRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'province_code' => ['bail', 'required', 'integer', Rule::exists('provinces', 'code')],
+			'province_code' => ['bail', 'required', 'string', Rule::exists('provinces', 'code')],
 		];
 	}
 

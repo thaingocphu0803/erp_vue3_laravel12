@@ -24,7 +24,7 @@ class ListByDepartmentRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'department_id' => ['bail', 'required', 'array', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
+			'department_id' => ['bail', 'required', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
 		];
 	}
 
