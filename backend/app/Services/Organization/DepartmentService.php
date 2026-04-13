@@ -5,13 +5,13 @@ namespace App\Services\Organization;
 use App\Enum\Table;
 use App\Repositories\Interfaces\Organization\DepartmentRepositoryInterface;
 
-use App\Trait\HasAutoGenerate;
+use App\Trait\AutoGenerate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class DepartmentService
 {
-	use HasAutoGenerate;
+	use AutoGenerate;
 
 	public function __construct(
 		protected DepartmentRepositoryInterface $departmentRepositoryInterface,

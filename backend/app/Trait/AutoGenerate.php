@@ -4,7 +4,7 @@ namespace App\Trait;
 
 use Illuminate\Support\Facades\DB;
 
-trait HasAutoGenerate
+trait AutoGenerate
 {
 	public function generateCode($table, $prefix = 'AUTO', $length = 4)
 	{
@@ -23,5 +23,20 @@ trait HasAutoGenerate
 		$newNumber = abs($lastNumber) + 1; // abs để tránh số âm nếu có
 
 		return $prefix . str_pad($newNumber, $length, '0', STR_PAD_LEFT);
+	}
+
+	public function TransformVerifyEmailUrl(string $url)
+	{
+		$transformUrl = config('app.frontend_url') . '/create-password';
+
+		if (empty($url))  return $transformUrl;
+
+		$parse = parse_url($url);
+		parse_str($parse['query'], $query);
+
+		foreach ($query as $key => $value) {
+			$transformUrl .= '?' . $key . '=' . $value;
+		}
+		return $transformUrl;
 	}
 }

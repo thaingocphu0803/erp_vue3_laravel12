@@ -73,7 +73,8 @@
 			"cancel": "Cancel",
 			"create": "Create",
 			"next": "Next",
-			"back": "Back"
+			"back": "Back",
+			"confirm": "Confirm"
 		},
 		"table": {
 			"department": {
@@ -117,3 +118,4 @@
 		}
 	}
 }
+

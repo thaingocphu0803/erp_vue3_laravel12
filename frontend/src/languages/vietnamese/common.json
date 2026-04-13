@@ -73,7 +73,8 @@
 			"cancel": "Hủy",
 			"create": "Tạo",
 			"next": "Tiếp tục",
-			"back": "Quay lại"
+			"back": "Quay lại",
+			"confirm": "Xác nhận"
 		},
 		"table": {
 			"department": {
@@ -117,3 +118,4 @@
 		}
 	}
 }
+

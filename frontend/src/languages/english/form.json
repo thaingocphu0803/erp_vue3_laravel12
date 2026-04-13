@@ -1,13 +1,16 @@
 {
 	"auth": {
 		"title": {
-			"login": "Login"
+			"login": "Login",
+			"createPassword": "Create Password"
 		},
 		"input": {
 			"email": "Email",
 			"password": "Password",
 			"rememberMe": "Remember me",
-			"name": "Name"
+			"name": "Name",
+			"newPassword": "New Password",
+			"confirmNewPassword": "Confirm New Password"
 		},
 		"validate": {
 			"email": {
@@ -309,3 +312,4 @@
 		}
 	}
 }
+

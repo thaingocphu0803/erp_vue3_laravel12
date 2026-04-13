@@ -7,7 +7,7 @@ use App\Repositories\Interfaces\HumanResource\EmployeeRepositoryInterface;
 use App\Repositories\Interfaces\HumanResource\UserRepositoryInterface;
 use App\Repositories\Interfaces\Organization\DepartmentRepositoryInterface;
 use App\Services\System\FileService;
-use App\Trait\HasAutoGenerate;
+use App\Trait\AutoGenerate;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 
 class EmployeeService
 {
-	use HasAutoGenerate;
+	use AutoGenerate;
 	public function __construct(
 		protected UserRepositoryInterface $userRepository,
 		protected EmployeeRepositoryInterface $employeeRepository,

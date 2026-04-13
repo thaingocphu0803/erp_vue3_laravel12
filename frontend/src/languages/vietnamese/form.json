@@ -1,13 +1,16 @@
 {
 	"auth": {
 		"title": {
-			"login": "Đăng Nhập"
+			"login": "Đăng Nhập",
+			"createPassword": "Tạo mật khẩu"
 		},
 		"input": {
 			"email": "Email",
 			"password": "Mật khẩu",
 			"rememberMe": "Ghi nhớ đăng nhập",
-			"name": "Họ và tên"
+			"name": "Họ và tên",
+			"newPassword": "Mật khẩu mới",
+			"confirmNewPassword": "Xác nhận mật khẩu mới"
 		},
 		"validate": {
 			"email": {
@@ -306,3 +309,4 @@
 		}
 	}
 }
+

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Trait\AutoGenerate;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Config;
 
 class QueueVerifyEmail extends VerifyEmail
 {
-	// use Queueable;
+	use AutoGenerate;
 
 	public function __construct() {}
 
@@ -40,34 +41,12 @@ class QueueVerifyEmail extends VerifyEmail
 	{
 		$verificationUrl = $this->verificationUrl($notifiable);
 
-		$parse = parse_url($verificationUrl);
-		parse_str($parse['query'], $query);
+		$newVerificationUrl = $this->TransformVerifyEmailUrl($verificationUrl);
 
-		$verificationUrl = str_replace(config('app.url') . '/api', '', $verificationUrl);
-
-		$newUrl = config('app.frontend_url') . '?verify_url=' . urlencode($verificationUrl);
-
-		dd($newUrl);
 		if (parent::$toMailCallback) {
-			return call_user_func(parent::$toMailCallback, $notifiable, $newUrl);
+			return call_user_func(parent::$toMailCallback, $notifiable, $newVerificationUrl);
 		}
 
-		return $this->buildMailMessage($newUrl, $notifiable);
-	}
-
-	protected function verificationUrl($notifiable)
-	{
-		if (static::$createUrlCallback) {
-			return call_user_func(static::$createUrlCallback, $notifiable);
-		}
-
-		return URL::temporarySignedRoute(
-			'verification.verify',
-			Carbon::now()->addMinutes(Config::get('auth.verification.expire', 60)),
-			[
-				'id' => $notifiable->getKey(),
-				'hash' => sha1($notifiable->getEmailForVerification()),
-			]
-		);
+		return $this->buildMailMessage($newVerificationUrl, $notifiable);
 	}
 }

@@ -1,6 +1,7 @@
 import { useAuthStore } from '@/stores/auth'
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/views/auth/Login.vue'
+import VerifyEmail from '@/views/auth/VerifyEmail.vue'
 import MainLayout from '@/views/MainLayout.vue'
 import RouteViewLayout from '@/views/RouteViewLayout.vue'
 
@@ -12,6 +13,12 @@ const router = createRouter({
 			component: Login,
 			name: 'login',
 			meta: { guestOnly: true, title: 'auth.title.login' },
+		},
+		{
+			path: '/create-password',
+			component: VerifyEmail,
+			name: 'create-password',
+			meta: { guestOnly: true, title: 'auth.title.createPassword' },
 		},
 		{
 			path: '/',
@@ -173,3 +180,4 @@ router.beforeEach(async (to, from) => {
 })
 
 export default router
+
