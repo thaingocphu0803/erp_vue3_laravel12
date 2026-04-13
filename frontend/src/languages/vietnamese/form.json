@@ -202,7 +202,8 @@
 			"department": "Phòng ban",
 			"position": "Chức vụ",
 			"birthDate": "Ngày sinh",
-			"isLeader": "Chỉ định làm Trưởng bộ phận"
+			"isLeader": "Chỉ định làm Trưởng bộ phận",
+			"locale": "Khu vực"
 		},
 		"placeholder": {
 			"phoneExample": "0987654321",
@@ -274,6 +275,10 @@
 			},
 			"isLeader": {
 				"format": "Định dạng chỉ định trưởng bộ phận không hợp lệ"
+			},
+			"locale": {
+				"required": "Vui lòng chọn ngôn ngữ",
+				"format": "Sai định dạng ngôn ngữ"
 			}
 		},
 		"alert": {

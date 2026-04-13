@@ -13,6 +13,7 @@ import { useEmployeeStore } from '@/stores/employee'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
 import router from '@/router'
+import type { commonGender, commonLocale } from '@/types/common'
 
 interface EmployeeForm {
 	avatar: File | null
@@ -20,7 +21,7 @@ interface EmployeeForm {
 	role_ids: number[]
 	name: string
 	code: string
-	gender: string | null
+	gender: commonGender | null
 	birth_date: string | null
 	phone_number: string
 	province_code: string | null
@@ -29,6 +30,7 @@ interface EmployeeForm {
 	department_id: number | null
 	position_id: number | null
 	is_leader: boolean
+	locale: commonLocale
 }
 
 interface ErrorMessage {
@@ -46,6 +48,7 @@ interface ErrorMessage {
 	address: string
 	is_leader: string
 	code: string
+	locale: string
 }
 
 const { employeeCreate } = useEmployeeStore()
@@ -66,6 +69,7 @@ const employeeData = reactive<EmployeeForm>({
 	department_id: null,
 	position_id: null,
 	is_leader: false,
+	locale: 'en',
 })
 
 // Validation states (Mock)
@@ -84,6 +88,7 @@ const errorMessage = reactive<ErrorMessage>({
 	address: '',
 	is_leader: '',
 	code: '',
+	locale: '',
 })
 
 const sections = [
@@ -177,6 +182,7 @@ const cancel = () => {
 					v-model:address="employeeData.address"
 					v-model:ward_code="employeeData.ward_code"
 					v-model:province_code="employeeData.province_code"
+					v-model:locale="employeeData.locale"
 				/>
 
 				<!-- Section: Organization & Position -->

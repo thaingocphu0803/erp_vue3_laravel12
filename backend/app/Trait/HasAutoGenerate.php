@@ -24,5 +24,4 @@ trait HasAutoGenerate
 
 		return $prefix . str_pad($newNumber, $length, '0', STR_PAD_LEFT);
 	}
-
 }

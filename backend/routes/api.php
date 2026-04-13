@@ -14,6 +14,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 	Route::post('login', 'login');
 	Route::post('logout', 'logout')->middleware('auth:sanctum');
 	Route::get('me', 'me')->middleware('auth:sanctum');
+	Route::get('verify-email', 'verifyEmail')->middleware('signed')->name('verification.verify');
 });
 
 // DepartmentController

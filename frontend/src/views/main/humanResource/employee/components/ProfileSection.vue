@@ -11,6 +11,7 @@ import { storeToRefs } from 'pinia'
 import { computed, ref, watch } from 'vue'
 import i18n from '@/plugins/vueI18n'
 import { formatDate } from '@/utils/dateFormat'
+import type { commonGender, commonLocale } from '@/types/common'
 
 interface ErrorMessage {
 	province: string
@@ -19,14 +20,15 @@ interface ErrorMessage {
 
 const name = defineModel<string>('name')
 const code = defineModel<string>('code')
-const gender = defineModel<string | null>('gender', { default: null })
+const gender = defineModel<commonGender | null>('gender', { default: null })
 const birth_date = defineModel<string | null>('birth_date')
 const phone_number = defineModel<string>('phone_number')
 const address = defineModel<string>('address')
 const ward_code = defineModel<string | null>('ward_code', { default: null })
 const province_code = defineModel<string | null>('province_code', { default: null })
+const locale = defineModel<commonLocale>('locale', { default: 'en' })
 
-const { genders } = useFilterModule()
+const { genders, locales } = useFilterModule()
 
 const formatBirthdate = computed({
 	get() {
@@ -132,7 +134,6 @@ watch(province_code, async (newVal) => {
 				:hide-details="false"
 				v-model="gender"
 				:items="genders"
-				searchable
 				item-title="name"
 				item-value="id"
 				:rules="employeeValidation.gender"
@@ -178,7 +179,18 @@ watch(province_code, async (newVal) => {
 			</Input>
 		</v-col>
 
-		<v-col cols="12" sm="6"></v-col>
+		<v-col cols="12" sm="6">
+			<list-filter
+				:hide-details="false"
+				v-model="locale"
+				:items="locales"
+				item-title="name"
+				item-value="id"
+				:clearable="false"
+				:label="$t('employee.input.locale')"
+			>
+			</list-filter>
+		</v-col>
 
 		<!-- Address Split (1 row) -->
 		<v-col cols="12" sm="4" class="mb-3">

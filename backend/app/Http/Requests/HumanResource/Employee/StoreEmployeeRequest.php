@@ -47,6 +47,7 @@ class StoreEmployeeRequest extends FormRequest
 			'address' => ['bail', 'required', 'string'],
 			'ward_code' => ['bail', 'required', Rule::exists('wards', 'code')],
 			'province_code' => ['bail', 'required', Rule::exists('provinces', 'code')],
+			'locale' => ['bail', 'required', 'in:en,vi'],
 		];
 	}
 
@@ -88,6 +89,8 @@ class StoreEmployeeRequest extends FormRequest
 			'ward_code.exists' => 'employee.validate.wardCode.exists',
 			'province_code.required' => 'employee.validate.provinceCode.required',
 			'province_code.exists' => 'employee.validate.provinceCode.exists',
+			'locale.required' => 'employee.validate.locale.required',
+			'locale.in' => 'employee.validate.locale.format',
 		];
 	}
 }

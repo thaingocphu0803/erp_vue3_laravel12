@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\QueueVerifyEmail;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -21,6 +22,7 @@ class User extends Authenticatable implements MustVerifyEmail
 		'name',
 		'email',
 		'password',
+		'locale',
 	];
 
 	/**
@@ -44,6 +46,13 @@ class User extends Authenticatable implements MustVerifyEmail
 			'email_verified_at' => 'datetime',
 			'password' => 'hashed',
 		];
+	}
+
+	// Override sendEmailVerificationNotification method
+	public function sendEmailVerificationNotification()
+	{
+
+		$this->notify(new QueueVerifyEmail());
 	}
 
 	public function employee()

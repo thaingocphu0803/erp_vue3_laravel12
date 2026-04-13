@@ -1,5 +1,5 @@
 import { t } from '@/plugins/vueI18n'
-import type { commonStatus, commonGender } from '@/types/common'
+import type { commonStatus, commonGender, commonLocale } from '@/types/common'
 import { computed } from 'vue'
 
 interface Status {
@@ -11,6 +11,11 @@ interface Status {
 interface Gender {
 	name: string
 	id: commonGender
+}
+
+interface Locale {
+	name: string
+	id: commonLocale
 }
 
 export const useFilterModule = () => {
@@ -28,5 +33,10 @@ export const useFilterModule = () => {
 		{ name: t('common.gender.female'), id: 'FEMALE' },
 	])
 
-	return { statuses, statusMap, genders }
+	const locales = computed((): Locale[] => [
+		{ name: t('common.language.english'), id: 'en' },
+		{ name: t('common.language.vietnamese'), id: 'vi' },
+	])
+
+	return { statuses, statusMap, genders, locales }
 }

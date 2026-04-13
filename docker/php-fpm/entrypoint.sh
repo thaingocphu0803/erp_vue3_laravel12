@@ -22,6 +22,6 @@ php artisan migrate --force --seed
 # Clear and cache configurations
 php artisan config:cache
 php artisan route:cache
-
+php artisan event:cache
 # Run the default command
 exec "$@"

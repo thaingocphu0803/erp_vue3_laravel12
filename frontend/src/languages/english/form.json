@@ -205,7 +205,8 @@
 			"department": "Department",
 			"position": "Position",
 			"birthDate": "Date of Birth",
-			"isLeader": "Appoint as Department Head"
+			"isLeader": "Appoint as Department Head",
+			"locale": "Locale"
 		},
 		"placeholder": {
 			"phoneExample": "0987654321",
@@ -277,6 +278,10 @@
 			},
 			"isLeader": {
 				"format": "Invalid appoint as department head format"
+			},
+			"locale": {
+				"required": "Language is required",
+				"format": "Invalid language format"
 			}
 		},
 		"alert": {

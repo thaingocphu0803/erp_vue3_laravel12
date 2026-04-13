@@ -54,4 +54,9 @@ class AuthController extends Controller
 		$message = 'auth.alert.success.logout';
 		return  $this->jsonResponse($message, JsonResponse::HTTP_OK);
 	}
+
+	public function verifyEmail()
+	{
+		dd(1);
+	}
 }

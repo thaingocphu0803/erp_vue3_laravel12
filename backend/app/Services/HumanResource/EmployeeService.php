@@ -72,6 +72,7 @@ class EmployeeService
 			'name' => $data['name'],
 			'email' => $data['email'],
 			'password' => $password,
+			'locale' => $data['locale'],
 		];
 	}
 
