@@ -5,13 +5,13 @@ namespace App\Http\Controllers\System;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\System\PermissionCollection;
 use App\Models\Permission;
-use App\Trait\HasResponse;
+use App\Trait\FormatResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller
 {
-	use HasResponse;
+	use FormatResponse;
 
 	public function index(Request $request)
 	{

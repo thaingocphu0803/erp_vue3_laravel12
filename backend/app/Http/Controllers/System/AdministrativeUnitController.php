@@ -6,13 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\System\ListByProvinceRequest;
 use App\Http\Resources\System\AdministrativeUnitResource;
 use App\Services\System\AdministrativeUnitService;
-use App\Trait\HasResponse;
+use App\Trait\FormatResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AdministrativeUnitController extends Controller
 {
-	use HasResponse;
+	use FormatResponse;
 
 	public function __construct(
 		protected AdministrativeUnitService $administrativeUnitService

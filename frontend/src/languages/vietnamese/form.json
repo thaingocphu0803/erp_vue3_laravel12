@@ -2,7 +2,8 @@
 	"auth": {
 		"title": {
 			"login": "Đăng Nhập",
-			"createPassword": "Tạo mật khẩu"
+			"createPassword": "Tạo mật khẩu",
+			"resendVerifyEmail": "Gửi lại email xác thực"
 		},
 		"input": {
 			"email": "Email",
@@ -22,7 +23,7 @@
 			},
 			"confirmPassword": {
 				"required": "Vui lòng xác nhận mật khẩu",
-				"confirm": "Mật khẩu xác nhận không khớp"
+				"confirmed": "Mật khẩu xác nhận không khớp"
 			},
 			"password": {
 				"required": "Vui lòng nhập mật khẩu",
@@ -34,17 +35,22 @@
 			},
 			"rememberMe": {
 				"format": "Định dạng ghi nhớ đăng nhập không hợp lệ"
+			},
+			"verify": {
+				"invalidToken": "Liên kết xác thực không đầy đủ hoặc đã hết hạn. Vui lòng sử dụng liên kết gốc trong email hoặc yêu cầu mã mới."
 			}
 		},
 		"alert": {
 			"error": {
 				"invalidAuth": "Dữ liệu nhập vào không hợp lệ",
-				"incorrectAuth": "Tên đăng nhập hoặc mật khẩu không chính xác"
+				"incorrectAuth": "Tên đăng nhập hoặc mật khẩu không chính xác",
+				"createPassword": "Tạo mật khẩu thất bại"
 			},
 			"success": {
 				"logout": "Đăng xuất thành công",
 				"login": "Đăng nhập thành công",
-				"me": "Truy cập thông tin người dùng thành công"
+				"me": "Truy cập thông tin người dùng thành công",
+				"createPassword": "Tạo mật khẩu thành công. Bây giờ bạn có thể đăng nhập vào hệ thống."
 			}
 		}
 	},
@@ -309,4 +315,3 @@
 		}
 	}
 }
-

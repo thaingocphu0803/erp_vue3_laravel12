@@ -4,7 +4,7 @@ namespace App\Trait;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-trait HasResponse
+trait FormatResponse
 {
 	public function exceptionResponse($message, $status_code, $errors = [])
 	{

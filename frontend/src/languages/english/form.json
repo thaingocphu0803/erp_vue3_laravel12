@@ -2,7 +2,8 @@
 	"auth": {
 		"title": {
 			"login": "Login",
-			"createPassword": "Create Password"
+			"createPassword": "Create Password",
+			"resendVerifyEmail": "Resend Verify Email"
 		},
 		"input": {
 			"email": "Email",
@@ -22,7 +23,7 @@
 			},
 			"confirmPassword": {
 				"required": "Confirm password is required",
-				"confirm": "Confirm password is not match"
+				"confirmed": "Confirm password is not match"
 			},
 			"password": {
 				"required": "Password is required",
@@ -34,17 +35,22 @@
 			},
 			"rememberMe": {
 				"format": "Incorrect format Remember login"
+			},
+			"verify": {
+				"invalidToken": "The verification link is incomplete or has expired. Please use the original link in the email or request a new one."
 			}
 		},
 		"alert": {
 			"error": {
 				"invalidAuth": "The input data is invalid",
-				"incorrectAuth": "Incorrect username or password"
+				"incorrectAuth": "Incorrect username or password",
+				"createPassword": "Failed to create password. Please try again."
 			},
 			"success": {
 				"logout": "Logout successfully",
 				"login": "Login successfully",
-				"me": "Retrieved user successfully"
+				"me": "Retrieved user successfully",
+				"createPassword": "Password created successfully. You can now login to the system."
 			}
 		}
 	},
@@ -312,4 +318,3 @@
 		}
 	}
 }
-

@@ -13,6 +13,8 @@ import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useRoute, type RouteLocationRaw } from 'vue-router'
 import { mapLaravelError } from '@/utils/errorHandler'
+import AppToast from '@/components/layout/AppToast.vue'
+import { useToastStore } from '@/stores/toast'
 
 interface LoginForm {
 	email: string
@@ -31,6 +33,8 @@ const title: string = 'auth.title.login'
 const LanguageBtnColor: string = 'blue-gray-draken-4'
 
 provide('LanguageBtnColor', LanguageBtnColor)
+
+const toast = useToastStore()
 
 const LoginData = reactive<LoginForm>({
 	email: '',
@@ -64,11 +68,13 @@ const handleLogin = async () => {
 	try {
 		loading.value = true
 
-		await authLogin(LoginData)
+		const response = await authLogin(LoginData)
 
 		redirect.value = (route.query.redirect as string) || { name: 'dashboard' }
 
 		router.replace(redirect.value)
+
+		toast.show(response.data.messageCode, 'success')
 	} catch (error: any) {
 		const status = error.response.status
 
@@ -94,19 +100,37 @@ const handleLogin = async () => {
 			<Form :title @submit-form="handleLogin">
 				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
-				<Input :label="$t('auth.input.email')" name="email" placeholder="example@gmail.com"
-					:rules="authValidation.email" v-model="LoginData.email" />
+				<Input
+					:label="$t('auth.input.email')"
+					name="email"
+					placeholder="example@gmail.com"
+					:rules="authValidation.email"
+					v-model="LoginData.email"
+				/>
 
-				<Input :label="$t('auth.input.password')" name="password" :type="visible ? 'text' : 'password'"
-					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="visible = !visible"
-					:rules="authValidation.password" v-model="LoginData.password" />
+				<Input
+					:label="$t('auth.input.password')"
+					name="password"
+					:type="visible ? 'text' : 'password'"
+					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+					@click:append-inner="visible = !visible"
+					:rules="authValidation.password"
+					v-model="LoginData.password"
+				/>
 
-				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="LoginData.rememberMe"
-					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
+				<Checkbox
+					:label="$t('auth.input.rememberMe')"
+					name="remember_me"
+					v-model="LoginData.rememberMe"
+					:false-value="checkboxData.falseValue"
+					:true-value="checkboxData.trueValue"
+				/>
 
 				<base-btn :title :loading="loading" type="submit" block />
 			</Form>
 		</v-main>
+
+		<app-toast />
 	</v-layout>
 </template>
 
@@ -120,3 +144,4 @@ const handleLogin = async () => {
 	margin-left: unset;
 }
 </style>
+

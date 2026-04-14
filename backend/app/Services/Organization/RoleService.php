@@ -29,7 +29,7 @@ class RoleService
 			return DB::transaction(function () use ($role, $newPermissions) {
 				$relation = Table::PERMISSION->value;
 
-				$this->roleRepositoryInterface->createWithPivote($role, $relation, $newPermissions);
+				$this->roleRepositoryInterface->create($role, $relation, $newPermissions);
 
 				return true;
 			});

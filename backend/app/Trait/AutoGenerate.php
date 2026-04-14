@@ -20,23 +20,21 @@ trait AutoGenerate
 		}
 
 		$lastNumber = (int) filter_var($lastCode, FILTER_SANITIZE_NUMBER_INT);
-		$newNumber = abs($lastNumber) + 1; // abs để tránh số âm nếu có
+		$newNumber = abs($lastNumber) + 1;
 
 		return $prefix . str_pad($newNumber, $length, '0', STR_PAD_LEFT);
 	}
 
-	public function TransformVerifyEmailUrl(string $url)
+	public function generateFrontendUrlWithParams(string $path, $params = [])
+
 	{
-		$transformUrl = config('app.frontend_url') . '/create-password';
+		$url = config('app.frontend_url') . '/' . $path . '?';
 
-		if (empty($url))  return $transformUrl;
+		if (empty($params))  return $url;
 
-		$parse = parse_url($url);
-		parse_str($parse['query'], $query);
-
-		foreach ($query as $key => $value) {
-			$transformUrl .= '?' . $key . '=' . $value;
+		foreach ($params as $key => $value) {
+			$url .= "{$key}={$value}&";
 		}
-		return $transformUrl;
+		return rtrim($url, '&');
 	}
 }

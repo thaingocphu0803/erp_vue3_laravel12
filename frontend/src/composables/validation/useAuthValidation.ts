@@ -9,26 +9,25 @@ import {
 	sameAs,
 } from '@/utils/validationRule'
 
-
 const messages = {
 	email: {
 		required: 'auth.validate.email.required',
-		format: 'auth.validate.email.format'
+		format: 'auth.validate.email.format',
 	},
 	name: {
-		required:'auth.validate.name.required',
+		required: 'auth.validate.name.required',
 	},
 	confirmPassword: {
-		required:'auth.validate.confirmPassword.required',
-		confirm:'auth.validate.confirmPassword.confirm',
+		required: 'auth.validate.confirmPassword.required',
+		confirm: 'auth.validate.confirmPassword.confirmed',
 	},
 	password: {
-		required:'auth.validate.password.required',
-		hasUpperLetter:'auth.validate.password.hasUpperLetter',
-		hasLowerLetter:'auth.validate.password.hasLowerLetter',
-		min:'auth.validate.password.min',
-		hasNumber:'auth.validate.password.hasNumber',
-		hasSpecialChar:'auth.validate.password.hasSpecialChar',
+		required: 'auth.validate.password.required',
+		hasUpperLetter: 'auth.validate.password.hasUpperLetter',
+		hasLowerLetter: 'auth.validate.password.hasLowerLetter',
+		min: 'auth.validate.password.min',
+		hasNumber: 'auth.validate.password.hasNumber',
+		hasSpecialChar: 'auth.validate.password.hasSpecialChar',
 	},
 }
 

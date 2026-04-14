@@ -12,25 +12,27 @@ use Illuminate\Support\Facades\Route;
 // AuthController
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
 	Route::post('login', 'login');
-	Route::post('logout', 'logout')->middleware('auth:sanctum');
-	Route::get('me', 'me')->middleware('auth:sanctum');
-	Route::get('verify-email', 'verifyEmail')->middleware('signed')->name('verification.verify');
+	Route::post('logout', 'logout')->middleware(['auth:sanctum', 'verified']);
+	Route::get('me', 'me')->middleware(['auth:sanctum', 'verified']);
+	Route::get('verify-email/{id}/{hash}', 'verifyEmail')->name('verification.verify');
+	Route::post('create-password', 'createPassword');
+	Route::post('resend-verify-email', 'resendVerifyEmail');
 });
 
 // DepartmentController
-Route::controller(DepartmentController::class)->prefix('department')->middleware('auth:sanctum')->group(function () {
+Route::controller(DepartmentController::class)->prefix('department')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
 	Route::get('list', 'list');
 });
 
 // PermissionController
-Route::controller(PermissionController::class)->prefix('permission')->middleware('auth:sanctum')->group(function () {
+Route::controller(PermissionController::class)->prefix('permission')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::get('index', 'index');
 });
 
 // PositionController
-Route::controller(PositionController::class)->prefix('position')->middleware('auth:sanctum')->group(function () {
+Route::controller(PositionController::class)->prefix('position')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
 	Route::get('list', 'list');
@@ -38,19 +40,19 @@ Route::controller(PositionController::class)->prefix('position')->middleware('au
 });
 
 // RoleController
-Route::controller(RoleController::class)->prefix('role')->middleware('auth:sanctum')->group(function () {
+Route::controller(RoleController::class)->prefix('role')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
 	Route::get('list', 'list');
 });
 
 // AdministrativeUnitController
-Route::controller(AdministrativeUnitController::class)->prefix('administrative-units')->middleware('auth:sanctum')->group(function () {
+Route::controller(AdministrativeUnitController::class)->prefix('administrative-units')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::get('provinces', 'provinces');
 	Route::get('provinces/{provinceCode}/wards', 'wards');
 });
 
 // EmployeeController
-Route::controller(EmployeeController::class)->prefix('employee')->middleware('auth:sanctum')->group(function () {
+Route::controller(EmployeeController::class)->prefix('employee')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 });

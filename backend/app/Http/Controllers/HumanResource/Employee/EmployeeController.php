@@ -5,12 +5,12 @@ namespace App\Http\Controllers\HumanResource\Employee;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\HumanResource\Employee\StoreEmployeeRequest;
 use App\Services\HumanResource\EmployeeService;
-use App\Trait\HasResponse;
+use App\Trait\FormatResponse;
 use Illuminate\Http\JsonResponse;
 
 class EmployeeController extends Controller
 {
-	use HasResponse;
+	use FormatResponse;
 
 	public function __construct(
 		protected EmployeeService $employeeService

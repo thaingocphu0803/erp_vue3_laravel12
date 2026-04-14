@@ -3,13 +3,13 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\Trait\HasResponse;
+use App\Trait\FormatResponse;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\JsonResponse;
 
 class IndexCommonRequest extends FormRequest
 {
-	use HasResponse;
+	use FormatResponse;
 
 	/**
 	 * Determine if the user is authorized to make this request.

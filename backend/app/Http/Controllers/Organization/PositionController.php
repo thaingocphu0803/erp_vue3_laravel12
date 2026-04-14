@@ -9,12 +9,12 @@ use App\Http\Requests\Organization\Position\StorePositionRequest;
 use App\Http\Resources\Organization\Position\PositionListResource;
 use App\Http\Resources\Organization\Position\PositionPagnateResource;
 use App\Services\Organization\PositionService;
-use App\Trait\HasResponse;
+use App\Trait\FormatResponse;
 use Illuminate\Http\JsonResponse;
 
 class PositionController extends Controller
 {
-	use HasResponse;
+	use FormatResponse;
 
 	public function __construct(
 		protected PositionService $positionService

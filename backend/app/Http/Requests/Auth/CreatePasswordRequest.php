@@ -2,17 +2,13 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Trait\FormatResponse;
+use App\Rules\HashEmailRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
-class LoginRequest extends FormRequest
+class CreatePasswordRequest extends FormRequest
 {
-	use FormatResponse;
-
-	// validation should stop after the first rule failure.
-	protected $stopOnFirstFailure = true;
-
 	/**
 	 * Determine if the user is authorized to make this request.
 	 */
@@ -29,23 +25,26 @@ class LoginRequest extends FormRequest
 	public function rules(): array
 	{
 		return [
-			'email' => ['bail', 'required', 'email'],
-			'password' => ['bail', 'required', Password::min(8)->mixedCase()->numbers()->symbols()],
-			'rememberMe' => ['boolean']
+			'id' => ['bail', 'required', 'integer', Rule::exists('users', 'id')],
+			'hash' => ['bail', 'required', 'string', new HashEmailRule($this->id)],
+			'password' => ['bail', 'required', Password::min(8)->mixedCase()->numbers()->symbols(), 'confirmed'],
 		];
 	}
 
-	public function messages()
+	public function messages(): array
 	{
 		return [
-			'email.required' => 'auth.validate.email.required',
-			'email.email' => 'auth.validate.email.format',
+			'id.required' => __('auth.alert.error.invalid_token'),
+			'id.integer' => __('auth.alert.error.invalid_token'),
+			'id.exists' => __('auth.alert.error.invalid_token'),
+			'hash.required' => __('auth.alert.error.invalid_token'),
+			'hash.string' => __('auth.alert.error.invalid_token'),
 			'password.required' => 'auth.validate.password.required',
 			'password.min' => 'auth.validate.password.min',
 			'password.mixed' => 'auth.validate.password.hasUpperLetter',
 			'password.numbers' => 'auth.validate.password.hasNumber',
 			'password.symbols' => 'auth.validate.password.hasSpecialChar',
-			'rememberMe.boolean' => 'auth.validate.rememberMe.format',
+			'password.confirmed' => 'auth.validate.password.confirmed',
 		];
 	}
 }

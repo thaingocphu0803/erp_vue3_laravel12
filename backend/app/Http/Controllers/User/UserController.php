@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use App\Trait\HasResponse;
+use App\Trait\FormatResponse;
 
 class UserController extends Controller
 {
-    use HasResponse;
+	use FormatResponse;
 
-    public function __construct() {}
-
+	public function __construct() {}
 }

@@ -11,9 +11,15 @@ abstract class BaseRepository implements BaseRepositoryInterface
 		protected Model $model
 	) {}
 
-	public function create(array $payload)
+	public function create(array $payload, string $relation = '', array $pivotPayload = [])
 	{
-		return $this->model->create($payload);
+		$model = $this->model->create($payload);
+
+		if (!empty($pivotPayload) && !empty($relation)) {
+			$model->$relation()->attach($pivotPayload);
+		}
+
+		return $model;
 	}
 
 	public function createWithPivote(array $payload, string $relation, array $pivotPayload)
@@ -30,6 +36,17 @@ abstract class BaseRepository implements BaseRepositoryInterface
 	public function update(int $id, array $payload)
 	{
 		return $this->model->where('id', $id)->update($payload);
+	}
+
+	public function find(int $id, string $relation = '')
+	{
+		$query = $this->model;
+
+		if (!empty($relation)) {
+			$query = $query->with($relation);
+		}
+
+		return $query->find($id);
 	}
 
 	public function paginate(array $paginationPayload, string $relation = '')

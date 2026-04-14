@@ -57,10 +57,40 @@ export const useAuthStore = defineStore('auth', () => {
 		}
 	}
 
+	const authCreatePassword = async (payload: object) => {
+		try {
+			const response = await api.post(`auth/create-password`, payload)
+			return response
+		} catch (error: any) {
+			console.log('Create password api error', error)
+			throw error
+		}
+	}
+
+	const authResendVerifyEmail = async (payload: object) => {
+		try {
+			const response = await api.post(`auth/resend-verify-email`, payload)
+			return response
+		} catch (error: any) {
+			console.log('Resend verify email api error', error)
+			throw error
+		}
+	}
+
 	const clearAuth = () => {
 		user.value = null
 		isInitialized.value = false
 	}
 
-	return { user, isInitialized, isLoggedin, authFetch, authLogin, authLogout, clearAuth }
+	return {
+		user,
+		isInitialized,
+		isLoggedin,
+		authFetch,
+		authLogin,
+		authLogout,
+		authCreatePassword,
+		authResendVerifyEmail,
+		clearAuth,
+	}
 })

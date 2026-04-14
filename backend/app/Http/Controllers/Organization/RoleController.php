@@ -8,12 +8,12 @@ use App\Http\Requests\Organization\Role\StoreRoleRequest;
 use App\Http\Resources\Organization\Role\RoleListResource;
 use App\Http\Resources\Organization\Role\RolePaginateResource;
 use App\Services\Organization\RoleService;
-use App\Trait\HasResponse;
+use App\Trait\FormatResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class RoleController extends Controller
 {
-	use HasResponse;
+	use FormatResponse;
 
 	public function __construct(
 		protected RoleService $roleService

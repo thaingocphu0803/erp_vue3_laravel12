@@ -2,17 +2,19 @@
 
 namespace App\Services\Auth;
 
+use App\Repositories\Interfaces\HumanResource\UserRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
 	/**
 	 * Create a new class instance.
 	 */
-	public function __construct()
-	{
-		//
-	}
+	public function __construct(
+		protected UserRepositoryInterface $userRepositoryInterface
+	) {}
 
 	public function login(array $data)
 	{
@@ -36,5 +38,30 @@ class AuthService
 	public function logout()
 	{
 		Auth::guard('web')->logout();
+	}
+
+	public function find(int $id)
+	{
+		return $this->userRepositoryInterface->find($id);
+	}
+
+	public function createPassword(array $data)
+	{
+		try {
+			return DB::transaction(function () use ($data) {
+				$payload = $this->getPasswordPayload($data);
+				return $this->userRepositoryInterface->update($data['id'], $payload);
+			});
+		} catch (\Exception $e) {
+			return false;
+		}
+	}
+
+	private function getPasswordPayload(array $data)
+	{
+		return [
+			'password' => Hash::make($data['password']),
+			'email_verified_at' => now()
+		];
 	}
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Organization;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexCommonRequest;
 use App\Http\Requests\Organization\Department\StoreDepartmentRequest;
-use App\Trait\HasResponse;
+use App\Trait\FormatResponse;
 use App\Http\Resources\Organization\Deparment\DepartmentListResource;
 use App\Http\Resources\Organization\Deparment\DepartmentPaginateResource;
 use App\Services\Organization\DepartmentService;
@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class DepartmentController extends Controller
 {
-	use HasResponse;
+	use FormatResponse;
 
 	public function __construct(
 		protected DepartmentService $departmentService
