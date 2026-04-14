@@ -20,7 +20,7 @@ const router = createRouter({
 			meta: { title: 'auth.title.createPassword' },
 		},
 		{
-			path: '/resend-verify-mail',
+			path: '/resend-verification',
 			component: () => import('@/views/auth/ResendVerifyEmail.vue'),
 			name: 'resend-verify-mail',
 			meta: { title: 'auth.title.resendVerifyEmail' },

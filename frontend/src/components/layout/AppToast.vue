@@ -26,18 +26,12 @@ const icon = computed(() => {
 </script>
 
 <template>
-	<v-snackbar
-		v-model="toast.visible"
-		:timeout="toast.duration"
-		:color="color"
-		location="top right"
-		rounded="lg"
-	>
+	<v-snackbar v-model="toast.visible" :timeout="toast.duration" :color="color" location="top right" rounded="lg">
 
-			<div class="d-flex ga-2 align-center">
-				<v-icon :icon="icon" size="20"/>
-				<span class="text-body-1 font-weight-medium">{{ $t(toast.message) }}</span>
-			</div>
+		<div class="d-flex ga-2 align-center">
+			<v-icon :icon="icon" size="20" />
+			<span class="text-body-1 font-weight-medium">{{ $t(toast.message) }}</span>
+		</div>
 
 		<template #actions>
 			<v-btn icon size="small" variant="text" @click="toast.hide()">

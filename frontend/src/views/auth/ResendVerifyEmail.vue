@@ -4,12 +4,22 @@ import ThemeSwitch from '@/components/ThemeSwitch.vue'
 import Form from '@/components/Form.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import LanguageBtn from '@/components/layout/LanguageBtn.vue'
-import { provide, ref } from 'vue'
+import { provide, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import AppToast from '@/components/layout/AppToast.vue'
-import { useI18n } from 'vue-i18n'
+import defaultConfig from '@/config/default'
+
+interface Payload {
+	id: number | null
+	hash: string
+}
+
+const payload: Payload = {
+	id: null,
+	hash: '',
+}
 
 const title: string = 'auth.title.resendVerifyEmail'
 const LanguageBtnColor: string = 'blue-gray-draken-4'
@@ -19,7 +29,6 @@ provide('LanguageBtnColor', LanguageBtnColor)
 const route = useRoute()
 const toast = useToastStore()
 const { authResendVerifyEmail } = useAuthStore()
-const i18n = useI18n()
 
 const loading = ref<boolean>(false)
 
@@ -27,20 +36,20 @@ const handleResend = async () => {
 	try {
 		loading.value = true
 
-		const id = route.query.id
-		const hash = route.query.hash
+		payload.id = Number(route.query.id)
+		payload.hash = String(route.query.hash)
 
-		if (!id || !hash) {
-			toast.show(i18n.t('auth.validate.verify.invalidToken'), 'error')
+		if (!payload.id || !payload.hash) {
+			toast.show('auth.validate.verify.invalidToken', 'error')
 			return
 		}
 
-		const response = await authResendVerifyEmail({ id: Number(id), hash: String(hash) })
-		toast.show(i18n.t(response.data.messageCode), 'success')
+		const response = await authResendVerifyEmail(payload)
+		toast.show(response.data.messageCode, 'success')
 	} catch (error: any) {
 		console.error('Resend error:', error)
 		const message = error.response?.data?.messageCode || 'auth.alert.error.invalidAuth'
-		toast.show(i18n.global.t(message), 'error')
+		toast.show(message, 'error')
 	} finally {
 		loading.value = false
 	}
@@ -54,22 +63,17 @@ const handleResend = async () => {
 			<theme-switch />
 		</layout-bar>
 
-		<v-main class="mx-auto my-auto" max-width="420px">
-			<Form :title @submit-form="handleResend">
-				<div class="text-center mb-6">
-					<v-icon
-						color="warning"
-						icon="mdi-alert-circle-outline"
-						size="64"
-						class="mb-4"
-					/>
-					<p class="text-body-1 text-medium-emphasis">
-						{{ $t('auth.validate.verify.invalidToken') }}
-					</p>
-				</div>
+		<v-main class="mx-auto my-auto" :max-width="defaultConfig.maxWidthForm">
+			<v-card density="comfortable" class="border d-flex flex-column justify-center align-center ga-5 pa-5">
+				<v-icon color="warning" icon="mdi-emoticon-dead-outline" size="72" />
 
-				<base-btn :title :loading="loading" type="submit" block />
-			</Form>
+				<p class="text-body-1 text-medium-emphasis text-center">
+					{{ $t('common.state.expiredLink') }}
+				</p>
+
+				<base-btn :title :loading="loading" type="button" class="mt-5" color="primary"
+					@click.prevent="handleResend" />
+			</v-card>
 		</v-main>
 
 		<app-toast />
@@ -86,4 +90,3 @@ const handleResend = async () => {
 	margin-left: unset;
 }
 </style>
-

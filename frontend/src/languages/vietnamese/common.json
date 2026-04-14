@@ -30,7 +30,8 @@
 			"addRole": "Tạo vai trò"
 		},
 		"state": {
-			"comeSoon": "Sắp Ra Mắt..."
+			"comeSoon": "Sắp Ra Mắt...",
+			"expiredLink": "Liên kết bạn sử dụng không còn hiệu lực. Vui lòng nhấn vào nút bên dưới để yêu cầu hệ thống gửi lại một liên kết mới đến địa chỉ email của bạn."
 		},
 		"subtitle": {
 			"notification": "Hôm nay"
