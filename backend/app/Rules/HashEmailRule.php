@@ -2,6 +2,7 @@
 
 namespace App\Rules;
 
+use App\Models\User;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\DB;
@@ -18,9 +19,9 @@ class HashEmailRule implements ValidationRule
 	 */
 	public function validate(string $attribute, mixed $value, Closure $fail): void
 	{
-		$user = DB::table('users')->where('id', $this->id)->first();
+		$user = User::find($this->id);
 
-		if (!$user || !hash_equals((string) $value, sha1($user->email))) {
+		if (!$user || !hash_equals((string) $value, sha1($user->getEmailForVerification()))) {
 			$fail('auth.validate.verify.invalidToken');
 		}
 	}

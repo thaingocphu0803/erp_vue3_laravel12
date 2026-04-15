@@ -11,6 +11,13 @@ return [
 		'login_email' => 'Email đăng nhập của bạn: :email',
 		'trouble_clicking' => 'Nếu bạn gặp khó khăn khi nhấn nút ":actionText", hãy sao chép và dán URL bên dưới vào trình duyệt web của bạn:',
 	],
+
+	'resend_verify_email' => [
+		'subject' => 'Gửi lại email xác thực tài khoản',
+		'greeting' => 'Xin chào :name!',
+		'line1' => 'Chúng tôi đã nhận được yêu cầu gửi lại email xác thực tài khoản cho tài khoản của bạn. Vui lòng nhấp vào nút bên dưới để xác thực địa chỉ email và đặt mật khẩu của bạn.',
+	],
+
 	'regards' => 'Trân trọng,',
 	'all_rights_reserved' => 'Mọi quyền được bảo lưu.',
 	'hello' => 'Xin chào!',

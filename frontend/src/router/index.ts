@@ -20,10 +20,16 @@ const router = createRouter({
 			meta: { title: 'auth.title.createPassword' },
 		},
 		{
-			path: '/resend-verification',
+			path: '/resend-verify-email',
 			component: () => import('@/views/auth/ResendVerifyEmail.vue'),
 			name: 'resend-verify-mail',
 			meta: { title: 'auth.title.resendVerifyEmail' },
+		},
+		{
+			path: '/error',
+			component: () => import('@/views/error/ErrorScreen.vue'),
+			name: 'error',
+			meta: { title: 'common.state.error' },
 		},
 		{
 			path: '/',

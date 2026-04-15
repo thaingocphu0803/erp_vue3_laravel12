@@ -50,7 +50,8 @@
 				"logout": "Logout successfully",
 				"login": "Login successfully",
 				"me": "Retrieved user successfully",
-				"createPassword": "Password created successfully. You can now login to the system."
+				"createPassword": "Password created successfully. You can now login to the system.",
+				"resendVerifyEmail": "The verification email has been resent. Please check your inbox, including the spam folder."
 			}
 		}
 	},
@@ -318,4 +319,3 @@
 		}
 	}
 }
-

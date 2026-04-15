@@ -16,7 +16,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 	Route::get('me', 'me')->middleware(['auth:sanctum', 'verified']);
 	Route::get('verify-email/{id}/{hash}', 'verifyEmail')->name('verification.verify');
 	Route::post('create-password', 'createPassword');
-	Route::post('resend-verify-email', 'resendVerifyEmail');
+	Route::post('resend-verify-email', 'resendVerifyEmail')->middleware(['throttle:3,3']);
 });
 
 // DepartmentController

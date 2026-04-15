@@ -1,8 +1,7 @@
-import { mount, VueWrapper } from "@vue/test-utils";
-import { beforeEach, describe, expect, it } from "vitest";
-import LayoutBar from "@/components/layout/LayoutBar.vue"
-import systemConfig from "@/config/system.ts"
-
+import { mount, VueWrapper } from '@vue/test-utils'
+import { beforeEach, describe, expect, it } from 'vitest'
+import LayoutBar from '@/components/layout/LayoutBar'
+import defaultConfig from '@/config/default'
 
 describe('LayoutBar.vue', () => {
 	let wrapper: VueWrapper<any>
@@ -12,23 +11,22 @@ describe('LayoutBar.vue', () => {
 			global: {
 				stubs: {
 					'v-app-bar': {
-						template: '<div><slot/></div>'
+						template: '<div><slot/></div>',
 					},
 					'v-app-bar-title': {
 						props: ['textColor'],
-						template: '<div :class="textColor"><slot/></div>'
-					}
-
-				}
+						template: '<div :class="textColor"><slot/></div>',
+					},
+				},
 			},
 			props: {
-				textColor: 'primary'
-			}
+				textColor: 'primary',
+			},
 		})
 	})
-	
+
 	it('render app name', () => {
-		expect(wrapper.text()).toContain(systemConfig.appName)
+		expect(wrapper.text()).toContain(defaultConfig.appName)
 	})
 
 	it('receive correct textColor Prop', () => {
@@ -36,3 +34,4 @@ describe('LayoutBar.vue', () => {
 		expect(barTitle.classes()).toContain('primary')
 	})
 })
+

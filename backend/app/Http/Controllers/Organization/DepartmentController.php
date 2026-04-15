@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Organization;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\IndexCommonRequest;
+use App\Http\Requests\Organization\Department\IndexDepartmentRequest;
 use App\Http\Requests\Organization\Department\StoreDepartmentRequest;
 use App\Trait\FormatResponse;
 use App\Http\Resources\Organization\Deparment\DepartmentListResource;
 use App\Http\Resources\Organization\Deparment\DepartmentPaginateResource;
 use App\Services\Organization\DepartmentService;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class DepartmentController extends Controller
 {
@@ -25,22 +25,22 @@ class DepartmentController extends Controller
 
 		if ($this->departmentService->create($data) !== false) {
 			$message = 'department.alert.success.create';
-			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
+			return $this->jsonResponse($message, Response::HTTP_OK);
 		}
 
 		$message = 'department.alert.error.create';
-		return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+		return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
 	}
 
-	public function index(IndexCommonRequest $indexCommonRequest)
+	public function index(IndexDepartmentRequest $indexDepartmentRequest)
 	{
-		$data = $indexCommonRequest->validated();
+		$data = $indexDepartmentRequest->validated();
 
 		$departments = $this->departmentService->paginate($data);
 
 		if ($departments === false) {
 			$message = 'common-list.alert.error.getTableData';
-			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
 		return DepartmentPaginateResource::collection($departments)->response();
@@ -52,7 +52,7 @@ class DepartmentController extends Controller
 
 		if ($departments === false) {
 			$message = 'department.alert.error.getList';
-			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
 		return DepartmentListResource::collection($departments)->response();

@@ -7,7 +7,7 @@ use App\Http\Requests\System\ListByProvinceRequest;
 use App\Http\Resources\System\AdministrativeUnitResource;
 use App\Services\System\AdministrativeUnitService;
 use App\Trait\FormatResponse;
-use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 
 class AdministrativeUnitController extends Controller
@@ -24,7 +24,7 @@ class AdministrativeUnitController extends Controller
 
 		if ($provinces === false) {
 			$message = 'common-list.alert.error.getList';
-			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
 		return AdministrativeUnitResource::collection($provinces)->response();
@@ -38,7 +38,7 @@ class AdministrativeUnitController extends Controller
 
 		if ($wards === false) {
 			$message = 'common-list.alert.error.getList';
-			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
 		return AdministrativeUnitResource::collection($wards)->response();

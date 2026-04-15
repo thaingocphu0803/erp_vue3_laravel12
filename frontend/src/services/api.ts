@@ -1,3 +1,4 @@
+import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import axios from 'axios'
 
@@ -44,6 +45,10 @@ api.interceptors.response.use(
 		if (status === 401) {
 			const authStore = useAuthStore()
 			authStore.clearAuth()
+		}
+
+		if (status === 500) {
+			router.push({ name: 'error', query: { code: status } })
 		}
 
 		// Always reject the promise so the Error can be caught in Vue component

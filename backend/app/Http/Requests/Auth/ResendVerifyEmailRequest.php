@@ -1,16 +1,15 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Auth;
 
-use Illuminate\Foundation\Http\FormRequest;
-use App\Trait\FormatResponse;
+use App\Http\Requests\VerifyEmailCommonRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
+use App\Trait\FormatResponse;
 
-class IndexCommonRequest extends FormRequest
+class ResendVerifyEmailRequest extends VerifyEmailCommonRequest
 {
 	use FormatResponse;
-
 	/**
 	 * Determine if the user is authorized to make this request.
 	 */
@@ -26,26 +25,19 @@ class IndexCommonRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [
-			'page' => ['bail', 'required', 'integer', 'min:1'],
-			'itemsPerPage' => ['bail', 'required', 'integer', 'in:5,10,15,20'],
-			'search' => ['nullable', 'string'],
-			'sortOrder' => ['nullable', 'in:asc,desc'],
-			'sortKey' => ['nullable', 'string'],
-			'status' => ['bail', 'nullable', 'string', 'in:A,X']
-		];
+		return parent::rules();
 	}
 
 	public function messages(): array
 	{
-		return [];
+		return parent::messages();
 	}
 
 	public function failedValidation(Validator $validator)
 	{
 		$errors = $validator->errors()->messages();
 
-		$messageCode = 'common-list.alert.error.badFilter';
+		$messageCode = 'auth.validate.verify.invalidToken';
 
 		return $this->exceptionResponse($messageCode, Response::HTTP_UNPROCESSABLE_ENTITY, $errors);
 	}

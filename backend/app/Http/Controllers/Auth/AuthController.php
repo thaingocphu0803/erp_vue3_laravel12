@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\CreatePasswordRequest;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\ResendVerifyEmailRequest;
+use App\Notifications\QueueVerifyEmail;
 use App\Services\Auth\AuthService;
 use App\Trait\AutoGenerate;
 use App\Trait\FormatResponse;
-use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
 {
@@ -28,7 +29,7 @@ class AuthController extends Controller
 
 			$message = 'auth.alert.error.incorrectAuth';
 
-			return  $this->jsonResponse($message, JsonResponse::HTTP_UNAUTHORIZED);
+			return  $this->jsonResponse($message, Response::HTTP_UNAUTHORIZED);
 		}
 
 		$loginRequest->session()->regenerateToken();
@@ -37,7 +38,7 @@ class AuthController extends Controller
 
 		$message = 'auth.alert.success.login';
 
-		return $this->jsonResponse($message, JsonResponse::HTTP_OK, compact('user'));
+		return $this->jsonResponse($message, Response::HTTP_OK, compact('user'));
 	}
 
 	public function me()
@@ -45,7 +46,7 @@ class AuthController extends Controller
 		$user = $this->authService->me();
 
 		$message = 'auth.alert.success.me';
-		return $this->jsonResponse($message, JsonResponse::HTTP_OK, compact('user'));
+		return $this->jsonResponse($message, Response::HTTP_OK, compact('user'));
 	}
 
 	public function logout(Request $request)
@@ -55,15 +56,12 @@ class AuthController extends Controller
 		$request->session()->regenerateToken();
 
 		$message = 'auth.alert.success.logout';
-		return  $this->jsonResponse($message, JsonResponse::HTTP_OK);
+		return  $this->jsonResponse($message, Response::HTTP_OK);
 	}
 
 	public function verifyEmail(Request $request)
 	{
-		$resendVerifyUrl = $this->generateFrontendUrlWithParams(
-			'resend-verification',
-			$request->route()->parameters()
-		);
+		$resendVerifyUrl = $this->generateFrontendUrlWithParams('resend-verify-email', $request->route()->parameters());
 
 		if (!$request->hasValidSignature()) {
 			return redirect($resendVerifyUrl);
@@ -71,19 +69,16 @@ class AuthController extends Controller
 
 		$user = $this->authService->find($request->route('id'));
 
-		if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+		if ($user === false) {
+			$serverErrorUrl = $this->generateFrontendUrlWithParams('error', ['code' => Response::HTTP_INTERNAL_SERVER_ERROR]);
+			return redirect($serverErrorUrl);
+		}
+
+		if (is_null($user) || !hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
 			return redirect($resendVerifyUrl);
 		}
 
-		if (!$user->hasVerifiedEmail()) {
-			$user->markEmailAsVerified();
-			event(new Verified($user));
-		}
-
-		$newPassswordUrl = $this->generateFrontendUrlWithParams(
-			'new-password',
-			$request->route()->parameters()
-		);
+		$newPassswordUrl = $this->generateFrontendUrlWithParams('new-password', $request->route()->parameters());
 
 		return redirect($newPassswordUrl);
 	}
@@ -94,32 +89,21 @@ class AuthController extends Controller
 
 		if ($this->authService->createPassword($data) === false) {
 			$message = 'auth.alert.error.createPassword';
-			return $this->jsonResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+			return $this->jsonResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 
 		$message = 'auth.alert.success.createPassword';
-		return $this->jsonResponse($message, JsonResponse::HTTP_OK);
+		return $this->jsonResponse($message, Response::HTTP_OK);
 	}
 
-	public function resendVerifyEmail(Request $request)
+	public function resendVerifyEmail(ResendVerifyEmailRequest $resendVerifyEmailRequest)
 	{
-		$data = $request->validate([
-			'id' => 'required|integer|exists:users,id',
-			'hash' => 'required|string',
-		]);
+		$data = $resendVerifyEmailRequest->validated();
 
 		$user = $this->authService->find($data['id']);
 
-		if (!$user || !hash_equals((string) $data['hash'], sha1($user->getEmailForVerification()))) {
-			return $this->jsonResponse('auth.validate.verify.invalidToken', JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
-		}
+		$user->notify(new QueueVerifyEmail(true));
 
-		if ($user->hasVerifiedEmail()) {
-			return $this->jsonResponse('auth.alert.success.already_verified', JsonResponse::HTTP_OK);
-		}
-
-		$user->notify(new \App\Notifications\QueueVerifyEmail(true));
-
-		return $this->jsonResponse('auth.alert.success.resend_email', JsonResponse::HTTP_OK);
+		return $this->jsonResponse('auth.alert.success.resendVerifyEmail', Response::HTTP_OK);
 	}
 }

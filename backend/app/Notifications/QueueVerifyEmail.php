@@ -11,9 +11,9 @@ class QueueVerifyEmail extends VerifyEmail implements ShouldQueue
 {
 	use Queueable;
 
-	private bool $resend;
+	public bool $resend  = false;
 
-	public function __construct(bool $resend = false)
+	public function __construct(bool $resend)
 	{
 		$this->resend = $resend;
 	}
@@ -24,9 +24,9 @@ class QueueVerifyEmail extends VerifyEmail implements ShouldQueue
 		app()->setLocale($locale);
 
 		return (new MailMessage)
-			->subject(__('mail.verify_email.subject'))
-			->greeting(__('mail.verify_email.greeting', ['name' => $notifiable->name]))
-			->line(__('mail.verify_email.line1'))
+			->subject($this->resend ? __('mail.resend_verify_email.subject') : __('mail.verify_email.subject'))
+			->greeting($this->resend ? __('mail.resend_verify_email.greeting', ['name' => $notifiable->name]) : __('mail.verify_email.greeting', ['name' => $notifiable->name]))
+			->line($this->resend ? __('mail.resend_verify_email.line1') : __('mail.verify_email.line1'))
 			->line(__('mail.verify_email.login_email', ['email' => $notifiable->email]))
 			->action(__('mail.verify_email.action'), $url)
 			->line(__('mail.verify_email.line2', ['count' => config('mail.verification_expire_days')]))

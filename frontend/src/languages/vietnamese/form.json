@@ -50,7 +50,8 @@
 				"logout": "Đăng xuất thành công",
 				"login": "Đăng nhập thành công",
 				"me": "Truy cập thông tin người dùng thành công",
-				"createPassword": "Tạo mật khẩu thành công. Bây giờ bạn có thể đăng nhập vào hệ thống."
+				"createPassword": "Tạo mật khẩu thành công. Bây giờ bạn có thể đăng nhập vào hệ thống.",
+				"resendVerifyEmail": "Email xác thực đã được gửi lại. Vui lòng kiểm tra hộp thư của bạn, bao gồm cả thư mục spam."
 			}
 		}
 	},

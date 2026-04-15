@@ -6,7 +6,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 trait FormatResponse
 {
-	public function exceptionResponse($message, $status_code, $errors = [])
+	public function exceptionResponse(string $message, int $status_code, array $errors = [])
 	{
 		$dataResponse = $this->initValidationResponseData($message, $errors);
 
@@ -15,14 +15,14 @@ trait FormatResponse
 		);
 	}
 
-	public function jsonResponse($message, $status_code = 200, $data = [])
+	public function jsonResponse(string $message, int $status_code = 200, array $data = [])
 	{
 		$dataResponse = $this->initResponseData($message, $data);
 
 		return response()->json($dataResponse, (int) $status_code);
 	}
 
-	private function initResponseData($message = '', $dataResponse = [])
+	private function initResponseData(string $message = '', array $dataResponse = [])
 	{
 		$data = [
 			'messageCode' => (string) $message,
@@ -32,7 +32,7 @@ trait FormatResponse
 		return $data;
 	}
 
-	private function initValidationResponseData($message = '', $errors = [])
+	private function initValidationResponseData(string $message = '', array $errors = [])
 	{
 		$data = [
 			'messageCode' => (string) $message,

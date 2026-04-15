@@ -31,7 +31,8 @@
 		},
 		"state": {
 			"comeSoon": "Sắp Ra Mắt...",
-			"expiredLink": "Liên kết bạn sử dụng không còn hiệu lực. Vui lòng nhấn vào nút bên dưới để yêu cầu hệ thống gửi lại một liên kết mới đến địa chỉ email của bạn."
+			"expiredLink": "Liên kết bạn sử dụng không còn hiệu lực. Vui lòng nhấn vào nút bên dưới để yêu cầu hệ thống gửi lại một liên kết mới đến địa chỉ email của bạn.",
+			"error": "Lỗi"
 		},
 		"subtitle": {
 			"notification": "Hôm nay"
@@ -75,7 +76,8 @@
 			"create": "Tạo",
 			"next": "Tiếp tục",
 			"back": "Quay lại",
-			"confirm": "Xác nhận"
+			"confirm": "Xác nhận",
+			"backToHome": "Quay về trang chủ"
 		},
 		"table": {
 			"department": {
@@ -116,7 +118,10 @@
 				"own": "Cá nhân",
 				"none": "Không"
 			}
+		},
+		"serverError": {
+			"internalServerError": "Lỗi Hệ thống. Vui lòng thử lại sau",
+			"notFound": "Không tìm thấy trang"
 		}
 	}
 }
-

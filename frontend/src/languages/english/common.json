@@ -31,7 +31,8 @@
 		},
 		"state": {
 			"comeSoon": "Comming Soon...",
-			"expiredLink": "The link you used is no longer valid. Please click the button below to request the system to send a new link to your email address."
+			"expiredLink": "The link you used is no longer valid. Please click the button below to request the system to send a new link to your email address.",
+			"error": "Error"
 		},
 		"subtitle": {
 			"notification": "Today"
@@ -75,7 +76,8 @@
 			"create": "Create",
 			"next": "Next",
 			"back": "Back",
-			"confirm": "Confirm"
+			"confirm": "Confirm",
+			"backToHome": "Back to home"
 		},
 		"table": {
 			"department": {
@@ -116,7 +118,10 @@
 				"own": "Own",
 				"none": "None"
 			}
+		},
+		"serverError": {
+			"internalServerError": "Internal Server Error. Please try again later",
+			"notFound": "Page Not Found"
 		}
 	}
 }
-

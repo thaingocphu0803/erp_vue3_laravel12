@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\System\PermissionCollection;
 use App\Models\Permission;
 use App\Trait\FormatResponse;
-use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Http\Request;
 
 class PermissionController extends Controller
@@ -20,7 +20,7 @@ class PermissionController extends Controller
 			return new PermissionCollection($permissions);
 		} catch (\Exception $e) {
 			$message = 'common-list.alert.error.getPermissions';
-			return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
 		}
 	}
 }

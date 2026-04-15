@@ -2,6 +2,7 @@ import noAvatar from '@/public/images/no-avatar.webp'
 import { getYesterdayISO } from '@/utils/dateFormat'
 
 const defaultConfig = {
+	appName: 'REZE HRM',
 	avatar: noAvatar as string,
 	perPage: [5, 10, 15, 20],
 	page: 1,

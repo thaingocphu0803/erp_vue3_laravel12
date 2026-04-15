@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\HumanResource\Employee\StoreEmployeeRequest;
 use App\Services\HumanResource\EmployeeService;
 use App\Trait\FormatResponse;
-use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 class EmployeeController extends Controller
 {
@@ -21,10 +21,10 @@ class EmployeeController extends Controller
 
 		if ($this->employeeService->create($data) !== false) {
 			$message = 'employee.alert.success.create';
-			return $this->jsonResponse($message, JsonResponse::HTTP_OK);
+			return $this->jsonResponse($message, Response::HTTP_OK);
 		}
 
 		$message = 'employee.alert.error.create';
-		return $this->exceptionResponse($message, JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+		return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
 	}
 }

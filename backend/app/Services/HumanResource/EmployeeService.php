@@ -35,7 +35,7 @@ class EmployeeService
 		}
 
 		try {
-			$user = DB::transaction(function () use ($data, $avatarPath) {
+			return DB::transaction(function () use ($data, $avatarPath) {
 				$credentialPayload = $this->getCredentialPayload($data);
 				$user = $this->userRepository->create($credentialPayload);
 
@@ -49,16 +49,11 @@ class EmployeeService
 					$this->departmentRepositoryInterface->update($data['department_id'], $departmentPayload);
 				}
 
-				return $user;
-			});
-
-			if (!is_null($user)) {
 				event(new Registered($user));
-			}
 
-			return true;
+				return true;
+			});
 		} catch (\Exception $e) {
-			echo $e->getMessage();
 			$this->fileService->delete($avatarPath);
 			return false;
 		}

@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\Rules\HashEmailRule;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\Http\Requests\VerifyEmailCommonRequest;
 use Illuminate\Validation\Rules\Password;
 
-class CreatePasswordRequest extends FormRequest
+class CreatePasswordRequest extends VerifyEmailCommonRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -24,21 +22,20 @@ class CreatePasswordRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [
-			'id' => ['bail', 'required', 'integer', Rule::exists('users', 'id')],
-			'hash' => ['bail', 'required', 'string', new HashEmailRule($this->id)],
-			'password' => ['bail', 'required', Password::min(8)->mixedCase()->numbers()->symbols(), 'confirmed'],
+		$parentRules = parent::rules();
+
+		$createPasswordRules = [
+			'password' => ['bail', 'required', Password::min(8)->mixedCase()->numbers()->symbols(), 'confirmed']
 		];
+
+		return array_merge($parentRules, $createPasswordRules);
 	}
 
 	public function messages(): array
 	{
-		return [
-			'id.required' => __('auth.alert.error.invalid_token'),
-			'id.integer' => __('auth.alert.error.invalid_token'),
-			'id.exists' => __('auth.alert.error.invalid_token'),
-			'hash.required' => __('auth.alert.error.invalid_token'),
-			'hash.string' => __('auth.alert.error.invalid_token'),
+		$parentMessages = parent::messages();
+
+		$createPasswordMessages = [
 			'password.required' => 'auth.validate.password.required',
 			'password.min' => 'auth.validate.password.min',
 			'password.mixed' => 'auth.validate.password.hasUpperLetter',
@@ -46,5 +43,7 @@ class CreatePasswordRequest extends FormRequest
 			'password.symbols' => 'auth.validate.password.hasSpecialChar',
 			'password.confirmed' => 'auth.validate.password.confirmed',
 		];
+
+		return array_merge($parentMessages, $createPasswordMessages);
 	}
 }

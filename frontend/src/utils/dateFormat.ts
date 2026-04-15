@@ -18,3 +18,12 @@ export const getYesterdayISO = () => {
 	return date.toISOString().split('T')[0]
 }
 
+// get local storage locale
+export const getRetryAfter = () => localStorage.getItem('retry-after')
+
+// set local storage locale
+export const setRetryAfter = (retryAfter: string) => localStorage.setItem('retry-after', retryAfter)
+
+// remove local storage locale
+export const removeRetryAfter = () => localStorage.removeItem('retry-after')
+

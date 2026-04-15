@@ -4,21 +4,17 @@ import ThemeSwitch from '@/components/ThemeSwitch.vue'
 import Form from '@/components/Form.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import LanguageBtn from '@/components/layout/LanguageBtn.vue'
-import { provide, reactive, ref } from 'vue'
+import { onMounted, provide, reactive, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import AppToast from '@/components/layout/AppToast.vue'
 import defaultConfig from '@/config/default'
+import { removeRetryAfter, setRetryAfter, getRetryAfter } from '@/utils/dateFormat'
 
 interface Payload {
 	id: number | null
 	hash: string
-}
-
-const payload: Payload = {
-	id: null,
-	hash: '',
 }
 
 const title: string = 'auth.title.resendVerifyEmail'
@@ -32,12 +28,18 @@ const { authResendVerifyEmail } = useAuthStore()
 
 const loading = ref<boolean>(false)
 
-const handleResend = async () => {
+const isDisabled = ref<boolean>(false)
+
+const retryAfter = ref<number>(0)
+
+const handleResendEmailVerification = async () => {
 	try {
 		loading.value = true
 
-		payload.id = Number(route.query.id)
-		payload.hash = String(route.query.hash)
+		const payload: Payload = {
+			id: route.query.id ? Number(route.query.id) : null,
+			hash: route.query.hash ? String(route.query.hash) : '',
+		}
 
 		if (!payload.id || !payload.hash) {
 			toast.show('auth.validate.verify.invalidToken', 'error')
@@ -47,13 +49,40 @@ const handleResend = async () => {
 		const response = await authResendVerifyEmail(payload)
 		toast.show(response.data.messageCode, 'success')
 	} catch (error: any) {
-		console.error('Resend error:', error)
-		const message = error.response?.data?.messageCode || 'auth.alert.error.invalidAuth'
-		toast.show(message, 'error')
+		if (error.status === 422) {
+			toast.show(error.response.data.messageCode, 'error')
+		}
+
+		if (error.status === 429) {
+			isDisabled.value = true
+
+			retryAfter.value = error.response.headers['retry-after'] as number
+			handleCountdown()
+		}
 	} finally {
 		loading.value = false
 	}
 }
+
+const handleCountdown = () => {
+	const interval = setInterval(() => {
+		retryAfter.value--
+		setRetryAfter(String(retryAfter.value))
+		if (retryAfter.value === 0) {
+			clearInterval(interval)
+			removeRetryAfter()
+			isDisabled.value = false
+		}
+	}, 1000)
+}
+
+onMounted(() => {
+	if (getRetryAfter()) {
+		isDisabled.value = true
+		retryAfter.value = Number(getRetryAfter())
+		handleCountdown()
+	}
+})
 </script>
 
 <template>
@@ -64,15 +93,29 @@ const handleResend = async () => {
 		</layout-bar>
 
 		<v-main class="mx-auto my-auto" :max-width="defaultConfig.maxWidthForm">
-			<v-card density="comfortable" class="border d-flex flex-column justify-center align-center ga-5 pa-5">
+			<v-card
+				density="comfortable"
+				class="border d-flex flex-column justify-center align-center ga-5 pa-5"
+			>
 				<v-icon color="warning" icon="mdi-emoticon-dead-outline" size="72" />
 
 				<p class="text-body-1 text-medium-emphasis text-center">
 					{{ $t('common.state.expiredLink') }}
 				</p>
 
-				<base-btn :title :loading="loading" type="button" class="mt-5" color="primary"
-					@click.prevent="handleResend" />
+				<base-btn
+					:title
+					:loading="loading"
+					type="button"
+					class="mt-5"
+					color="primary"
+					:disabled="isDisabled"
+					@click.prevent="handleResendEmailVerification"
+				/>
+
+				<span v-if="isDisabled" class="text-red-lighten-2"
+					>Thao tác quá nhiều lần chờ {{ retryAfter }}s cho đến khi được gửi lại</span
+				>
 			</v-card>
 		</v-main>
 
@@ -90,3 +133,4 @@ const handleResend = async () => {
 	margin-left: unset;
 }
 </style>
+

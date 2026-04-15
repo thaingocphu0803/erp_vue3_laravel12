@@ -42,7 +42,13 @@ class AuthService
 
 	public function find(int $id)
 	{
-		return $this->userRepositoryInterface->find($id);
+		try {
+			$auth =  $this->userRepositoryInterface->find($id);
+
+			return $auth;
+		} catch (\Exception $e) {
+			return false;
+		}
 	}
 
 	public function createPassword(array $data)
