@@ -122,6 +122,9 @@
 		"serverError": {
 			"internalServerError": "Internal Server Error. Please try again later",
 			"notFound": "Page Not Found"
+		},
+		"throttle": {
+			"tooManyRequests": "Too many requests. Please try again after {time}s"
 		}
 	}
 }

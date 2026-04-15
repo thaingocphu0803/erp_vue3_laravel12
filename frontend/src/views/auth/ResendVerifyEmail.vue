@@ -113,9 +113,9 @@ onMounted(() => {
 					@click.prevent="handleResendEmailVerification"
 				/>
 
-				<span v-if="isDisabled" class="text-red-lighten-2"
-					>Thao tác quá nhiều lần chờ {{ retryAfter }}s cho đến khi được gửi lại</span
-				>
+				<span v-if="isDisabled" class="text-red-lighten-2">
+					{{ $t('common.throttle.tooManyRequests', { time: retryAfter }) }}
+				</span>
 			</v-card>
 		</v-main>
 

@@ -122,6 +122,9 @@
 		"serverError": {
 			"internalServerError": "Lỗi Hệ thống. Vui lòng thử lại sau",
 			"notFound": "Không tìm thấy trang"
+		},
+		"throttle": {
+			"tooManyRequests": "Thao tác quá nhiều lần chờ {time}s cho đến khi được gửi lại"
 		}
 	}
 }
