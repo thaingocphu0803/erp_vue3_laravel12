@@ -8,13 +8,16 @@ import BaseBtn from '@/components/BaseBtn.vue'
 import LanguageBtn from '@/components/layout/LanguageBtn.vue'
 import authValidation from '@/composables/validation/useAuthValidation'
 import ErrorAlert from '@/components/form/ErrorAlert.vue'
-import { provide, reactive, ref } from 'vue'
+import { onMounted, provide, reactive, ref } from 'vue'
 import router from '@/router'
 import { useAuthStore } from '@/stores/auth'
 import { useRoute, type RouteLocationRaw } from 'vue-router'
 import { mapLaravelError } from '@/utils/errorHandler'
 import AppToast from '@/components/layout/AppToast.vue'
 import { useToastStore } from '@/stores/toast'
+import { useThrottleStore } from '@/stores/throttle'
+import { storeToRefs } from 'pinia'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
 
 interface LoginForm {
 	email: string
@@ -62,6 +65,10 @@ const loading = ref<boolean>(false)
 
 const visible = ref<boolean>(false)
 
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
+const { initThrottle, startThrottle } = useThrottleStore()
+
+
 const { authLogin } = useAuthStore()
 
 const handleLogin = async () => {
@@ -82,11 +89,20 @@ const handleLogin = async () => {
 			errorMessage.unauthorized = error.response.data.messageCode
 		} else if (status == 422) {
 			mapLaravelError(errorMessage, error)
+		} else if (status === 429) {
+			throttle.value = error.response.headers['retry-after'] as number
+			startThrottle()
 		}
 	} finally {
 		loading.value = false
 	}
 }
+
+
+onMounted(() => {
+	initThrottle()
+})
+
 </script>
 
 <template>
@@ -100,34 +116,20 @@ const handleLogin = async () => {
 			<Form :title @submit-form="handleLogin">
 				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
-				<Input
-					:label="$t('auth.input.email')"
-					name="email"
-					placeholder="example@gmail.com"
-					:rules="authValidation.email"
-					v-model="LoginData.email"
-				/>
+				<Input :label="$t('auth.input.email')" name="email" placeholder="example@gmail.com"
+					:rules="authValidation.email" v-model="LoginData.email" />
 
-				<Input
-					:label="$t('auth.input.password')"
-					name="password"
-					:type="visible ? 'text' : 'password'"
-					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-					@click:append-inner="visible = !visible"
-					:rules="authValidation.password"
-					v-model="LoginData.password"
-				/>
+				<Input :label="$t('auth.input.password')" name="password" :type="visible ? 'text' : 'password'"
+					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="visible = !visible"
+					:rules="authValidation.password" v-model="LoginData.password" />
 
-				<Checkbox
-					:label="$t('auth.input.rememberMe')"
-					name="remember_me"
-					v-model="LoginData.rememberMe"
-					:false-value="checkboxData.falseValue"
-					:true-value="checkboxData.trueValue"
-				/>
+				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="LoginData.rememberMe"
+					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
 
-				<base-btn :title :loading="loading" type="submit" block />
+				<base-btn :title :loading="loading" type="submit" block :disabled="isDisabled" />
 			</Form>
+
+			<throttle-alert :show="isDisabled" :time="throttle" />
 		</v-main>
 
 		<app-toast />
@@ -144,4 +146,3 @@ const handleLogin = async () => {
 	margin-left: unset;
 }
 </style>
-

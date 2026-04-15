@@ -124,7 +124,7 @@
 			"notFound": "Không tìm thấy trang"
 		},
 		"throttle": {
-			"tooManyRequests": "Thao tác quá nhiều lần chờ {time}s cho đến khi được gửi lại"
+			"tooManyRequests": "Thao tác quá nhiều lần. Vui lòng chờ {time}s cho đến khi được gửi lại"
 		}
 	}
 }

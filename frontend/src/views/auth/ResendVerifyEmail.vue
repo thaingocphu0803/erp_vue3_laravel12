@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import LayoutBar from '@/components/layout/LayoutBar.vue'
 import ThemeSwitch from '@/components/ThemeSwitch.vue'
-import Form from '@/components/Form.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import LanguageBtn from '@/components/layout/LanguageBtn.vue'
-import { onMounted, provide, reactive, ref } from 'vue'
+import { onMounted, provide, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import AppToast from '@/components/layout/AppToast.vue'
 import defaultConfig from '@/config/default'
-import { removeRetryAfter, setRetryAfter, getRetryAfter } from '@/utils/dateFormat'
+import { useThrottleStore } from '@/stores/throttle'
+import { storeToRefs } from 'pinia'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
 
 interface Payload {
 	id: number | null
@@ -28,9 +29,9 @@ const { authResendVerifyEmail } = useAuthStore()
 
 const loading = ref<boolean>(false)
 
-const isDisabled = ref<boolean>(false)
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 
-const retryAfter = ref<number>(0)
+const { initThrottle, startThrottle } = useThrottleStore()
 
 const handleResendEmailVerification = async () => {
 	try {
@@ -54,34 +55,16 @@ const handleResendEmailVerification = async () => {
 		}
 
 		if (error.status === 429) {
-			isDisabled.value = true
-
-			retryAfter.value = error.response.headers['retry-after'] as number
-			handleCountdown()
+			throttle.value = error.response.headers['retry-after'] as number
+			startThrottle()
 		}
 	} finally {
 		loading.value = false
 	}
 }
 
-const handleCountdown = () => {
-	const interval = setInterval(() => {
-		retryAfter.value--
-		setRetryAfter(String(retryAfter.value))
-		if (retryAfter.value === 0) {
-			clearInterval(interval)
-			removeRetryAfter()
-			isDisabled.value = false
-		}
-	}, 1000)
-}
-
 onMounted(() => {
-	if (getRetryAfter()) {
-		isDisabled.value = true
-		retryAfter.value = Number(getRetryAfter())
-		handleCountdown()
-	}
+	initThrottle()
 })
 </script>
 
@@ -93,29 +76,17 @@ onMounted(() => {
 		</layout-bar>
 
 		<v-main class="mx-auto my-auto" :max-width="defaultConfig.maxWidthForm">
-			<v-card
-				density="comfortable"
-				class="border d-flex flex-column justify-center align-center ga-5 pa-5"
-			>
+			<v-card density="comfortable" class="border d-flex flex-column justify-center align-center ga-5 pa-5">
 				<v-icon color="warning" icon="mdi-emoticon-dead-outline" size="72" />
 
 				<p class="text-body-1 text-medium-emphasis text-center">
 					{{ $t('common.state.expiredLink') }}
 				</p>
 
-				<base-btn
-					:title
-					:loading="loading"
-					type="button"
-					class="mt-5"
-					color="primary"
-					:disabled="isDisabled"
-					@click.prevent="handleResendEmailVerification"
-				/>
+				<base-btn :title :loading="loading" type="button" class="mt-5" :disabled="isDisabled"
+					@click.prevent="handleResendEmailVerification" />
 
-				<span v-if="isDisabled" class="text-red-lighten-2">
-					{{ $t('common.throttle.tooManyRequests', { time: retryAfter }) }}
-				</span>
+				<throttle-alert :show="isDisabled" :time="throttle" />
 			</v-card>
 		</v-main>
 
@@ -133,4 +104,3 @@ onMounted(() => {
 	margin-left: unset;
 }
 </style>
-
