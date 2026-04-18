@@ -77,6 +77,7 @@
 			"next": "Next",
 			"back": "Back",
 			"confirm": "Confirm",
+			"retry": "Retry",
 			"backToHome": "Back to home"
 		},
 		"table": {
@@ -125,6 +126,10 @@
 		},
 		"throttle": {
 			"tooManyRequests": "Too many requests. Please try again after {time}s"
+		},
+		"error": {
+			"fetchDataFailed": "Failed to fetch data. Please try again."
 		}
 	}
 }
+

@@ -5,33 +5,49 @@ import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import { useTableModule } from '@/composables/useTableModule'
 import { t } from '@/plugins/vueI18n'
 import { usePermissionStore, type RolePermission } from '@/stores/permission'
+import RetryBtn from '@/components/RetryBtn.vue'
 import type { suportedScopes } from '@/types/common'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import SYSTEM from '@/config/system'
+import { useThrottleStore } from '@/stores/throttle'
 
 const emit = defineEmits(['update:selectedPermissions'])
 
 const { permissionScopeHeaders } = useTableModule()
 const { permissionGroup } = storeToRefs(usePermissionStore())
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
+const { initThrottle, startThrottle } = useThrottleStore()
 const { permissionFetch } = usePermissionStore()
 
 const selectedPermissions = ref<RolePermission>({})
 const loadingPermission = ref<boolean>(false)
 const searchModule = ref<string>('')
-const errorMessage = ref<string>('')
 
-onMounted(async () => {
+const isError = ref<boolean>(false)
+
+const loadData = async () => {
 	try {
+		isError.value = false
 		loadingPermission.value = true
 
 		await permissionFetch()
 
 		updateSelectedPermisions()
 	} catch (error: any) {
-		if (error.status === 500) {
-			errorMessage.value = error.response.data.messageCode
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value = error.response.headers['retry-after'] as number
+			startThrottle()
 		}
+
+		isError.value = true
 	} finally {
 		loadingPermission.value = false
 	}
+}
+
+onMounted(() => {
+	loadData()
+	initThrottle()
 })
 
 watch(
@@ -84,27 +100,25 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 			<v-progress-circular indeterminate></v-progress-circular>
 		</v-col>
 
-		<v-col cols="12" v-if="!loadingPermission">
+		<!-- Error State -->
+		<v-col cols="12" class="text-center mt-10" v-else-if="isError">
+			<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
+				{{ $t('common.error.fetchDataFailed') }}
+			</div>
+			<retry-btn color="primary" :disabled="isDisabled" variant="outlined" prepend-icon="mdi-refresh"
+				@click="loadData"></retry-btn>
+
+			<throttle-alert :show="isDisabled" :time="throttle"></throttle-alert>
+		</v-col>
+
+		<!-- Success State: Data loaded -->
+		<v-col cols="12" v-else>
 			<!-- Search Module Input -->
 			<div class="mt-3 mb-10">
-				<base-search-btn
-					v-model="searchModule"
-					:label="$t('common.filter.permissionModule')"
-				></base-search-btn>
+				<base-search-btn v-model="searchModule" :label="$t('common.filter.permissionModule')"></base-search-btn>
 			</div>
 
-			<template v-if="!Object.entries(permissionGroup).length">
-				<div class="text-center text-body-1">({{ $t(errorMessage) }})</div>
-			</template>
-
-			<v-table
-				v-else
-				class="elevation-1 border"
-				density="comfortable"
-				hover
-				height="50vh"
-				fixed-header
-			>
+			<v-table class="elevation-1 border" density="comfortable" hover height="50vh" fixed-header>
 				<thead>
 					<tr>
 						<th></th>
@@ -112,13 +126,9 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 						<th v-for="header in permissionScopeHeaders" class="text-center">
 							<v-tooltip :text="$t('role.tooltip.applyToAll')" location="top">
 								<template #activator="{ props }">
-									<v-btn
-										v-bind="props"
-										class="text-center font-weight-bold text-capitalize"
-										density="compact"
-										variant="text"
-										@click.prevent="updateSelectedPermisions(header.key)"
-									>
+									<v-btn v-bind="props" class="text-center font-weight-bold text-capitalize"
+										density="compact" variant="text"
+										@click.prevent="updateSelectedPermisions(header.key)">
 										{{ header.title }}
 									</v-btn>
 								</template>
@@ -144,22 +154,13 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 								{{ $t(permission.name) }}
 							</td>
 
-							<td
-								v-for="header in permissionScopeHeaders"
-								:key="header.key"
-								class="text-center"
-							>
-								<v-radio
-									v-if="
-										permission.supported_scopes.includes(header.key) ||
-										header.key === 'NONE'
-									"
-									:model-value="selectedPermissions[permission.id] === header.key"
-									@click.prevent="selectPermisionScope(permission.id, header.key)"
-									hide-details
-									color="primary"
-									class="d-flex justify-center"
-								></v-radio>
+							<td v-for="header in permissionScopeHeaders" :key="header.key" class="text-center">
+								<v-radio v-if="
+									permission.supported_scopes.includes(header.key) ||
+									header.key === 'NONE'
+								" :model-value="selectedPermissions[permission.id] === header.key"
+									@click.prevent="selectPermisionScope(permission.id, header.key)" hide-details
+									color="primary" class="d-flex justify-center"></v-radio>
 								<v-icon class="text-center" v-else>mdi-minus-thick</v-icon>
 							</td>
 						</tr>
@@ -169,4 +170,3 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 		</v-col>
 	</v-row>
 </template>
-

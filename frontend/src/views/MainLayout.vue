@@ -28,7 +28,7 @@ const handleNavDisplay = () => {
 		<layout-bar text-color="text-primary">
 			<template #icon>
 				<v-app-bar-nav-icon
-					class="d-sm-none"
+					class="d-md-none"
 					color="primary"
 					@click="handleNavDisplay"
 				></v-app-bar-nav-icon>

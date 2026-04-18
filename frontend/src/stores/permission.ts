@@ -30,3 +30,4 @@ export const usePermissionStore = defineStore('permission', () => {
 	}
 	return { permissionFetch, permissionGroup }
 })
+

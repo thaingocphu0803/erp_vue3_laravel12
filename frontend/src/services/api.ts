@@ -47,13 +47,10 @@ api.interceptors.response.use(
 			authStore.clearAuth()
 		}
 
-		if (status === 500) {
-			router.push({ name: 'error', query: { code: status } })
-		}
-
 		// Always reject the promise so the Error can be caught in Vue component
 		return Promise.reject(error)
 	},
 )
 
 export default api
+

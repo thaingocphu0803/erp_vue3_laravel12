@@ -27,7 +27,7 @@ Route::controller(DepartmentController::class)->prefix('department')->middleware
 });
 
 // PermissionController
-Route::controller(PermissionController::class)->prefix('permission')->middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::controller(PermissionController::class)->prefix('permission')->middleware(['auth:sanctum', 'verified', 'throttle:3,1'])->group(function () {
 	Route::get('index', 'index');
 });
 

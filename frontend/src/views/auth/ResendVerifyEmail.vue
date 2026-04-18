@@ -12,6 +12,7 @@ import defaultConfig from '@/config/default'
 import { useThrottleStore } from '@/stores/throttle'
 import { storeToRefs } from 'pinia'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import SYSTEM from '@/config/system'
 
 interface Payload {
 	id: number | null
@@ -54,7 +55,7 @@ const handleResendEmailVerification = async () => {
 			toast.show(error.response.data.messageCode, 'error')
 		}
 
-		if (error.status === 429) {
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
 			throttle.value = error.response.headers['retry-after'] as number
 			startThrottle()
 		}

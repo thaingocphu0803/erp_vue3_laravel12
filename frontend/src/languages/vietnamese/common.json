@@ -77,6 +77,7 @@
 			"next": "Tiếp tục",
 			"back": "Quay lại",
 			"confirm": "Xác nhận",
+			"retry": "Tải lại",
 			"backToHome": "Quay về trang chủ"
 		},
 		"table": {
@@ -125,6 +126,10 @@
 		},
 		"throttle": {
 			"tooManyRequests": "Thao tác quá nhiều lần. Vui lòng chờ {time}s cho đến khi được gửi lại"
+		},
+		"error": {
+			"fetchDataFailed": "Không thể tải dữ liệu phân quyền. Vui lòng thử lại."
 		}
 	}
 }
+

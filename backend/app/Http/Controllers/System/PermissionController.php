@@ -15,12 +15,12 @@ class PermissionController extends Controller
 
 	public function index(Request $request)
 	{
-		try {
-			$permissions = Permission::whereNot('slug', 'admin')->get();
-			return new PermissionCollection($permissions);
-		} catch (\Exception $e) {
-			$message = 'common-list.alert.error.getPermissions';
-			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+		$permissions = Permission::whereNot('slug', 'admin')->get();
+
+		if ($permissions->isEmpty()) {
+			abort(Response::HTTP_INTERNAL_SERVER_ERROR, 'System configurations missing: Permissions must be seeded before usage.');
 		}
+
+		return new PermissionCollection($permissions);
 	}
 }
