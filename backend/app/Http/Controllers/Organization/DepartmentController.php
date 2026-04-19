@@ -50,11 +50,6 @@ class DepartmentController extends Controller
 	{
 		$departments = $this->departmentService->list();
 
-		if ($departments === false) {
-			$message = 'department.alert.error.getList';
-			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
-
 		return DepartmentListResource::collection($departments)->response();
 	}
 }

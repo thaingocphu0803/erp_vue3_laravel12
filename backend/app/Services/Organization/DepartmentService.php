@@ -47,11 +47,7 @@ class DepartmentService
 
 	public function list()
 	{
-		try {
-			$departments = $this->departmentRepositoryInterface->list();
-			return $departments;
-		} catch (\Exception $e) {
-			return false;
-		}
+		$departments = $this->departmentRepositoryInterface->list();
+		return $departments;
 	}
 }

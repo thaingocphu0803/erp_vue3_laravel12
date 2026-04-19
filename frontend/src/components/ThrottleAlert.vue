@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { useThrottleStore } from '@/stores/throttle'
 
 interface Props {
     show: boolean
@@ -9,7 +7,6 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 </script>
 
 <template>

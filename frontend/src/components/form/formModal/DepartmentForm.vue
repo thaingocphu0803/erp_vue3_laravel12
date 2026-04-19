@@ -5,7 +5,7 @@ import BaseBtn from '@/components/BaseBtn.vue'
 import AnnotationTooltip from '../AnnotationTooltip.vue'
 import ErrorAlert from '../ErrorAlert.vue'
 import departmentValidation from '@/composables/validation/useDepartmentValidation'
-import { reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import Textarea from '@/components/form/Textarea.vue'
 import { useDepartmentStore } from '@/stores/department'
@@ -14,6 +14,9 @@ import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
 import defaultConfig from '@/config/default'
 import RequiredLabel from './requiredLabel.vue'
+import RetryBtn from '@/components/RetryBtn.vue'
+import { useThrottleStore } from '@/stores/throttle'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
 
 interface DepartmentForm {
 	name: string
@@ -40,7 +43,13 @@ const toast = useToastStore()
 
 const { departments } = storeToRefs(useDepartmentStore())
 
+const { isDisabled, throttle } = storeToRefs(useThrottleStore())
+
+const { initThrottle, startThrottle } = useThrottleStore()
+
 const loading = ref<boolean>(false)
+
+const isError = ref<boolean>(false)
 
 const departmentData = reactive<DepartmentForm>({
 	name: '',
@@ -58,13 +67,25 @@ const errorMessage = reactive<ErrorMessage>({
 })
 
 const getDepartmentList = async () => {
+
+	if (isDisabled.value) return
+
+
 	try {
 		loading.value = true
 		await departmentsFetch()
+		isError.value = false
 		errorMessage.getDepartmentList = ''
 	} catch (error: any) {
+		isError.value = true
+
 		if (error.status === 500) {
-			errorMessage.getDepartmentList = error.response?.data?.messageCode
+			errorMessage.getDepartmentList = 'common.error.fetchDataFailed'
+		}
+
+		if (error.status === 429) {
+			throttle.value = error.response.headers['retry-after'] as number
+			startThrottle()
 		}
 	} finally {
 		loading.value = false
@@ -90,6 +111,17 @@ const handleCreate = async () => {
 const handleCancel = () => {
 	emit('cancel')
 }
+
+onMounted(() => {
+	initThrottle()
+})
+
+watch(isDisabled, (value) => {
+	if (value) {
+		errorMessage.getDepartmentList = ''
+	}
+})
+
 </script>
 
 <template>
@@ -98,17 +130,10 @@ const handleCancel = () => {
 
 		<v-row dense>
 			<v-col cols="12">
-				<Input
-					name="name"
-					:rules="departmentValidation.name"
-					v-model="departmentData.name"
-					:maxlength="defaultConfig.maxLengthName"
-					counter
-				>
+				<Input name="name" :rules="departmentValidation.name" v-model="departmentData.name"
+					:maxlength="defaultConfig.maxLengthName" counter>
 					<template #label>
-						<required-label
-							:label="$t('department.input.departmentName')"
-						></required-label>
+						<required-label :label="$t('department.input.departmentName')"></required-label>
 					</template>
 				</Input>
 			</v-col>
@@ -116,54 +141,39 @@ const handleCancel = () => {
 
 		<v-row dense>
 			<v-col cols="12" md="6">
-				<Input
-					:label="$t('department.input.departmentCode')"
-					name="code"
-					v-model="departmentData.code"
-					:maxlength="defaultConfig.maxLengthCode"
-					counter
-				>
+				<Input :label="$t('department.input.departmentCode')" name="code" v-model="departmentData.code"
+					:maxlength="defaultConfig.maxLengthCode" counter>
 					<template #append-inner>
-						<annotation-tooltip
-							text="department.tooltip.codeAutoGenerate"
-						></annotation-tooltip>
+						<annotation-tooltip text="department.tooltip.codeAutoGenerate"></annotation-tooltip>
 					</template>
 				</Input>
 			</v-col>
 
 			<v-col cols="12" md="6">
-				<list-filter
-					:label="$t('department.input.departmentParent')"
-					v-model="departmentData.parent_id"
-					:error-messages="errorMessage.getDepartmentList"
-					:items="departments"
-					searchable
-					item-title="name"
-					item-value="id"
-					:loading
-					@click="getDepartmentList"
-				/>
+				<list-filter :label="$t('department.input.departmentParent')" v-model="departmentData.parent_id"
+					:error-messages="errorMessage.getDepartmentList" :items="departments" searchable item-title="name"
+					item-value="id" :loading @click="getDepartmentList" list-filter>
+
+					<template #append v-if="isError">
+						<retry-btn @click.stop="getDepartmentList" only-icon :disabled="isDisabled"></retry-btn>
+					</template>
+				</list-filter>
+
+				<throttle-alert :show="isDisabled" :time="throttle"></throttle-alert>
 			</v-col>
 		</v-row>
 
 		<v-row dense>
 			<v-col cols="12">
-				<Textarea
-					:label="$t('department.input.departmentDesc')"
-					name="description"
-					v-model="departmentData.description"
-				></Textarea>
+				<Textarea :label="$t('department.input.departmentDesc')" name="description"
+					v-model="departmentData.description"></Textarea>
 			</v-col>
 		</v-row>
 
 		<!-- Actions: Cancel (red) + Create (blue) -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn
-					title="common.btn.cancel"
-					color="red-darken-1"
-					@click.prevent="handleCancel"
-				/>
+				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
 			</v-col>
 			<v-col cols="auto">
 				<BaseBtn title="common.btn.create" color="primary" type="submit" />
@@ -171,4 +181,3 @@ const handleCancel = () => {
 		</v-row>
 	</Form>
 </template>
-

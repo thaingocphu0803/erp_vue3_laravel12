@@ -23,7 +23,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 Route::controller(DepartmentController::class)->prefix('department')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
-	Route::get('list', 'list');
+	Route::get('list', 'list')->middleware(['throttle:3,1']);
 });
 
 // PermissionController
