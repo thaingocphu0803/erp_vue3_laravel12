@@ -90,8 +90,8 @@ const handleLogin = async () => {
 		} else if (status == 422) {
 			mapLaravelError(errorMessage, error)
 		} else if (status === 429) {
-			throttle.value = error.response.headers['retry-after'] as number
-			startThrottle()
+			throttle.value['login'] = error.response.headers['retry-after'] as number
+			startThrottle('login')
 		}
 	} finally {
 		loading.value = false
@@ -100,7 +100,7 @@ const handleLogin = async () => {
 
 
 onMounted(() => {
-	initThrottle()
+	initThrottle('login')
 })
 
 </script>
@@ -126,10 +126,10 @@ onMounted(() => {
 				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="LoginData.rememberMe"
 					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
 
-				<base-btn :title :loading="loading" type="submit" block :disabled="isDisabled" />
+				<base-btn :title :loading="loading" type="submit" block :disabled="isDisabled('login')" />
 			</Form>
 
-			<throttle-alert :show="isDisabled" :time="throttle" />
+			<throttle-alert :show="isDisabled('login')" :time="throttle['login'] || 0" />
 		</v-main>
 
 		<app-toast />

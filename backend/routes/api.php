@@ -11,12 +11,12 @@ use Illuminate\Support\Facades\Route;
 
 // AuthController
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
-	Route::post('login', 'login')->middleware(['throttle:5,3']);
+	Route::post('login', 'login')->middleware(['throttle:3,1']);
 	Route::post('logout', 'logout')->middleware(['auth:sanctum', 'verified']);
 	Route::get('me', 'me')->middleware(['auth:sanctum', 'verified']);
 	Route::get('verify-email/{id}/{hash}', 'verifyEmail')->name('verification.verify');
 	Route::post('create-password', 'createPassword');
-	Route::post('resend-verify-email', 'resendVerifyEmail')->middleware(['throttle:3,3']);
+	Route::post('resend-verify-email', 'resendVerifyEmail')->middleware(['throttle:3,1']);
 });
 
 // DepartmentController
@@ -35,7 +35,7 @@ Route::controller(PermissionController::class)->prefix('permission')->middleware
 Route::controller(PositionController::class)->prefix('position')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
-	Route::get('list', 'list');
+	Route::get('list', 'list')->middleware(['throttle:3,1']);
 	Route::get('list-by-department', 'listByDepartment');
 });
 

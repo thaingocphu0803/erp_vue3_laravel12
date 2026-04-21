@@ -27,16 +27,16 @@ const isError = ref<boolean>(false)
 
 const loadData = async () => {
 	try {
-		isError.value = false
 		loadingPermission.value = true
 
 		await permissionFetch()
-
 		updateSelectedPermisions()
+		isError.value = false
+
 	} catch (error: any) {
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value = error.response.headers['retry-after'] as number
-			startThrottle()
+			throttle.value['permission'] = error.response.headers['retry-after'] as number
+			startThrottle('permission')
 		}
 
 		isError.value = true
@@ -47,7 +47,7 @@ const loadData = async () => {
 
 onMounted(() => {
 	loadData()
-	initThrottle()
+	initThrottle('permission')
 })
 
 watch(
@@ -105,10 +105,10 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 			<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
 				{{ $t('common.error.fetchDataFailed') }}
 			</div>
-			<retry-btn color="primary" :disabled="isDisabled" variant="outlined" prepend-icon="mdi-refresh"
-				@click="loadData"></retry-btn>
+			<retry-btn color="primary" :disabled="isDisabled('permission')" variant="outlined"
+				prepend-icon="mdi-refresh" @click="loadData"></retry-btn>
 
-			<throttle-alert :show="isDisabled" :time="throttle"></throttle-alert>
+			<throttle-alert :show="isDisabled('permission')" :time="throttle['permission'] || 0"></throttle-alert>
 		</v-col>
 
 		<!-- Success State: Data loaded -->

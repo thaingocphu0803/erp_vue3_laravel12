@@ -1,39 +1,42 @@
 import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
+import { computed, reactive, ref } from 'vue'
 
 type Interval = ReturnType<typeof setInterval> | null
 
 export const useThrottleStore = defineStore(
 	'throttle',
 	() => {
-		let interval: Interval = null
+		let interval = reactive<Record<string, Interval>>({})
 
-		const throttle = ref<number>(0)
+		const throttle = ref<Record<string, number | undefined>>({})
 
-		const isDisabled = computed<boolean>(() => throttle.value > 0)
+		const isDisabled = computed(() => (key: string): boolean => {
+			return (throttle.value[key] || 0) > 0
+		})
 
-		const initThrottle = () => {
-			if (throttle.value > 0) {
-				startThrottle()
+		const initThrottle = (key: string) => {
+			if ((throttle.value[key] || 0) > 0) {
+				startThrottle(key)
 			}
 		}
 
-		const startThrottle = () => {
-			stopThrottle()
+		const startThrottle = (key: string) => {
+			stopThrottle(key)
 
-			interval = setInterval(() => {
-				if (throttle.value > 0) {
-					throttle.value--
+			interval[key] = setInterval(() => {
+				const current = throttle.value[key] || 0
+				if (current > 0) {
+					throttle.value[key] = current - 1
 				} else {
-					stopThrottle()
+					stopThrottle(key)
 				}
 			}, 1000)
 		}
 
-		const stopThrottle = () => {
-			if (interval) {
-				clearInterval(interval)
-				interval = null
+		const stopThrottle = (key: string) => {
+			if (interval[key]) {
+				clearInterval(interval[key] as ReturnType<typeof setInterval>)
+				interval[key] = null
 			}
 		}
 

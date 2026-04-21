@@ -56,8 +56,8 @@ const handleResendEmailVerification = async () => {
 		}
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value = error.response.headers['retry-after'] as number
-			startThrottle()
+			throttle.value['resend_email'] = error.response.headers['retry-after'] as number
+			startThrottle('resend_email')
 		}
 	} finally {
 		loading.value = false
@@ -65,7 +65,7 @@ const handleResendEmailVerification = async () => {
 }
 
 onMounted(() => {
-	initThrottle()
+	initThrottle('resend_email')
 })
 </script>
 
@@ -84,10 +84,10 @@ onMounted(() => {
 					{{ $t('common.state.expiredLink') }}
 				</p>
 
-				<base-btn :title :loading="loading" type="button" class="mt-5" :disabled="isDisabled"
+				<base-btn :title :loading="loading" type="button" class="mt-5" :disabled="isDisabled('resend_email')"
 					@click.prevent="handleResendEmailVerification" />
 
-				<throttle-alert :show="isDisabled" :time="throttle" />
+				<throttle-alert :show="isDisabled('resend_email')" :time="throttle['resend_email'] || 0" />
 			</v-card>
 		</v-main>
 

@@ -49,6 +49,8 @@ class PositionController extends Controller
 
 	public function list()
 	{
+		abort(500);
+
 		$positions = $this->positionService->list();
 
 		if ($positions === false) {

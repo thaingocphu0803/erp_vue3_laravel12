@@ -68,8 +68,7 @@ const errorMessage = reactive<ErrorMessage>({
 
 const getDepartmentList = async () => {
 
-	if (isDisabled.value) return
-
+	if (isDisabled.value('departmentFetch')) return
 
 	try {
 		loading.value = true
@@ -84,8 +83,8 @@ const getDepartmentList = async () => {
 		}
 
 		if (error.status === 429) {
-			throttle.value = error.response.headers['retry-after'] as number
-			startThrottle()
+			throttle.value['departmentFetch'] = error.response.headers['retry-after'] as number
+			startThrottle('departmentFetch')
 		}
 	} finally {
 		loading.value = false
@@ -113,10 +112,10 @@ const handleCancel = () => {
 }
 
 onMounted(() => {
-	initThrottle()
+	initThrottle('departmentFetch')
 })
 
-watch(isDisabled, (value) => {
+watch(() => isDisabled.value('departmentFetch'), (value) => {
 	if (value) {
 		errorMessage.getDepartmentList = ''
 	}
@@ -155,11 +154,13 @@ watch(isDisabled, (value) => {
 					item-value="id" :loading @click="getDepartmentList" list-filter>
 
 					<template #append v-if="isError">
-						<retry-btn @click.stop="getDepartmentList" only-icon :disabled="isDisabled"></retry-btn>
+						<retry-btn @click.stop="getDepartmentList" only-icon
+							:disabled="isDisabled('departmentFetch')"></retry-btn>
 					</template>
 				</list-filter>
 
-				<throttle-alert :show="isDisabled" :time="throttle"></throttle-alert>
+				<throttle-alert :show="isDisabled('departmentFetch')"
+					:time="throttle['departmentFetch'] || 0"></throttle-alert>
 			</v-col>
 		</v-row>
 
