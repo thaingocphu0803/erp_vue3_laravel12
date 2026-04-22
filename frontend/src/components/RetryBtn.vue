@@ -1,15 +1,16 @@
 <script setup lang="ts">
 interface Props {
-    onlyIcon?: boolean
+	onlyIcon?: boolean
 }
 
 const props = defineProps<Props>()
 </script>
 
 <template>
-    <v-icon v-if="props.onlyIcon" icon="mdi-refresh" v-bind="$attrs"></v-icon>
+	<v-icon v-if="props.onlyIcon" icon="mdi-refresh" v-bind="$attrs" color="primary"></v-icon>
 
-    <v-btn v-else color="primary" variant="outlined" prepend-icon="mdi-refresh" v-bind="$attrs">
-        {{ $t('common.btn.retry') }}
-    </v-btn>
+	<v-btn v-else color="primary" variant="outlined" prepend-icon="mdi-refresh" v-bind="$attrs">
+		{{ $t('common.btn.retry') }}
+	</v-btn>
 </template>
+

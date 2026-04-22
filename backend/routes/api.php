@@ -36,18 +36,18 @@ Route::controller(PositionController::class)->prefix('position')->middleware(['a
 	Route::post('create', 'create');
 	Route::get('index', 'index');
 	Route::get('list', 'list')->middleware(['throttle:retry']);
-	Route::get('list-by-department', 'listByDepartment');
+	Route::get('list-by-department', 'listByDepartment')->middleware(['throttle:retry']);
 });
 
 // RoleController
 Route::controller(RoleController::class)->prefix('role')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
-	Route::get('list', 'list');
+	Route::get('list', 'list')->middleware(['throttle:retry']);
 });
 
 // AdministrativeUnitController
-Route::controller(AdministrativeUnitController::class)->prefix('administrative-units')->middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::controller(AdministrativeUnitController::class)->prefix('administrative-units')->middleware(['auth:sanctum', 'verified', 'throttle:retry'])->group(function () {
 	Route::get('provinces', 'provinces');
 	Route::get('provinces/{provinceCode}/wards', 'wards');
 });

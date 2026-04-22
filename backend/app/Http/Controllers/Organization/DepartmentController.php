@@ -48,9 +48,7 @@ class DepartmentController extends Controller
 
 	public function list()
 	{
-		abort(500);
 		$departments = $this->departmentService->list();
-
 		return DepartmentListResource::collection($departments)->response();
 	}
 }

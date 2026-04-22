@@ -49,12 +49,6 @@ class RoleController extends Controller
 	public function list()
 	{
 		$roles = $this->roleService->list();
-
-		if ($roles === false) {
-			$message = 'role.alert.error.getList';
-			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
-
 		return RoleListResource::collection($roles)->response();
 	}
 }

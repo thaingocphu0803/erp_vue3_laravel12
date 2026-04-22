@@ -5,7 +5,7 @@ import BaseBtn from '@/components/BaseBtn.vue'
 import AnnotationTooltip from '../AnnotationTooltip.vue'
 import ErrorAlert from '../ErrorAlert.vue'
 import departmentValidation from '@/composables/validation/useDepartmentValidation'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref, computed } from 'vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import Textarea from '@/components/form/Textarea.vue'
 import { useDepartmentStore } from '@/stores/department'
@@ -17,6 +17,7 @@ import RequiredLabel from './requiredLabel.vue'
 import RetryBtn from '@/components/RetryBtn.vue'
 import { useThrottleStore } from '@/stores/throttle'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import SYSTEM from '@/config/system'
 
 interface DepartmentForm {
 	name: string
@@ -67,23 +68,19 @@ const errorMessage = reactive<ErrorMessage>({
 })
 
 const getDepartmentList = async () => {
-
 	if (isDisabled.value('departmentFetch')) return
 
 	try {
 		loading.value = true
 		await departmentsFetch()
-		isError.value = false
 		errorMessage.getDepartmentList = ''
+		isError.value = false
 	} catch (error: any) {
+		errorMessage.getDepartmentList = 'common.error.fetchDataFailed'
 		isError.value = true
 
-		if (error.status === 500) {
-			errorMessage.getDepartmentList = 'common.error.fetchDataFailed'
-		}
-
-		if (error.status === 429) {
-			throttle.value['departmentFetch'] = error.response.headers['retry-after'] as number
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['departmentFetch'] = Number(error.response.headers['retry-after'])
 			startThrottle('departmentFetch')
 		}
 	} finally {
@@ -99,7 +96,7 @@ const handleCreate = async () => {
 
 		emit('save')
 	} catch (error: any) {
-		if (error.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			mapLaravelError(errorMessage, error)
 			return
 		}
@@ -113,14 +110,11 @@ const handleCancel = () => {
 
 onMounted(() => {
 	initThrottle('departmentFetch')
-})
 
-watch(() => isDisabled.value('departmentFetch'), (value) => {
-	if (value) {
-		errorMessage.getDepartmentList = ''
+	if (isDisabled.value('departmentFetch')) {
+		isError.value = true
 	}
 })
-
 </script>
 
 <template>
@@ -150,9 +144,9 @@ watch(() => isDisabled.value('departmentFetch'), (value) => {
 
 			<v-col cols="12" md="6">
 				<list-filter :label="$t('department.input.departmentParent')" v-model="departmentData.parent_id"
-					:error-messages="errorMessage.getDepartmentList" :items="departments" searchable item-title="name"
-					item-value="id" :loading @click="getDepartmentList" list-filter>
-
+					:error-messages="isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
+						" :items="departments" searchable item-title="name" item-value="id" :loading @click="getDepartmentList"
+					list-filter>
 					<template #append v-if="isError">
 						<retry-btn @click.stop="getDepartmentList" only-icon
 							:disabled="isDisabled('departmentFetch')"></retry-btn>

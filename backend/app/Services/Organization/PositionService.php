@@ -41,12 +41,8 @@ class PositionService
 
 	public function list()
 	{
-		try {
-			$positions = $this->positionRepositoryInterface->list();
-			return $positions;
-		} catch (\Exception $e) {
-			return false;
-		}
+		$positions = $this->positionRepositoryInterface->list();
+		return $positions;
 	}
 
 	public function listByDepartment($departmentId)

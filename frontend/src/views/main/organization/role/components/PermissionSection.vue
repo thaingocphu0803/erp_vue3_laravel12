@@ -22,41 +22,27 @@ const { permissionFetch } = usePermissionStore()
 const selectedPermissions = ref<RolePermission>({})
 const loadingPermission = ref<boolean>(false)
 const searchModule = ref<string>('')
-
 const isError = ref<boolean>(false)
 
 const loadData = async () => {
+	if (isDisabled.value('permissionFetch')) return
+
 	try {
 		loadingPermission.value = true
-
 		await permissionFetch()
 		updateSelectedPermisions()
 		isError.value = false
-
 	} catch (error: any) {
-		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['permission'] = error.response.headers['retry-after'] as number
-			startThrottle('permission')
-		}
-
 		isError.value = true
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['permissionFetch'] = Number(error.response.headers['retry-after'])
+			startThrottle('permissionFetch')
+		}
 	} finally {
 		loadingPermission.value = false
 	}
 }
-
-onMounted(() => {
-	loadData()
-	initThrottle('permission')
-})
-
-watch(
-	selectedPermissions,
-	() => {
-		emit('update:selectedPermissions', selectedPermissions.value)
-	},
-	{ deep: true },
-)
 
 const displayedModules = computed(() => {
 	if (!permissionGroup.value) return {}
@@ -92,6 +78,23 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 		[permissionId]: scope,
 	}
 }
+
+onMounted(() => {
+	loadData()
+	initThrottle('permissionFetch')
+
+	if (isDisabled.value('permissionFetch')) {
+		isError.value = true
+	}
+})
+
+watch(
+	selectedPermissions,
+	() => {
+		emit('update:selectedPermissions', selectedPermissions.value)
+	},
+	{ deep: true },
+)
 </script>
 
 <template>
@@ -105,10 +108,11 @@ const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 			<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
 				{{ $t('common.error.fetchDataFailed') }}
 			</div>
-			<retry-btn color="primary" :disabled="isDisabled('permission')" variant="outlined"
+			<retry-btn color="primary" :disabled="isDisabled('permissionFetch')" variant="outlined"
 				prepend-icon="mdi-refresh" @click="loadData"></retry-btn>
 
-			<throttle-alert :show="isDisabled('permission')" :time="throttle['permission'] || 0"></throttle-alert>
+			<throttle-alert :show="isDisabled('permissionFetch')"
+				:time="throttle['permissionFetch'] || 0"></throttle-alert>
 		</v-col>
 
 		<!-- Success State: Data loaded -->

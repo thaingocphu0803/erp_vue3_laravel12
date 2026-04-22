@@ -6,7 +6,7 @@ type Interval = ReturnType<typeof setInterval> | null
 export const useThrottleStore = defineStore(
 	'throttle',
 	() => {
-		let interval = reactive<Record<string, Interval>>({})
+		let interval: Record<string, Interval> = {}
 
 		const throttle = ref<Record<string, number | undefined>>({})
 
@@ -50,3 +50,4 @@ export const useThrottleStore = defineStore(
 		},
 	},
 )
+

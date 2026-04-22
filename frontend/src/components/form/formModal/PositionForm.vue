@@ -8,7 +8,7 @@ import DepartmentForm from './DepartmentForm.vue'
 import CreatePrependItem from '../AddItemListBtn.vue'
 import AnnotationTooltip from '../AnnotationTooltip.vue'
 import ErrorAlert from '../ErrorAlert.vue'
-import { onMounted, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { useDepartmentStore } from '@/stores/department'
 import { storeToRefs } from 'pinia'
 import { mapLaravelError } from '@/utils/errorHandler'
@@ -20,6 +20,7 @@ import { useThrottleStore } from '@/stores/throttle'
 import requiredLabel from './requiredLabel.vue'
 import RetryBtn from '@/components/RetryBtn.vue'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import SYSTEM from '@/config/system'
 
 interface PositionForm {
 	name: string
@@ -75,24 +76,20 @@ const errorMessage = reactive<ErrorMessage>({
 const showDepartmentDialog = ref<boolean>(false)
 
 const getDepartmentList = async () => {
-	if (isDisabled.value('position-departmentList')) return
+	if (isDisabled.value('departmentFetch')) return
 
 	try {
 		loadingDepartment.value = true
 		await departmentsFetch()
 		errorMessage.getDepartmentList = ''
 		isDepartmentError.value = false
-
 	} catch (error: any) {
+		errorMessage.getDepartmentList = 'common.error.fetchDataFailed'
 		isDepartmentError.value = true
 
-		if (error.status === 500) {
-			errorMessage.getDepartmentList = 'common.error.fetchDataFailed'
-		}
-
-		if (error.status === 429) {
-			throttle.value['position-departmentList'] = error.response.headers['retry-after'] as number
-			startThrottle('position-departmentList')
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['departmentFetch'] = Number(error.response.headers['retry-after'])
+			startThrottle('departmentFetch')
 		}
 	} finally {
 		loadingDepartment.value = false
@@ -100,7 +97,7 @@ const getDepartmentList = async () => {
 }
 
 const getPositionList = async () => {
-	if (isDisabled.value('position-positionList')) return
+	if (isDisabled.value('positionFetch')) return
 
 	try {
 		loadingPosition.value = true
@@ -108,15 +105,12 @@ const getPositionList = async () => {
 		errorMessage.getPositionList = ''
 		isPositionError.value = false
 	} catch (error: any) {
+		errorMessage.getPositionList = 'common.error.fetchDataFailed'
 		isPositionError.value = true
 
-		if (error.status === 500) {
-			errorMessage.getPositionList = 'common.error.fetchDataFailed'
-		}
-
-		if (error.status === 429) {
-			throttle.value['position-positionList'] = error.response.headers['retry-after'] as number
-			startThrottle('position-positionList')
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['positionFetch'] = Number(error.response.headers['retry-after'])
+			startThrottle('positionFetch')
 		}
 	} finally {
 		loadingPosition.value = false
@@ -129,7 +123,7 @@ const handleSubmit = async () => {
 		toast.show(response.data.messageCode, 'success')
 		emit('save')
 	} catch (error: any) {
-		if (error.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			mapLaravelError(errorMessage, error)
 			return
 		}
@@ -142,19 +136,15 @@ const handleCancel = () => {
 }
 
 onMounted(() => {
-	initThrottle('position-departmentList')
-	initThrottle('position-positionList')
-})
+	initThrottle('departmentFetch')
+	initThrottle('positionFetch')
 
-watch(() => isDisabled.value('position-departmentList'), (value) => {
-	if (value) {
-		errorMessage.getDepartmentList = ''
+	if (isDisabled.value('departmentFetch')) {
+		isDepartmentError.value = true
 	}
-})
 
-watch(() => isDisabled.value('position-positionList'), (value) => {
-	if (value) {
-		errorMessage.getPositionList = ''
+	if (isDisabled.value('positionFetch')) {
+		isPositionError.value = true
 	}
 })
 </script>
@@ -177,10 +167,11 @@ watch(() => isDisabled.value('position-positionList'), (value) => {
 
 		<!-- Row 2: Department Select with tooltip inside (append-inner) -->
 		<v-row dense>
-			<v-col cols="12" sm="6">
+			<v-col cols="12" md="6">
 				<list-filter :label="$t('position.input.selectDepartment')" v-model="positionData.department_id"
-					:error-messages="errorMessage.getDepartmentList" :items="departments" searchable item-title="name"
-					item-value="id" :loading="loadingDepartment" @click="getDepartmentList">
+					:error-messages="isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
+						" :items="departments" searchable item-title="name" item-value="id" :loading="loadingDepartment"
+					@click="getDepartmentList">
 					<template #prepend-item>
 						<create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true">
 						</create-prepend-item>
@@ -192,30 +183,28 @@ watch(() => isDisabled.value('position-positionList'), (value) => {
 					</template>
 					<template #append v-if="isDepartmentError">
 						<retry-btn @click.stop="getDepartmentList" only-icon
-							:disabled="isDisabled('position-departmentList')"></retry-btn>
+							:disabled="isDisabled('departmentFetch')"></retry-btn>
 					</template>
 				</list-filter>
-				<throttle-alert :show="isDisabled('position-departmentList')"
-					:time="throttle['position-departmentList'] || 0"></throttle-alert>
-
+				<throttle-alert :show="isDisabled('departmentFetch')"
+					:time="throttle['departmentFetch'] || 0"></throttle-alert>
 			</v-col>
 
-			<v-col cols="12" sm="6">
-				<list-filter :label="$t('position.input.supervisor')" v-model="positionData.parent_id"
-					:error-messages="errorMessage.getPositionList" :items="positions" searchable item-title="name"
-					item-value="id" :loading="loadingPosition" @click="getPositionList">
+			<v-col cols="12" md="6">
+				<list-filter :label="$t('position.input.supervisor')" v-model="positionData.parent_id" :error-messages="isDisabled('positionFetch') ? '' : errorMessage.getPositionList
+					" :items="positions" searchable item-title="name" item-value="id" :loading="loadingPosition"
+					@click="getPositionList">
 					<template #append-inner>
 						<annotation-tooltip text="position.tooltip.unselectSupervisor">
 						</annotation-tooltip>
 					</template>
 					<template #append v-if="isPositionError">
 						<retry-btn @click.stop="getPositionList" only-icon
-							:disabled="isDisabled('position-positionList')"></retry-btn>
+							:disabled="isDisabled('positionFetch')"></retry-btn>
 					</template>
 				</list-filter>
-				<throttle-alert :show="isDisabled('position-positionList')"
-					:time="throttle['position-positionList'] || 0"></throttle-alert>
-
+				<throttle-alert :show="isDisabled('positionFetch')"
+					:time="throttle['positionFetch'] || 0"></throttle-alert>
 			</v-col>
 		</v-row>
 

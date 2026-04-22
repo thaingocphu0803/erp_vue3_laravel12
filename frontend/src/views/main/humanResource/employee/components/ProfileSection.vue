@@ -8,10 +8,14 @@ import AnnotationTooltip from '@/components/form/AnnotationTooltip.vue'
 import { useFilterModule } from '@/composables/useFilterModule'
 import { useAdministrativeUnitStore } from '@/stores/administrativeUnit'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import i18n from '@/plugins/vueI18n'
 import { formatDate } from '@/utils/dateFormat'
 import type { commonGender, commonLocale } from '@/types/common'
+import { useThrottleStore } from '@/stores/throttle'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import RetryBtn from '@/components/RetryBtn.vue'
+import SYSTEM from '@/config/system'
 
 interface ErrorMessage {
 	province: string
@@ -42,6 +46,11 @@ const formatBirthdate = computed({
 const provinceLoading = ref<boolean>(false)
 const wardLoading = ref<boolean>(false)
 
+const isProvinceError = computed(
+	() => isDisabled.value('provinceFetch') || !!errorMessage.value.province,
+)
+const isWardError = computed(() => isDisabled.value('wardFetch') || !!errorMessage.value.ward)
+
 const errorMessage = ref<ErrorMessage>({
 	province: '',
 	ward: '',
@@ -52,14 +61,22 @@ const disableWard = ref<boolean>(true)
 const { provincesFetch, wardsFetchByProvinceCode, wardsReset } = useAdministrativeUnitStore()
 const { provinces, wards } = storeToRefs(useAdministrativeUnitStore())
 
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
+const { initThrottle, startThrottle } = useThrottleStore()
+
 const getProvinces = async () => {
+	if (isDisabled.value('provinceFetch')) return
+
 	try {
 		provinceLoading.value = true
 		await provincesFetch()
 		errorMessage.value.province = ''
 	} catch (error: any) {
-		if (error.status === 500) {
-			errorMessage.value.province = error.response?.data?.messageCode
+		errorMessage.value.province = 'common.error.fetchDataFailed'
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['provinceFetch'] = Number(error.response.headers['retry-after'])
+			startThrottle('provinceFetch')
 		}
 	} finally {
 		provinceLoading.value = false
@@ -67,6 +84,8 @@ const getProvinces = async () => {
 }
 
 const getWards = async (provinceCode: string | null) => {
+	if (isDisabled.value('wardFetch')) return
+
 	if (!provinceCode) {
 		disableWard.value = true
 		return
@@ -77,11 +96,14 @@ const getWards = async (provinceCode: string | null) => {
 		await wardsFetchByProvinceCode(provinceCode)
 		errorMessage.value.ward = ''
 	} catch (error: any) {
-		if (error.status === 500) {
-			errorMessage.value.ward = error.response?.data?.messageCode
+		errorMessage.value.ward = 'common.error.fetchDataFailed'
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['wardFetch'] = Number(error.response.headers['retry-after'])
+			startThrottle('wardFetch')
 		}
 
-		if (error.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			errorMessage.value.ward = error.response?.data?.message
 		}
 	} finally {
@@ -96,6 +118,11 @@ watch(province_code, async (newVal) => {
 	disableWard.value = false
 	wardsReset()
 	await getWards(newVal)
+})
+
+onMounted(() => {
+	initThrottle('provinceFetch')
+	initThrottle('wardFetch')
 })
 </script>
 
@@ -131,7 +158,6 @@ watch(province_code, async (newVal) => {
 
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
-				:hide-details="false"
 				v-model="gender"
 				:items="genders"
 				item-title="name"
@@ -181,7 +207,6 @@ watch(province_code, async (newVal) => {
 
 		<v-col cols="12" sm="6">
 			<list-filter
-				:hide-details="false"
 				v-model="locale"
 				:items="locales"
 				item-title="name"
@@ -195,14 +220,13 @@ watch(province_code, async (newVal) => {
 		<!-- Address Split (1 row) -->
 		<v-col cols="12" sm="4" class="mb-3">
 			<list-filter
-				:hide-details="false"
 				v-model="province_code"
 				:items="provinces"
 				searchable
 				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
 				item-value="code"
-				:rules="employeeValidation.province"
-				:error-messages="errorMessage.province"
+				:rules="isProvinceError ? [] : employeeValidation.province"
+				:error-messages="isDisabled('provinceFetch') ? '' : errorMessage.province"
 				:loading="provinceLoading"
 				:clearable="false"
 				@click="getProvinces()"
@@ -210,18 +234,29 @@ watch(province_code, async (newVal) => {
 				<template #label>
 					<required-label :label="$t('employee.input.province')"></required-label>
 				</template>
+
+				<template #append v-if="isProvinceError">
+					<retry-btn
+						@click.stop="getProvinces()"
+						only-icon
+						:disabled="isDisabled('provinceFetch')"
+					></retry-btn>
+				</template>
 			</list-filter>
+			<throttle-alert
+				:show="isDisabled('provinceFetch')"
+				:time="throttle['provinceFetch'] || 0"
+			></throttle-alert>
 		</v-col>
 		<v-col cols="12" sm="4" class="mb-3">
 			<list-filter
-				:hide-details="false"
 				v-model="ward_code"
 				:items="wards"
 				searchable
 				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
 				item-value="code"
-				:rules="employeeValidation.ward"
-				:error-messages="errorMessage.ward"
+				:rules="isWardError ? [] : employeeValidation.ward"
+				:error-messages="isDisabled('wardFetch') ? '' : errorMessage.ward"
 				:disabled="disableWard"
 				:clearable="false"
 				:loading="wardLoading"
@@ -230,7 +265,19 @@ watch(province_code, async (newVal) => {
 				<template #label>
 					<required-label :label="$t('employee.input.ward')"></required-label>
 				</template>
+
+				<template #append v-if="isWardError">
+					<retry-btn
+						@click.stop="getWards(province_code)"
+						only-icon
+						:disabled="isDisabled('wardFetch')"
+					></retry-btn>
+				</template>
 			</list-filter>
+			<throttle-alert
+				:show="isDisabled('wardFetch')"
+				:time="throttle['wardFetch'] || 0"
+			></throttle-alert>
 		</v-col>
 		<v-col cols="12" sm="4" class="mb-3">
 			<Input

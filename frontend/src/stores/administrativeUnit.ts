@@ -21,6 +21,8 @@ export const useAdministrativeUnitStore = defineStore('administrativeUnit', () =
 		const response = await api.get('/administrative-units/provinces')
 		provinces.value = response.data.data
 		isProvincesFetched.value = true
+
+		return response
 	}
 
 	const wardsFetchByProvinceCode = async (provinceCode: string) => {
@@ -29,6 +31,8 @@ export const useAdministrativeUnitStore = defineStore('administrativeUnit', () =
 		const response = await api.get(`/administrative-units/provinces/${provinceCode}/wards`)
 		wards.value = response.data.data
 		isWardsFetched.value = true
+
+		return response
 	}
 
 	const wardsReset = () => {

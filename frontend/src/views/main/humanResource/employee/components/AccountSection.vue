@@ -6,10 +6,13 @@ import RequiredLabel from '@/components/form/formModal/requiredLabel.vue'
 import defaultConfig from '@/config/default'
 import CreatePrependItem from '@/components/form/AddItemListBtn.vue'
 import RoleForm from '@/components/form/formModal/RoleForm.vue'
-import { ref } from 'vue'
-
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRoleStore } from '@/stores/role'
+import { useThrottleStore } from '@/stores/throttle'
 import { storeToRefs } from 'pinia'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import RetryBtn from '@/components/RetryBtn.vue'
+import SYSTEM from '@/config/system'
 
 const email = defineModel<string>('email')
 const role_ids = defineModel<number[]>('role_ids', { default: [] })
@@ -17,23 +20,40 @@ const role_ids = defineModel<number[]>('role_ids', { default: [] })
 const { rolesFetch } = useRoleStore()
 const { roles } = storeToRefs(useRoleStore())
 
+const { initThrottle, startThrottle } = useThrottleStore()
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
+
 const showRoleDialog = ref<boolean>(false)
 const loadingRole = ref<boolean>(false)
+
+const isError = computed<boolean>(
+	() => isDisabled.value('roleFetch') || !!getRolesErrorMessage.value,
+)
+
 const getRolesErrorMessage = ref<string>('')
 
 const getRoleList = async () => {
+	if (isDisabled.value('roleFetch')) return
+
 	try {
 		loadingRole.value = true
 		await rolesFetch()
 		getRolesErrorMessage.value = ''
 	} catch (error: any) {
-		if (error.status === 500) {
-			getRolesErrorMessage.value = error.response?.data?.messageCode
+		getRolesErrorMessage.value = 'common.error.fetchDataFailed'
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['roleFetch'] = Number(error.response.headers['retry-after'])
+			startThrottle('roleFetch')
 		}
 	} finally {
 		loadingRole.value = false
 	}
 }
+
+onMounted(() => {
+	initThrottle('roleFetch')
+})
 </script>
 
 <template>
@@ -52,14 +72,13 @@ const getRoleList = async () => {
 
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
-				:hide-details="false"
 				v-model="role_ids"
 				:items="roles"
 				searchable
 				item-title="name"
 				item-value="id"
-				:rules="employeeValidation.role"
-				:error-messages="getRolesErrorMessage"
+				:rules="isError ? [] : employeeValidation.role"
+				:error-messages="isDisabled('roleFetch') ? '' : getRolesErrorMessage"
 				:loading="loadingRole"
 				:clearable="false"
 				multiple
@@ -72,10 +91,20 @@ const getRoleList = async () => {
 					/>
 					<v-divider />
 				</template>
+
 				<template #label>
 					<required-label :label="$t('employee.input.role')"></required-label>
 				</template>
+
+				<template #append v-if="isError">
+					<retry-btn
+						@click.stop="getRoleList"
+						only-icon
+						:disabled="isDisabled('roleFetch')"
+					/>
+				</template>
 			</list-filter>
+			<throttle-alert :show="isDisabled('roleFetch')" :time="throttle['roleFetch'] || 0" />
 		</v-col>
 		<v-col cols="12">
 			<v-alert type="info" variant="tonal" density="compact" class="text-caption">

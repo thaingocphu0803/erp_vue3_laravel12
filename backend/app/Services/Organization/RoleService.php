@@ -52,12 +52,8 @@ class RoleService
 
 	public function list()
 	{
-		try {
-			$roles = $this->roleRepositoryInterface->list();
-			return $roles;
-		} catch (\Exception $e) {
-			return false;
-		}
+		$roles = $this->roleRepositoryInterface->list();
+		return $roles;
 	}
 
 	private function getNewPermissionPayload(array $permissions)

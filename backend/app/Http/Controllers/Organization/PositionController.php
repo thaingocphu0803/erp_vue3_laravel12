@@ -49,15 +49,7 @@ class PositionController extends Controller
 
 	public function list()
 	{
-		abort(500);
-
 		$positions = $this->positionService->list();
-
-		if ($positions === false) {
-			$message = 'position.alert.error.getList';
-			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
-
 		return PositionListResource::collection($positions)->response();
 	}
 

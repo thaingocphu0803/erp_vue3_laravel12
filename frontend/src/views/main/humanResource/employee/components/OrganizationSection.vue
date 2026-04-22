@@ -5,12 +5,16 @@ import employeeValidation from '@/composables/validation/useEmployeeValidation'
 import { useDepartmentStore } from '@/stores/department'
 import { usePositionStore } from '@/stores/position'
 import { storeToRefs } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import Checkbox from '@/components/form/CheckBox.vue'
 import defaultConfig from '@/config/default'
 import DepartmentForm from '@/components/form/formModal/DepartmentForm.vue'
 import PositionForm from '@/components/form/formModal/PositionForm.vue'
 import CreatePrependItem from '@/components/form/AddItemListBtn.vue'
+import SYSTEM from '@/config/system'
+import { useThrottleStore } from '@/stores/throttle'
+import RetryBtn from '@/components/RetryBtn.vue'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
 
 interface ErrorMessage {
 	getDepartmentList: string
@@ -36,6 +40,9 @@ const { positionsFetchByDepartmentId, positionReset } = usePositionStore()
 const { departments } = storeToRefs(useDepartmentStore())
 const { positionByDepartment } = storeToRefs(usePositionStore())
 
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
+const { initThrottle, startThrottle } = useThrottleStore()
+
 const showIsLeader = computed(() => {
 	const department = departments.value.find((department) => department.id === department_id.value)
 	return department ? department.leader_id === null : false
@@ -43,6 +50,13 @@ const showIsLeader = computed(() => {
 
 const loadingDepartments = ref<boolean>(false)
 const loadingPositions = ref<boolean>(false)
+
+const isDepartmentError = computed(
+	() => isDisabled.value('departmentFetch') || !!errorMessage.value.getDepartmentList,
+)
+const isPositionError = computed(
+	() => isDisabled.value('positionFetch') || !!errorMessage.value.getPositionList,
+)
 
 const showPositionDialog = ref<boolean>(false)
 const showDepartmentDialog = ref<boolean>(false)
@@ -53,13 +67,18 @@ const errorMessage = ref<ErrorMessage>({
 })
 
 const getDepartmentList = async () => {
+	if (isDisabled.value('departmentFetch')) return
+
 	try {
 		loadingDepartments.value = true
 		await departmentsFetch()
 		errorMessage.value.getDepartmentList = ''
 	} catch (error: any) {
-		if (error.status === 500) {
-			errorMessage.value.getDepartmentList = error.response?.data?.messageCode
+		errorMessage.value.getDepartmentList = 'common.error.fetchDataFailed'
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['departmentFetch'] = Number(error.response.headers['retry-after'])
+			startThrottle('departmentFetch')
 		}
 	} finally {
 		loadingDepartments.value = false
@@ -72,22 +91,32 @@ const getPositionList = async (departmentId: number | null) => {
 		return
 	}
 
+	if (isDisabled.value('positionFetch')) return
+
 	try {
 		loadingPositions.value = true
 		await positionsFetchByDepartmentId(departmentId)
 		errorMessage.value.getPositionList = ''
 	} catch (error: any) {
-		if (error.status === 500) {
-			errorMessage.value.getPositionList = error.response?.data?.messageCode
+		errorMessage.value.getPositionList = 'common.error.fetchDataFailed'
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['positionFetch'] = Number(error.response.headers['retry-after'])
+			startThrottle('positionFetch')
 		}
 
-		if (error.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			errorMessage.value.getPositionList = error.response?.data?.message
 		}
 	} finally {
 		loadingPositions.value = false
 	}
 }
+
+onMounted(() => {
+	initThrottle('departmentFetch')
+	initThrottle('positionFetch')
+})
 
 watch(department_id, (newValue) => {
 	if (!newValue) return
@@ -103,15 +132,16 @@ watch(department_id, (newValue) => {
 	<v-row dense>
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
-				:hide-details="false"
 				v-model="department_id"
 				:items="departments"
 				searchable
 				item-title="name"
 				item-value="id"
 				:loading="loadingDepartments"
-				:rules="employeeValidation.department"
-				:error-messages="errorMessage.getDepartmentList"
+				:rules="isDepartmentError ? [] : employeeValidation.department"
+				:error-messages="
+					isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
+				"
 				@click="getDepartmentList"
 				:clearable="false"
 			>
@@ -126,11 +156,21 @@ watch(department_id, (newValue) => {
 				<template #label>
 					<required-label :label="$t('employee.input.department')"></required-label>
 				</template>
+				<template #append v-if="isDepartmentError">
+					<retry-btn
+						@click.stop="getDepartmentList"
+						only-icon
+						:disabled="isDisabled('departmentFetch')"
+					></retry-btn>
+				</template>
 			</list-filter>
+			<throttle-alert
+				:show="isDisabled('departmentFetch')"
+				:time="throttle['departmentFetch'] || 0"
+			></throttle-alert>
 		</v-col>
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
-				:hide-details="false"
 				v-model="position_id"
 				:items="positionByDepartment"
 				searchable
@@ -138,8 +178,8 @@ watch(department_id, (newValue) => {
 				item-value="id"
 				:loading="loadingPositions"
 				:disabled="disablePosition"
-				:rules="employeeValidation.position"
-				:error-messages="errorMessage.getPositionList"
+				:rules="isPositionError ? [] : employeeValidation.position"
+				:error-messages="isDisabled('positionFetch') ? '' : errorMessage.getPositionList"
 				@click="getPositionList(department_id)"
 				:clearable="false"
 			>
@@ -154,7 +194,18 @@ watch(department_id, (newValue) => {
 				<template #label>
 					<required-label :label="$t('employee.input.position')"></required-label>
 				</template>
+				<template #append v-if="isPositionError">
+					<retry-btn
+						@click.stop="getPositionList(department_id)"
+						only-icon
+						:disabled="isDisabled('positionFetch')"
+					></retry-btn>
+				</template>
 			</list-filter>
+			<throttle-alert
+				:show="isDisabled('positionFetch')"
+				:time="throttle['positionFetch'] || 0"
+			></throttle-alert>
 		</v-col>
 
 		<v-col cols="12" class="mt-n4">
