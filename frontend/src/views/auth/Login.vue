@@ -68,8 +68,7 @@ const visible = ref<boolean>(false)
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const { initThrottle, startThrottle } = useThrottleStore()
 
-
-const { authLogin } = useAuthStore()
+const { authLogin, clearAuth } = useAuthStore()
 
 const handleLogin = async () => {
 	try {
@@ -83,6 +82,8 @@ const handleLogin = async () => {
 
 		toast.show(response.data.messageCode, 'success')
 	} catch (error: any) {
+		clearAuth()
+
 		const status = error.response.status
 
 		if (status === 401) {
@@ -90,7 +91,7 @@ const handleLogin = async () => {
 		} else if (status == 422) {
 			mapLaravelError(errorMessage, error)
 		} else if (status === 429) {
-			throttle.value['login'] = error.response.headers['retry-after'] as number
+			throttle.value['login'] = Number(error.response.headers['retry-after'])
 			startThrottle('login')
 		}
 	} finally {
@@ -98,11 +99,9 @@ const handleLogin = async () => {
 	}
 }
 
-
 onMounted(() => {
 	initThrottle('login')
 })
-
 </script>
 
 <template>
@@ -116,17 +115,39 @@ onMounted(() => {
 			<Form :title @submit-form="handleLogin">
 				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
-				<Input :label="$t('auth.input.email')" name="email" placeholder="example@gmail.com"
-					:rules="authValidation.email" v-model="LoginData.email" />
+				<Input
+					:label="$t('auth.input.email')"
+					name="email"
+					placeholder="example@gmail.com"
+					:rules="authValidation.email"
+					v-model="LoginData.email"
+				/>
 
-				<Input :label="$t('auth.input.password')" name="password" :type="visible ? 'text' : 'password'"
-					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="visible = !visible"
-					:rules="authValidation.password" v-model="LoginData.password" />
+				<Input
+					:label="$t('auth.input.password')"
+					name="password"
+					:type="visible ? 'text' : 'password'"
+					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+					@click:append-inner="visible = !visible"
+					:rules="authValidation.password"
+					v-model="LoginData.password"
+				/>
 
-				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="LoginData.rememberMe"
-					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
+				<Checkbox
+					:label="$t('auth.input.rememberMe')"
+					name="remember_me"
+					v-model="LoginData.rememberMe"
+					:false-value="checkboxData.falseValue"
+					:true-value="checkboxData.trueValue"
+				/>
 
-				<base-btn :title :loading="loading" type="submit" block :disabled="isDisabled('login')" />
+				<base-btn
+					:title
+					:loading="loading"
+					type="submit"
+					block
+					:disabled="isDisabled('login')"
+				/>
 			</Form>
 
 			<throttle-alert :show="isDisabled('login')" :time="throttle['login'] || 0" />
@@ -146,3 +167,4 @@ onMounted(() => {
 	margin-left: unset;
 }
 </style>
+

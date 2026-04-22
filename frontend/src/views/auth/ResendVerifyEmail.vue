@@ -56,8 +56,8 @@ const handleResendEmailVerification = async () => {
 		}
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['resend_email'] = error.response.headers['retry-after'] as number
-			startThrottle('resend_email')
+			throttle.value['resendEmail'] = Number(error.response.headers['retry-after'])
+			startThrottle('resendEmail')
 		}
 	} finally {
 		loading.value = false
@@ -65,7 +65,7 @@ const handleResendEmailVerification = async () => {
 }
 
 onMounted(() => {
-	initThrottle('resend_email')
+	initThrottle('resendEmail')
 })
 </script>
 
@@ -77,17 +77,29 @@ onMounted(() => {
 		</layout-bar>
 
 		<v-main class="mx-auto my-auto" :max-width="defaultConfig.maxWidthForm">
-			<v-card density="comfortable" class="border d-flex flex-column justify-center align-center ga-5 pa-5">
+			<v-card
+				density="comfortable"
+				class="border d-flex flex-column justify-center align-center ga-5 pa-5"
+			>
 				<v-icon color="warning" icon="mdi-emoticon-dead-outline" size="72" />
 
 				<p class="text-body-1 text-medium-emphasis text-center">
 					{{ $t('common.state.expiredLink') }}
 				</p>
 
-				<base-btn :title :loading="loading" type="button" class="mt-5" :disabled="isDisabled('resend_email')"
-					@click.prevent="handleResendEmailVerification" />
+				<base-btn
+					:title
+					:loading="loading"
+					type="button"
+					class="mt-5"
+					:disabled="isDisabled('resendEmail')"
+					@click.prevent="handleResendEmailVerification"
+				/>
 
-				<throttle-alert :show="isDisabled('resend_email')" :time="throttle['resend_email'] || 0" />
+				<throttle-alert
+					:show="isDisabled('resendEmail')"
+					:time="throttle['resendEmail'] || 0"
+				/>
 			</v-card>
 		</v-main>
 
@@ -105,3 +117,4 @@ onMounted(() => {
 	margin-left: unset;
 }
 </style>
+

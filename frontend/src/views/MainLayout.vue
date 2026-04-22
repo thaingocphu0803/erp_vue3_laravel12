@@ -60,3 +60,4 @@ const handleNavDisplay = () => {
 		</v-main>
 	</v-layout>
 </template>
+

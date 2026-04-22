@@ -31,50 +31,35 @@ export const useAuthStore = defineStore('auth', () => {
 	}
 
 	const authLogin = async (credentials: object) => {
-		try {
-			const response = await api.post('auth/login', credentials)
-			user.value = response.data.data?.user
-			isInitialized.value = true
+		const response = await api.post('auth/login', credentials)
+		user.value = response.data.data?.user
+		isInitialized.value = true
 
-			return response
-		} catch (error: any) {
-			clearAuth()
-			console.log('Login api error', error)
-			throw error
-		}
+		return response
 	}
 
 	const authLogout = async () => {
 		try {
 			const response = await api.post('auth/logout')
-			if (response.status === 200) {
-				router.push({ name: 'login' })
-			}
+
+			return response
 		} catch (error: any) {
 			console.log('Logout api error', error)
+			throw error
 		} finally {
 			user.value = null
+			router.push({ name: 'login' })
 		}
 	}
 
 	const authCreatePassword = async (payload: object) => {
-		try {
-			const response = await api.post(`auth/create-password`, payload)
-			return response
-		} catch (error: any) {
-			console.log('Create password api error', error)
-			throw error
-		}
+		const response = await api.post(`auth/create-password`, payload)
+		return response
 	}
 
 	const authResendVerifyEmail = async (payload: object) => {
-		try {
-			const response = await api.post(`auth/resend-verify-email`, payload)
-			return response
-		} catch (error: any) {
-			console.log('Resend verify email api error', error)
-			throw error
-		}
+		const response = await api.post(`auth/resend-verify-email`, payload)
+		return response
 	}
 
 	const clearAuth = () => {
