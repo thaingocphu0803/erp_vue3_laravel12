@@ -123,10 +123,17 @@ onMounted(() => {
 
 		<v-row dense>
 			<v-col cols="12">
-				<Input name="name" :rules="departmentValidation.name" v-model="departmentData.name"
-					:maxlength="defaultConfig.maxLengthName" counter>
+				<Input
+					name="name"
+					:rules="departmentValidation.name"
+					v-model="departmentData.name"
+					:maxlength="defaultConfig.maxLengthName"
+					counter
+				>
 					<template #label>
-						<required-label :label="$t('department.input.departmentName')"></required-label>
+						<required-label
+							:label="$t('department.input.departmentName')"
+						></required-label>
 					</template>
 				</Input>
 			</v-col>
@@ -134,41 +141,70 @@ onMounted(() => {
 
 		<v-row dense>
 			<v-col cols="12" md="6">
-				<Input :label="$t('department.input.departmentCode')" name="code" v-model="departmentData.code"
-					:maxlength="defaultConfig.maxLengthCode" counter>
+				<Input
+					:label="$t('department.input.departmentCode')"
+					name="code"
+					v-model="departmentData.code"
+					:maxlength="defaultConfig.maxLengthCode"
+					counter
+				>
 					<template #append-inner>
-						<annotation-tooltip text="department.tooltip.codeAutoGenerate"></annotation-tooltip>
+						<annotation-tooltip
+							text="department.tooltip.codeAutoGenerate"
+						></annotation-tooltip>
 					</template>
 				</Input>
 			</v-col>
 
 			<v-col cols="12" md="6">
-				<list-filter :label="$t('department.input.departmentParent')" v-model="departmentData.parent_id"
-					:error-messages="isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
-						" :items="departments" searchable item-title="name" item-value="id" :loading @click="getDepartmentList"
-					list-filter>
+				<list-filter
+					:label="$t('department.input.departmentParent')"
+					v-model="departmentData.parent_id"
+					:error-messages="
+						isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
+					"
+					:items="departments"
+					searchable
+					item-title="name"
+					item-value="id"
+					:loading
+					@click="getDepartmentList"
+					list-filter
+				>
 					<template #append v-if="isError">
-						<retry-btn @click.stop="getDepartmentList" only-icon
-							:disabled="isDisabled('departmentFetch')"></retry-btn>
+						<retry-btn
+							@click.stop="getDepartmentList"
+							only-icon
+							:disabled="isDisabled('departmentFetch')"
+						></retry-btn>
 					</template>
 				</list-filter>
 
-				<throttle-alert :show="isDisabled('departmentFetch')"
-					:time="throttle['departmentFetch'] || 0"></throttle-alert>
+				<throttle-alert
+					:show="isDisabled('departmentFetch')"
+					:time="throttle['departmentFetch'] || 0"
+				></throttle-alert>
 			</v-col>
 		</v-row>
 
 		<v-row dense>
 			<v-col cols="12">
-				<Textarea :label="$t('department.input.departmentDesc')" name="description"
-					v-model="departmentData.description"></Textarea>
+				<Textarea
+					:label="$t('department.input.departmentDesc')"
+					name="description"
+					v-model="departmentData.description"
+				></Textarea>
 			</v-col>
 		</v-row>
 
 		<!-- Actions: Cancel (red) + Create (blue) -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
+				<BaseBtn
+					title="common.btn.cancel"
+					color="red-darken-1"
+					@click.prevent="handleCancel"
+				/>
 			</v-col>
 			<v-col cols="auto">
 				<BaseBtn title="common.btn.create" color="primary" type="submit" />
@@ -176,3 +212,4 @@ onMounted(() => {
 		</v-row>
 	</Form>
 </template>
+

@@ -103,7 +103,6 @@ const getPositionList = async () => {
 		loadingPosition.value = true
 		await positionFetch()
 		errorMessage.getPositionList = ''
-		isPositionError.value = false
 	} catch (error: any) {
 		errorMessage.getPositionList = 'common.error.fetchDataFailed'
 		isPositionError.value = true
@@ -151,13 +150,21 @@ onMounted(() => {
 
 <template>
 	<Form title="position.title.create" @submit-form="handleSubmit">
-		<error-alert :messages="errorMessage" :ignore="['getDepartmentList', 'getPositionList']"></error-alert>
+		<error-alert
+			:messages="errorMessage"
+			:ignore="['getDepartmentList', 'getPositionList']"
+		></error-alert>
 
 		<!-- Row 1: Position Name -->
 		<v-row dense>
 			<v-col cols="12">
-				<Input name="name" :rules="positionValidation.name" v-model="positionData.name"
-					:maxlength="defaultConfig.maxLengthName" counter>
+				<Input
+					name="name"
+					:rules="positionValidation.name"
+					v-model="positionData.name"
+					:maxlength="defaultConfig.maxLengthName"
+					counter
+				>
 					<template #label>
 						<required-label :label="$t('position.input.positionName')"></required-label>
 					</template>
@@ -168,12 +175,24 @@ onMounted(() => {
 		<!-- Row 2: Department Select with tooltip inside (append-inner) -->
 		<v-row dense>
 			<v-col cols="12" md="6">
-				<list-filter :label="$t('position.input.selectDepartment')" v-model="positionData.department_id"
-					:error-messages="isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
-						" :items="departments" searchable item-title="name" item-value="id" :loading="loadingDepartment"
-					@click="getDepartmentList">
+				<list-filter
+					:label="$t('position.input.selectDepartment')"
+					v-model="positionData.department_id"
+					:error-messages="
+						isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
+					"
+					:items="departments"
+					searchable
+					item-title="name"
+					item-value="id"
+					:loading="loadingDepartment"
+					@click="getDepartmentList"
+				>
 					<template #prepend-item>
-						<create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true">
+						<create-prepend-item
+							title="department.title.create"
+							@open-model="showDepartmentDialog = true"
+						>
 						</create-prepend-item>
 						<v-divider />
 					</template>
@@ -182,44 +201,71 @@ onMounted(() => {
 						</annotation-tooltip>
 					</template>
 					<template #append v-if="isDepartmentError">
-						<retry-btn @click.stop="getDepartmentList" only-icon
-							:disabled="isDisabled('departmentFetch')"></retry-btn>
+						<retry-btn
+							@click.stop="getDepartmentList"
+							only-icon
+							:disabled="isDisabled('departmentFetch')"
+						></retry-btn>
 					</template>
 				</list-filter>
-				<throttle-alert :show="isDisabled('departmentFetch')"
-					:time="throttle['departmentFetch'] || 0"></throttle-alert>
+				<throttle-alert
+					:show="isDisabled('departmentFetch')"
+					:time="throttle['departmentFetch'] || 0"
+				></throttle-alert>
 			</v-col>
 
 			<v-col cols="12" md="6">
-				<list-filter :label="$t('position.input.supervisor')" v-model="positionData.parent_id" :error-messages="isDisabled('positionFetch') ? '' : errorMessage.getPositionList
-					" :items="positions" searchable item-title="name" item-value="id" :loading="loadingPosition"
-					@click="getPositionList">
+				<list-filter
+					:label="$t('position.input.supervisor')"
+					v-model="positionData.parent_id"
+					:error-messages="
+						isDisabled('positionFetch') ? '' : errorMessage.getPositionList
+					"
+					:items="positions"
+					searchable
+					item-title="name"
+					item-value="id"
+					:loading="loadingPosition"
+					@click="getPositionList"
+				>
 					<template #append-inner>
 						<annotation-tooltip text="position.tooltip.unselectSupervisor">
 						</annotation-tooltip>
 					</template>
 					<template #append v-if="isPositionError">
-						<retry-btn @click.stop="getPositionList" only-icon
-							:disabled="isDisabled('positionFetch')"></retry-btn>
+						<retry-btn
+							@click.stop="getPositionList"
+							only-icon
+							:disabled="isDisabled('positionFetch')"
+						></retry-btn>
 					</template>
 				</list-filter>
-				<throttle-alert :show="isDisabled('positionFetch')"
-					:time="throttle['positionFetch'] || 0"></throttle-alert>
+				<throttle-alert
+					:show="isDisabled('positionFetch')"
+					:time="throttle['positionFetch'] || 0"
+				></throttle-alert>
 			</v-col>
 		</v-row>
 
 		<!-- Row 3: Description -->
 		<v-row dense>
 			<v-col cols="12">
-				<Textarea :label="$t('position.input.positionDesc')" name="description"
-					v-model="positionData.description"></Textarea>
+				<Textarea
+					:label="$t('position.input.positionDesc')"
+					name="description"
+					v-model="positionData.description"
+				></Textarea>
 			</v-col>
 		</v-row>
 
 		<!-- Actions: Cancel + Create -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
+				<BaseBtn
+					title="common.btn.cancel"
+					color="red-darken-1"
+					@click.prevent="handleCancel"
+				/>
 			</v-col>
 			<v-col cols="auto">
 				<BaseBtn title="common.btn.create" color="primary" type="submit" />
@@ -230,7 +276,11 @@ onMounted(() => {
 	<!-- Dialog Create Department -->
 	<v-dialog v-model="showDepartmentDialog" :max-width="defaultConfig.maxWidthForm" persistent>
 		<v-card class="pa-4 rounded-lg">
-			<DepartmentForm @save="showDepartmentDialog = false" @cancel="showDepartmentDialog = false" />
+			<DepartmentForm
+				@save="showDepartmentDialog = false"
+				@cancel="showDepartmentDialog = false"
+			/>
 		</v-card>
 	</v-dialog>
 </template>
+
