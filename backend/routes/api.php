@@ -11,23 +11,23 @@ use Illuminate\Support\Facades\Route;
 
 // AuthController
 Route::controller(AuthController::class)->prefix('auth')->group(function () {
-	Route::post('login', 'login')->middleware(['throttle:3,1']);
+	Route::post('login', 'login')->middleware(['throttle:retry']);
 	Route::post('logout', 'logout')->middleware(['auth:sanctum', 'verified']);
 	Route::get('me', 'me')->middleware(['auth:sanctum', 'verified']);
 	Route::get('verify-email/{id}/{hash}', 'verifyEmail')->name('verification.verify');
 	Route::post('create-password', 'createPassword');
-	Route::post('resend-verify-email', 'resendVerifyEmail')->middleware(['throttle:3,1']);
+	Route::post('resend-verify-email', 'resendVerifyEmail')->middleware(['throttle:retry']);
 });
 
 // DepartmentController
 Route::controller(DepartmentController::class)->prefix('department')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
-	Route::get('list', 'list')->middleware(['throttle:3,1']);
+	Route::get('list', 'list')->middleware(['throttle:retry']);
 });
 
 // PermissionController
-Route::controller(PermissionController::class)->prefix('permission')->middleware(['auth:sanctum', 'verified', 'throttle:3,1'])->group(function () {
+Route::controller(PermissionController::class)->prefix('permission')->middleware(['auth:sanctum', 'verified', 'throttle:retry'])->group(function () {
 	Route::get('index', 'index');
 });
 
@@ -35,7 +35,7 @@ Route::controller(PermissionController::class)->prefix('permission')->middleware
 Route::controller(PositionController::class)->prefix('position')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create');
 	Route::get('index', 'index');
-	Route::get('list', 'list')->middleware(['throttle:3,1']);
+	Route::get('list', 'list')->middleware(['throttle:retry']);
 	Route::get('list-by-department', 'listByDepartment');
 });
 
