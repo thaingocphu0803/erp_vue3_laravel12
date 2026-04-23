@@ -19,20 +19,24 @@ interface Locale {
 }
 
 export const useFilterModule = () => {
+	// Status filter
 	const statuses = computed((): Status[] => [
 		{ name: t('common.status.active'), id: 'A', color: 'success' },
 		{ name: t('common.status.inActive'), id: 'X', color: 'error' },
 	])
 
+	// Status Map filter
 	const statusMap = computed(
 		(): Record<string, Status> => Object.fromEntries(statuses.value.map((s) => [s.id, s])),
 	)
 
+	// Gender filter
 	const genders = computed((): Gender[] => [
 		{ name: t('common.gender.male'), id: 'MALE' },
 		{ name: t('common.gender.female'), id: 'FEMALE' },
 	])
 
+	// Locale filter
 	const locales = computed((): Locale[] => [
 		{ name: t('common.language.english'), id: 'en' },
 		{ name: t('common.language.vietnamese'), id: 'vi' },

@@ -1,4 +1,4 @@
-import api from '@/services/api'
+import { roleService } from '@/services/roleService'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -10,13 +10,13 @@ export const useRoleStore = defineStore('role', () => {
 	const rolesFetch = async () => {
 		if (isFetched.value) return
 
-		const response = await api.get('role/list')
+		const response = await roleService.getList()
 		roles.value = response.data.data
 		isFetched.value = true
 	}
 
 	const roleCreate = async (payload: object) => {
-		const response = await api.post('role/create', payload)
+		const response = await roleService.create(payload)
 		isFetched.value = false
 		return response
 	}

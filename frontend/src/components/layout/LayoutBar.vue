@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import defaultConfig from '@/config/default'
+import CONFIG from '@/config/constants'
 
 interface Props {
 	textColor?: string
@@ -15,7 +15,7 @@ const props = defineProps<Props>()
 		</template>
 
 		<v-app-bar-title :class="props.textColor" data-testId="app-bar-title">{{
-			defaultConfig.appName
+			CONFIG.appName
 		}}</v-app-bar-title>
 
 		<div class="d-flex align-center justify-center ga-5 mr-5">
@@ -23,4 +23,5 @@ const props = defineProps<Props>()
 		</div>
 	</v-app-bar>
 </template>
+
 

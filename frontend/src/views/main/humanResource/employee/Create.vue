@@ -3,8 +3,8 @@ import { computed, reactive } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import Form from '@/components/Form.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
-import defaultConfig from '@/config/default'
-import employeeValidation from '@/composables/validation/useEmployeeValidation'
+import CONFIG from '@/config/constants'
+import useEmployeeValidation from '@/composables/validation/useEmployeeValidation'
 import AccountSection from '@/views/main/humanResource/employee/components/AccountSection.vue'
 import ProfileSection from '@/views/main/humanResource/employee/components/ProfileSection.vue'
 import OrganizationSection from '@/views/main/humanResource/employee/components/OrganizationSection.vue'
@@ -13,26 +13,9 @@ import { useEmployeeStore } from '@/stores/employee'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
 import router from '@/router'
-import type { commonGender, commonLocale } from '@/types/common'
 import SYSTEM from '@/config/system'
 
-interface EmployeeForm {
-	avatar: File | null
-	email: string
-	role_ids: number[]
-	name: string
-	code: string
-	gender: commonGender | null
-	birth_date: string | null
-	phone_number: string
-	province_code: string | null
-	ward_code: string | null
-	address: string
-	department_id: number | null
-	position_id: number | null
-	is_leader: boolean
-	locale: commonLocale
-}
+import type { EmployeeForm } from '@/types/employee'
 
 interface ErrorMessage {
 	avatar: string
@@ -52,6 +35,7 @@ interface ErrorMessage {
 	locale: string
 }
 
+const { employeeValidation } = useEmployeeValidation()
 const { employeeCreate } = useEmployeeStore()
 const toast = useToastStore()
 
@@ -92,19 +76,22 @@ const errorMessage = reactive<ErrorMessage>({
 	locale: '',
 })
 
+// Sections
 const sections = [
 	{ id: 1, title: 'employee.section.account' },
 	{ id: 2, title: 'employee.section.profile' },
 	{ id: 3, title: 'employee.section.organization' },
 ]
 
+// Review avatar
 const avatarReview = computed<string>(() => {
 	if (employeeData.avatar) {
 		return URL.createObjectURL(employeeData.avatar)
 	}
-	return defaultConfig.avatar
+	return CONFIG.avatar
 })
 
+// Handle submit
 const handleSubmit = async () => {
 	try {
 		const response = await employeeCreate(employeeData)
@@ -119,6 +106,7 @@ const handleSubmit = async () => {
 	}
 }
 
+// Cancel
 const cancel = () => {
 	router.back()
 }
@@ -127,11 +115,15 @@ const cancel = () => {
 <template>
 	<app-breadcrumb class="mb-2" />
 
+	<!-- Employee Create -->
 	<v-container class="employee-create mx-auto" max-width="900px">
 		<Form title="employee.title.create" @submit-form="handleSubmit">
+			<!-- Error Alert -->
 			<error-alert :messages="errorMessage" />
+
 			<!-- Avatar Upload (Centered) -->
 			<div class="d-flex flex-column align-center justify-center mb-6">
+				<!-- Avatar -->
 				<v-avatar
 					variant="plain"
 					color="primary"
@@ -140,6 +132,7 @@ const cancel = () => {
 					:image="avatarReview"
 				/>
 
+				<!-- Upload Avatar Button -->
 				<v-file-input
 					v-model="employeeData.avatar"
 					accept="image/png, image/jpeg, image/jpg"
@@ -156,23 +149,27 @@ const cancel = () => {
 				>
 					<template v-slot:message="{ message }">{{ $t(message) }}</template>
 				</v-file-input>
+
+				<!-- Upload Avatar Tooltip -->
 				<span class="text-caption text-grey mt-1">{{
 					$t('employee.tooltip.uploadAvatar')
 				}}</span>
 			</div>
 
 			<v-divider class="mb-6"></v-divider>
+
 			<template v-for="section in sections" :key="section.id">
+				<!-- Section Title -->
 				<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
 
-				<!-- Section: Account -->
+				<!-- Account Section -->
 				<account-section
 					v-if="section.id === 1"
 					v-model:email="employeeData.email"
 					v-model:role_ids="employeeData.role_ids"
 				/>
 
-				<!-- Section: Basic Profile -->
+				<!-- Profile Section -->
 				<profile-section
 					v-else-if="section.id === 2"
 					v-model:name="employeeData.name"
@@ -186,7 +183,7 @@ const cancel = () => {
 					v-model:locale="employeeData.locale"
 				/>
 
-				<!-- Section: Organization & Position -->
+				<!-- Organization Section -->
 				<organization-section
 					v-else
 					v-model:department_id="employeeData.department_id"
@@ -197,7 +194,7 @@ const cancel = () => {
 				<v-divider v-if="section.id !== sections.length" class="my-6"></v-divider>
 			</template>
 
-			<!-- Actions: Cancel (red) + Create (blue) at the bottom -->
+			<!-- Actions-->
 			<v-row dense justify="space-between" class="mt-8">
 				<v-col cols="auto">
 					<BaseBtn

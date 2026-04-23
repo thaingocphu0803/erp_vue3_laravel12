@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import Input from '@/components/form/Input.vue'
-import defaultConfig from '@/config/default'
-import requiredLabel from '@/components/form/formModal/requiredLabel.vue'
-import employeeValidation from '@/composables/validation/useEmployeeValidation'
+import CONFIG from '@/config/constants'
+import RequiredLabel from '@/components/form/formModal/RequiredLabel.vue'
+import useEmployeeValidation from '@/composables/validation/useEmployeeValidation'
 import ListFilter from '@/components/list/ListFilter.vue'
 import AnnotationTooltip from '@/components/form/AnnotationTooltip.vue'
 import { useFilterModule } from '@/composables/useFilterModule'
@@ -32,6 +32,7 @@ const ward_code = defineModel<string | null>('ward_code', { default: null })
 const province_code = defineModel<string | null>('province_code', { default: null })
 const locale = defineModel<commonLocale>('locale', { default: 'en' })
 
+const { employeeValidation } = useEmployeeValidation()
 const { genders, locales } = useFilterModule()
 
 const formatBirthdate = computed({
@@ -133,11 +134,13 @@ onMounted(() => {
 </script>
 
 <template>
+	<!-- Profile Section -->
 	<v-row dense>
+		<!-- Full Name -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<Input
 				v-model="name"
-				:maxlength="defaultConfig.maxLengthName"
+				:maxlength="CONFIG.maxLengthName"
 				counter
 				:rules="employeeValidation.name"
 			>
@@ -147,11 +150,12 @@ onMounted(() => {
 			</Input>
 		</v-col>
 
+		<!-- Employee Code -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<Input
 				v-model="code"
 				:label="$t('employee.input.employeeCode')"
-				:maxlength="defaultConfig.maxLengthCode"
+				:maxlength="CONFIG.maxLengthCode"
 				counter
 			>
 				<template #append-inner>
@@ -162,6 +166,7 @@ onMounted(() => {
 			</Input>
 		</v-col>
 
+		<!-- Gender -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
 				v-model="gender"
@@ -176,6 +181,8 @@ onMounted(() => {
 				</template>
 			</list-filter>
 		</v-col>
+
+		<!-- Birth Date -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<v-date-input
 				v-model="formatBirthdate"
@@ -185,7 +192,7 @@ onMounted(() => {
 				prepend-inner-icon="mdi-calendar"
 				prepend-icon=""
 				:rules="employeeValidation.birthDate"
-				:max="defaultConfig.currentDate"
+				:max="CONFIG.currentDate"
 				@keydown.prevent
 			>
 				<template #label>
@@ -201,7 +208,7 @@ onMounted(() => {
 				v-model="phone_number"
 				placeholder="0987654321"
 				prefix="+84"
-				:maxlength="defaultConfig.sizePhone"
+				:maxlength="CONFIG.sizePhone"
 				counter
 				:rules="employeeValidation.phone"
 			>
@@ -249,11 +256,15 @@ onMounted(() => {
 					></retry-btn>
 				</template>
 			</list-filter>
+
+			<!-- Throttle Alert -->
 			<throttle-alert
 				:show="isDisabled('provinceFetch')"
 				:time="throttle['provinceFetch'] || 0"
 			></throttle-alert>
 		</v-col>
+
+		<!-- Ward -->
 		<v-col cols="12" sm="4" class="mb-3">
 			<list-filter
 				v-model="ward_code"
@@ -280,16 +291,20 @@ onMounted(() => {
 					></retry-btn>
 				</template>
 			</list-filter>
+
+			<!-- Throttle Alert -->
 			<throttle-alert
 				:show="isDisabled('wardFetch')"
 				:time="throttle['wardFetch'] || 0"
 			></throttle-alert>
 		</v-col>
+
+		<!-- Address -->
 		<v-col cols="12" sm="4" class="mb-3">
 			<Input
 				v-model="address"
 				:placeholder="$t('employee.placeholder.addressExample')"
-				:maxlength="defaultConfig.maxLengthAddress"
+				:maxlength="CONFIG.maxLengthAddress"
 				counter
 				:rules="employeeValidation.address"
 			>

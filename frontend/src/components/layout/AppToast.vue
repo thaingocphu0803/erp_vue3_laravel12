@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useToastStore } from '@/stores/toast'
+import type { PropertyString } from '@/types/common'
 
 const toast = useToastStore()
 
 const color = computed(() => {
-	const map: Record<string, string> = {
+	const map: PropertyString = {
 		success: 'success',
 		error: 'error',
 		warning: 'warning',
@@ -15,7 +16,7 @@ const color = computed(() => {
 })
 
 const icon = computed(() => {
-	const map: Record<string, string> = {
+	const map: PropertyString = {
 		success: 'mdi-check-circle-outline',
 		error: 'mdi-alert-circle-outline',
 		warning: 'mdi-alert-outline',
@@ -26,8 +27,13 @@ const icon = computed(() => {
 </script>
 
 <template>
-	<v-snackbar v-model="toast.visible" :timeout="toast.duration" :color="color" location="top right" rounded="lg">
-
+	<v-snackbar
+		v-model="toast.visible"
+		:timeout="toast.duration"
+		:color="color"
+		location="top right"
+		rounded="lg"
+	>
 		<div class="d-flex ga-2 align-center">
 			<v-icon :icon="icon" size="20" />
 			<span class="text-body-1 font-weight-medium">{{ $t(toast.message) }}</span>
@@ -40,3 +46,4 @@ const icon = computed(() => {
 		</template>
 	</v-snackbar>
 </template>
+

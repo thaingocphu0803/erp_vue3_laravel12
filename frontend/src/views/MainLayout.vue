@@ -16,16 +16,21 @@ const authStore = useAuthStore()
 
 const isOpen = ref<boolean>()
 
+// handle logout
 const handleLogout = async () => await authStore.authLogout()
 
+// handle navigation display
 const handleNavDisplay = () => {
 	isOpen.value = !isOpen.value
 }
 </script>
 
 <template>
+	<!-- Main Layout -->
 	<v-layout>
+		<!-- Layout Bar -->
 		<layout-bar text-color="text-primary">
+			<!-- Icon -->
 			<template #icon>
 				<v-app-bar-nav-icon
 					class="d-md-none"
@@ -34,12 +39,16 @@ const handleNavDisplay = () => {
 				></v-app-bar-nav-icon>
 			</template>
 
+			<!-- Notification Button -->
 			<notification-btn />
 
+			<!-- Language Button -->
 			<language-btn />
 
+			<!-- Theme Switch -->
 			<theme-switch color="primary" base-color="primary" />
 
+			<!-- Logout Button -->
 			<base-btn
 				:title="logoutBtnTitle"
 				color="primary"
@@ -49,13 +58,19 @@ const handleNavDisplay = () => {
 			>
 			</base-btn>
 
+			<!-- Mobile Menu Button -->
 			<mobile-menu-btn />
 		</layout-bar>
 
+		<!-- Layout Navigation -->
 		<layout-nav v-model="isOpen"></layout-nav>
 
+		<!-- Main Content -->
 		<v-main>
+			<!-- Router View -->
 			<router-view></router-view>
+
+			<!-- Toast -->
 			<app-toast />
 		</v-main>
 	</v-layout>

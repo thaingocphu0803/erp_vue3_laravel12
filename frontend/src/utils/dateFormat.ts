@@ -1,3 +1,4 @@
+// format date
 export const formatDate = (date: Date | string | null) => {
 	if (!date) return null
 
@@ -12,6 +13,7 @@ export const formatDate = (date: Date | string | null) => {
 	return `${year}/${month}/${day}`
 }
 
+// get yesterday ISO
 export const getYesterdayISO = () => {
 	const date = new Date()
 	date.setDate(date.getDate() - 1)

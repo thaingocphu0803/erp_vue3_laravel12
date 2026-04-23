@@ -1,17 +1,17 @@
-import type { serverErrorCode } from '@/types/common'
-
-export interface ErrorConfig {
+interface ERROR_CONFIG {
 	icon: string
 	code: number
 	title: string
 }
 
-export type ERROR_CONFIG = Record<string, ErrorConfig>
+type SERVER_ERROR_CODE = 500 | 404 | 401 | 422 | 429
 
-export type SERVER_ERROR = Record<string, serverErrorCode>
+type ERROR_MAP = Record<string, ERROR_CONFIG>
+
+type SERVER_ERROR = Record<string, SERVER_ERROR_CODE>
 
 const SYSTEM = {
-	ERROR_CONFIG: {
+	ERROR_MAP: {
 		'500': {
 			icon: 'mdi-server-off',
 			code: 500,
@@ -22,7 +22,7 @@ const SYSTEM = {
 			code: 404,
 			title: 'common.serverError.notFound',
 		},
-	} as ERROR_CONFIG,
+	} as ERROR_MAP,
 
 	SERVER_ERROR: {
 		INTERNAL_SERVER_ERROR: 500,

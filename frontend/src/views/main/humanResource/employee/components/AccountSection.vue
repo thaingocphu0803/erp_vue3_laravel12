@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import employeeValidation from '@/composables/validation/useEmployeeValidation'
+import useEmployeeValidation from '@/composables/validation/useEmployeeValidation'
 import ListFilter from '@/components/list/ListFilter.vue'
 import Input from '@/components/form/Input.vue'
-import RequiredLabel from '@/components/form/formModal/requiredLabel.vue'
-import defaultConfig from '@/config/default'
+import RequiredLabel from '@/components/form/formModal/RequiredLabel.vue'
+import CONFIG from '@/config/constants'
 import CreatePrependItem from '@/components/form/AddItemListBtn.vue'
 import RoleForm from '@/components/form/formModal/RoleForm.vue'
-import { computed, onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoleStore } from '@/stores/role'
 import { useThrottleStore } from '@/stores/throttle'
 import { storeToRefs } from 'pinia'
@@ -20,6 +20,7 @@ const role_ids = defineModel<number[]>('role_ids', { default: [] })
 const { rolesFetch } = useRoleStore()
 const { roles } = storeToRefs(useRoleStore())
 
+const { employeeValidation } = useEmployeeValidation()
 const { initThrottle, startThrottle } = useThrottleStore()
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 
@@ -59,7 +60,9 @@ onMounted(() => {
 </script>
 
 <template>
+	<!-- Account Section -->
 	<v-row dense>
+		<!-- Email -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<Input
 				v-model="email"
@@ -72,6 +75,7 @@ onMounted(() => {
 			</Input>
 		</v-col>
 
+		<!-- Role -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
 				v-model="role_ids"
@@ -106,8 +110,12 @@ onMounted(() => {
 					/>
 				</template>
 			</list-filter>
+
+			<!-- Throttle Alert -->
 			<throttle-alert :show="isDisabled('roleFetch')" :time="throttle['roleFetch'] || 0" />
 		</v-col>
+
+		<!-- Note: Auto Send Auth Email -->
 		<v-col cols="12">
 			<v-alert type="info" variant="tonal" density="compact" class="text-caption">
 				{{ $t('employee.tooltip.autoSendAuthEmail') }}
@@ -116,7 +124,7 @@ onMounted(() => {
 	</v-row>
 
 	<!-- Dialog Create Role -->
-	<v-dialog v-model="showRoleDialog" :max-width="defaultConfig.maxWidthForm" persistent>
+	<v-dialog v-model="showRoleDialog" :max-width="CONFIG.maxWidthForm" persistent>
 		<RoleForm @save="showRoleDialog = false" @cancel="showRoleDialog = false" />
 	</v-dialog>
 </template>

@@ -4,7 +4,7 @@ import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
-import defaultConfig from '@/config/default'
+import CONFIG from '@/config/constants'
 import { useRoute } from 'vue-router'
 import { debounce } from 'vuetify/lib/util/helpers.mjs'
 import { useRouteQuery } from '@/composables/useRouteQuery'
@@ -34,8 +34,8 @@ const departmentStatus = ref(route.query.status as 'A' | 'X' | undefined)
 const tempSearch = ref((route.query.search as string) || '')
 
 const search = ref((route.query.search as string) || '')
-const itemsPerPage = ref(Number(route.query.itemsPerPage) || defaultConfig.itemPerPage)
-const page = ref(Number(route.query.page) || defaultConfig.page)
+const itemsPerPage = ref(Number(route.query.itemsPerPage) || CONFIG.itemPerPage)
+const page = ref(Number(route.query.page) || CONFIG.page)
 
 const departmentItems = ref<DepartmentItem[]>([])
 const totalItemLength = ref<number>(0)
@@ -46,8 +46,8 @@ const { statuses } = useFilterModule()
 const { departmentHeaders } = useTableModule()
 
 const resetURLToDefault = () => {
-	page.value = defaultConfig.page
-	itemsPerPage.value = defaultConfig.itemPerPage
+	page.value = CONFIG.page
+	itemsPerPage.value = CONFIG.itemPerPage
 	search.value = ''
 	tempSearch.value = ''
 	departmentStatus.value = undefined
@@ -61,8 +61,8 @@ const resetURLToDefault = () => {
 watch(departmentStatus, async () => {
 	let isPageChanged = false
 
-	if (page.value !== defaultConfig.page) {
-		page.value = defaultConfig.page
+	if (page.value !== CONFIG.page) {
+		page.value = CONFIG.page
 		isPageChanged = true
 	}
 
@@ -80,7 +80,7 @@ watch(departmentStatus, async () => {
 
 const handleUpdateSearchValue = debounce((val: string) => {
 	search.value = val
-}, defaultConfig.debounceTimeout)
+}, CONFIG.debounceTimeout)
 
 const handleDepartmentPaginate = async (options: any) => {
 	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
@@ -196,7 +196,7 @@ const fetchDepartmentIndex = async (params: object) => {
 						<list-filter
 							class="d-none d-sm-block"
 							v-model="itemsPerPage"
-							:items="defaultConfig.perPage"
+							:items="CONFIG.perPage"
 							:label="$t('common.filter.itemPerPage')"
 							max-width="200"
 							min-width="200"
@@ -207,7 +207,7 @@ const fetchDepartmentIndex = async (params: object) => {
 							v-if="totalPage > 1"
 							v-model="page"
 							:length="totalPage"
-							:total-visible="defaultConfig.pageVisible"
+							:total-visible="CONFIG.pageVisible"
 							rounded="shape"
 							density="comfortable"
 						></v-pagination>
@@ -226,3 +226,4 @@ const fetchDepartmentIndex = async (params: object) => {
 	text-decoration: underline;
 }
 </style>
+

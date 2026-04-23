@@ -7,47 +7,46 @@ import { useRoleStore } from '@/stores/role'
 import PermissionSection from '@/views/main/organization/role/components/PermissionSection.vue'
 import InformationSection from '@/views/main/organization/role/components/InformationSection.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
-import type { RolePermission } from '@/stores/permission'
 import { useToastStore } from '@/stores/toast'
 import SYSTEM from '@/config/system'
+import type { RoleFormError, RoleFormData, RolePermission } from '@/types/role'
 
-interface RoleForm {
-	name: string
-	description: string
-	permissions: RolePermission
-}
+// title
+const title = 'role.title.create'
 
-interface ErrorMessage {
-	name: string
-	permissions: string
-	description: string
-}
-
+// emits
 const emit = defineEmits(['save', 'cancel'])
 
+// role stores
 const { roleCreate } = useRoleStore()
+
+// toast
 const toast = useToastStore()
 
-const roleData = reactive<RoleForm>({
+// role form data
+const roleFormData = reactive<RoleFormData>({
 	name: '',
 	description: '',
 	permissions: {},
 })
 
-const errorMessage = reactive<ErrorMessage>({
+// error message
+const errorMessage = reactive<RoleFormError>({
 	name: '',
 	permissions: '',
 	description: '',
 })
 
+// sections
 const sections = [
 	{ id: 1, title: 'role.step.info' },
 	{ id: 2, title: 'role.step.permission' },
 ]
 
+// handle submit
 const handleSubmit = async () => {
 	try {
-		const response = await roleCreate(roleData)
+		const response = await roleCreate(roleFormData)
 		toast.show(response.data.messageCode, 'success')
 		emit('save')
 	} catch (error: any) {
@@ -59,16 +58,18 @@ const handleSubmit = async () => {
 	}
 }
 
+// handle update permission
 const updatePermision = (permissionsRecord: RolePermission) => {
 	const newPermissions = Object.fromEntries(
 		Object.entries(permissionsRecord).filter(([_, scope]) => scope !== 'NONE'),
 	)
 
-	roleData.permissions = { ...newPermissions }
+	roleFormData.permissions = { ...newPermissions }
 }
 
+// watch permission
 watch(
-	() => roleData.permissions,
+	() => roleFormData.permissions,
 	(newPermissions) => {
 		if (Object.keys(newPermissions).length === 0) {
 			errorMessage.permissions = 'role.validate.permissions.atLeastOne'
@@ -79,31 +80,36 @@ watch(
 	{ deep: true },
 )
 
+// handle cancel
 const handleCancel = () => {
 	emit('cancel')
 }
 </script>
 
 <template>
-	<Form title="role.title.create" @submit-form="handleSubmit">
+	<Form :title @submit-form="handleSubmit">
+		<!-- Error Message -->
 		<error-alert :messages="errorMessage"></error-alert>
 
+		<!-- Content -->
 		<template v-for="section in sections" :key="section.id">
 			<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
+
+			<!-- Step 1: Information -->
 			<information-section
 				v-if="section.id === 1"
-				v-model:role-name="roleData.name"
-				v-model:role-description="roleData.description"
+				v-model:role-name="roleFormData.name"
+				v-model:role-description="roleFormData.description"
 				class="mt-2"
 			/>
 
-			<!-- content for step 2: select role -->
+			<!-- Step 2: Permission -->
 			<permission-section v-else @update:selected-permissions="updatePermision" />
 
 			<v-divider v-if="section.id !== sections.length"></v-divider>
 		</template>
 
-		<!-- Actions: Cancel (red) + Create (blue) -->
+		<!-- Actions -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
 				<BaseBtn

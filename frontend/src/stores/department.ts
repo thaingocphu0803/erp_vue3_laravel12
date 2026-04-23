@@ -1,12 +1,7 @@
-import api from '@/services/api'
+import { departmentService } from '@/services/departmentService'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
-interface Department {
-	id: number
-	name: string
-	leader_id: number | null
-}
+import type { Department } from '@/types/department'
 
 export const useDepartmentStore = defineStore('deparment', () => {
 	const departments = ref<Department[]>([])
@@ -16,14 +11,14 @@ export const useDepartmentStore = defineStore('deparment', () => {
 	const departmentsFetch = async () => {
 		if (isFetched.value) return
 
-		const response = await api.get('department/list')
+		const response = await departmentService.getList()
 		departments.value = response.data.data
 
 		isFetched.value = true
 	}
 
 	const departmentCreate = async (payload: object) => {
-		const response = await api.post('department/create', payload)
+		const response = await departmentService.create(payload)
 		isFetched.value = false
 		return response
 	}

@@ -1,7 +1,7 @@
 import noAvatar from '@/public/images/no-avatar.webp'
 import { getYesterdayISO } from '@/utils/dateFormat'
 
-const defaultConfig = {
+const CONFIG = {
 	appName: 'REZE HRM',
 	avatar: noAvatar as string,
 	perPage: [5, 10, 15, 20],
@@ -17,6 +17,8 @@ const defaultConfig = {
 	currentDate: getYesterdayISO(),
 	maxSizeAvatar: 2 * 1024 * 1024,
 	validTypesAvatar: ['image/jpeg', 'image/png', 'image/jpg'],
+	minLengthPassword: 8,
 }
 
-export default defaultConfig
+export default CONFIG
+

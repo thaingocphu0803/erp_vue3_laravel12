@@ -1,7 +1,7 @@
 import { mount, VueWrapper } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from 'vitest'
 import LayoutBar from '@/components/layout/LayoutBar'
-import defaultConfig from '@/config/default'
+import CONFIG from '@/config/constants'
 
 describe('LayoutBar.vue', () => {
 	let wrapper: VueWrapper<any>
@@ -26,7 +26,7 @@ describe('LayoutBar.vue', () => {
 	})
 
 	it('render app name', () => {
-		expect(wrapper.text()).toContain(defaultConfig.appName)
+		expect(wrapper.text()).toContain(CONFIG.appName)
 	})
 
 	it('receive correct textColor Prop', () => {
@@ -34,4 +34,5 @@ describe('LayoutBar.vue', () => {
 		expect(barTitle.classes()).toContain('primary')
 	})
 })
+
 

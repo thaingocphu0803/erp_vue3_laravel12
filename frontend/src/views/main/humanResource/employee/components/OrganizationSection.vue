@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import ListFilter from '@/components/list/ListFilter.vue'
-import requiredLabel from '@/components/form/formModal/requiredLabel.vue'
-import employeeValidation from '@/composables/validation/useEmployeeValidation'
+import RequiredLabel from '@/components/form/formModal/RequiredLabel.vue'
+import useEmployeeValidation from '@/composables/validation/useEmployeeValidation'
 import { useDepartmentStore } from '@/stores/department'
 import { usePositionStore } from '@/stores/position'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref, watch } from 'vue'
 import Checkbox from '@/components/form/CheckBox.vue'
-import defaultConfig from '@/config/default'
+import CONFIG from '@/config/constants'
 import DepartmentForm from '@/components/form/formModal/DepartmentForm.vue'
 import PositionForm from '@/components/form/formModal/PositionForm.vue'
 import CreatePrependItem from '@/components/form/AddItemListBtn.vue'
@@ -40,6 +40,7 @@ const { positionsFetchByDepartmentId, positionReset } = usePositionStore()
 const { departments } = storeToRefs(useDepartmentStore())
 const { positionByDepartment } = storeToRefs(usePositionStore())
 
+const { employeeValidation } = useEmployeeValidation()
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const { initThrottle, startThrottle } = useThrottleStore()
 
@@ -131,7 +132,9 @@ watch(department_id, (newValue) => {
 </script>
 
 <template>
+	<!-- Organization Section -->
 	<v-row dense>
+		<!-- Department -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
 				v-model="department_id"
@@ -166,11 +169,15 @@ watch(department_id, (newValue) => {
 					></retry-btn>
 				</template>
 			</list-filter>
+
+			<!-- Throttle Alert -->
 			<throttle-alert
 				:show="isDisabled('departmentFetch')"
 				:time="throttle['departmentFetch'] || 0"
 			></throttle-alert>
 		</v-col>
+
+		<!-- Position -->
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter
 				v-model="position_id"
@@ -204,12 +211,15 @@ watch(department_id, (newValue) => {
 					></retry-btn>
 				</template>
 			</list-filter>
+
+			<!-- Throttle Alert -->
 			<throttle-alert
 				:show="isDisabled('positionFetch')"
 				:time="throttle['positionFetch'] || 0"
 			></throttle-alert>
 		</v-col>
 
+		<!-- Is Leader -->
 		<v-col cols="12" class="mt-n4">
 			<Checkbox
 				:style="{ visibility: showIsLeader ? 'visible' : 'hidden' }"
@@ -222,12 +232,12 @@ watch(department_id, (newValue) => {
 	</v-row>
 
 	<!-- Dialog Create Position -->
-	<v-dialog v-model="showPositionDialog" :max-width="defaultConfig.maxWidthForm" persistent>
+	<v-dialog v-model="showPositionDialog" :max-width="CONFIG.maxWidthForm" persistent>
 		<PositionForm @save="showPositionDialog = false" @cancel="showPositionDialog = false" />
 	</v-dialog>
 
 	<!-- Dialog Create Department -->
-	<v-dialog v-model="showDepartmentDialog" :max-width="defaultConfig.maxWidthForm" persistent>
+	<v-dialog v-model="showDepartmentDialog" :max-width="CONFIG.maxWidthForm" persistent>
 		<DepartmentForm
 			@save="showDepartmentDialog = false"
 			@cancel="showDepartmentDialog = false"

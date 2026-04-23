@@ -1,16 +1,21 @@
 import { required, noSpecialChars } from '@/utils/validationRule'
 
-const messages = {
-	name: {
-		required: 'role.validate.name.required',
-		noSpecialChars: 'role.validate.name.noSpecialChars',
-	},
-}
+/**
+ * Composable for Role Validation Rules
+ */
+export default function useRoleValidation() {
+	const messages = {
+		name: {
+			required: 'role.validate.name.required',
+			noSpecialChars: 'role.validate.name.noSpecialChars',
+		},
+	}
 
-const roleValidation = {
-	// validation department name input (required + alphanumeric only)
-	name: [required(messages.name.required), noSpecialChars(messages.name.noSpecialChars)],
-}
+	const roleValidation = {
+		/** Validation for role name input (required + alphanumeric only) */
+		name: [required(messages.name.required), noSpecialChars(messages.name.noSpecialChars)],
+	}
 
-export default roleValidation
+	return { roleValidation }
+}
 

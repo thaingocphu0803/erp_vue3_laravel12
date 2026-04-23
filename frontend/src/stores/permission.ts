@@ -1,20 +1,7 @@
-import api from '@/services/api'
-import type { suportedScopes } from '@/types/common'
+import { permissionService } from '@/services/permissionService'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-
-interface Permission {
-	id: number
-	name: string
-	slug: string
-	supported_scopes: suportedScopes[]
-}
-
-export type PermissionItem = Record<number, suportedScopes>
-
-export type PermissionGroup = Record<string, Permission[]>
-
-export type RolePermission = Record<number, suportedScopes>
+import type { PermissionGroup } from '@/types/role'
 
 export const usePermissionStore = defineStore('permission', () => {
 	const permissionGroup = ref<PermissionGroup>({})
@@ -24,7 +11,7 @@ export const usePermissionStore = defineStore('permission', () => {
 	const permissionFetch = async () => {
 		if (isFetched.value) return
 
-		const response = await api.get('permission/index')
+		const response = await permissionService.getList()
 		isFetched.value = true
 		permissionGroup.value = response.data?.data
 	}

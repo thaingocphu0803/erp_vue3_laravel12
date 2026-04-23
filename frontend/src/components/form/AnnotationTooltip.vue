@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-
 interface Props {
 	text: string
 }
 
 const props = defineProps<Props>()
-
 </script>
 <template>
 	<v-tooltip location="top" :text="$t(props.text)">

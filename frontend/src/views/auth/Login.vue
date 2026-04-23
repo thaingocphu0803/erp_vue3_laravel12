@@ -6,7 +6,7 @@ import Input from '@/components/form/Input.vue'
 import Checkbox from '@/components/form/CheckBox.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import LanguageBtn from '@/components/layout/LanguageBtn.vue'
-import authValidation from '@/composables/validation/useAuthValidation'
+import useAuthValidation from '@/composables/validation/useAuthValidation'
 import ErrorAlert from '@/components/form/ErrorAlert.vue'
 import { onMounted, provide, reactive, ref } from 'vue'
 import router from '@/router'
@@ -20,18 +20,7 @@ import { storeToRefs } from 'pinia'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import SYSTEM from '@/config/system'
 
-interface LoginForm {
-	email: string
-	password: string
-	rememberMe: Boolean
-}
-
-interface ErrorMessage {
-	unauthorized: string
-	email: string
-	password: string
-	rememberMe: string
-}
+import type { LoginFormData, LoginFormError } from '@/types/auth'
 
 const title: string = 'auth.title.login'
 const LanguageBtnColor: string = 'blue-gray-draken-4'
@@ -40,13 +29,13 @@ provide('LanguageBtnColor', LanguageBtnColor)
 
 const toast = useToastStore()
 
-const LoginData = reactive<LoginForm>({
+const loginFormData = reactive<LoginFormData>({
 	email: '',
 	password: '',
 	rememberMe: false,
 })
 
-const errorMessage = reactive<ErrorMessage>({
+const errorMessage = reactive<LoginFormError>({
 	unauthorized: '',
 	email: '',
 	password: '',
@@ -68,6 +57,7 @@ const visible = ref<boolean>(false)
 
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const { initThrottle, startThrottle } = useThrottleStore()
+const { authValidation } = useAuthValidation()
 
 const { authLogin, clearAuth } = useAuthStore()
 
@@ -75,7 +65,7 @@ const handleLogin = async () => {
 	try {
 		loading.value = true
 
-		const response = await authLogin(LoginData)
+		const response = await authLogin(loginFormData)
 
 		redirect.value = (route.query.redirect as string) || { name: 'dashboard' }
 
@@ -105,23 +95,28 @@ onMounted(() => {
 
 <template>
 	<v-layout>
+		<!-- layout bar -->
 		<layout-bar>
 			<language-btn />
 			<theme-switch />
 		</layout-bar>
 
+		<!-- layout main -->
 		<v-main class="mx-auto my-auto" max-width="420px">
 			<Form :title @submit-form="handleLogin">
+				<!-- error alert -->
 				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
+				<!-- email -->
 				<Input
 					:label="$t('auth.input.email')"
 					name="email"
 					placeholder="example@gmail.com"
 					:rules="authValidation.email"
-					v-model="LoginData.email"
+					v-model="loginFormData.email"
 				/>
 
+				<!-- password -->
 				<Input
 					:label="$t('auth.input.password')"
 					name="password"
@@ -129,17 +124,19 @@ onMounted(() => {
 					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
 					@click:append-inner="visible = !visible"
 					:rules="authValidation.password"
-					v-model="LoginData.password"
+					v-model="loginFormData.password"
 				/>
 
+				<!-- remember me -->
 				<Checkbox
 					:label="$t('auth.input.rememberMe')"
 					name="remember_me"
-					v-model="LoginData.rememberMe"
+					v-model="loginFormData.rememberMe"
 					:false-value="checkboxData.falseValue"
 					:true-value="checkboxData.trueValue"
 				/>
 
+				<!-- submit -->
 				<base-btn
 					:title
 					:loading="loading"
@@ -149,9 +146,11 @@ onMounted(() => {
 				/>
 			</Form>
 
+			<!-- throttle alert -->
 			<throttle-alert :show="isDisabled('login')" :time="throttle['login'] || 0" />
 		</v-main>
 
+		<!-- toast -->
 		<app-toast />
 	</v-layout>
 </template>

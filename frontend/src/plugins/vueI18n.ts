@@ -5,7 +5,21 @@ import formEn from '@/languages/english/form.json'
 import formVi from '@/languages/vietnamese/form.json'
 import commonEn from '@/languages/english/common.json'
 import commonVi from '@/languages/vietnamese/common.json'
-import { getLanguage } from '@/utils/language'
+
+/**
+ * Get initial locale from localStorage (matching Pinia persistence format)
+ */
+const getInitialLocale = (): string => {
+	const saved = localStorage.getItem('locale')
+	if (!saved) return 'vi'
+
+	try {
+		const parsed = JSON.parse(saved)
+		return parsed.locale || 'vi'
+	} catch {
+		return saved || 'vi'
+	}
+}
 
 const messages = {
 	en: {
@@ -22,7 +36,7 @@ const messages = {
 
 const i18n = createI18n({
 	legacy: false,
-	locale: getLanguage(),
+	locale: getInitialLocale(),
 	fallbackLocale: 'vi',
 	messages,
 })

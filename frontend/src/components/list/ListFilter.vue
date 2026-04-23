@@ -7,6 +7,7 @@ const props = defineProps<Props>()
 </script>
 
 <template>
+	<!-- Searchable -->
 	<v-autocomplete
 		v-if="props.searchable"
 		v-bind="$attrs"
@@ -21,6 +22,8 @@ const props = defineProps<Props>()
 			<slot :name="name" v-bind="slotProps ?? {}" />
 		</template>
 	</v-autocomplete>
+
+	<!-- Normal Select -->
 	<v-select
 		v-else
 		v-bind="$attrs"

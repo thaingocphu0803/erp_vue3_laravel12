@@ -4,26 +4,34 @@ import { storeToRefs } from 'pinia'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import { useTableModule } from '@/composables/useTableModule'
 import { t } from '@/plugins/vueI18n'
-import { usePermissionStore, type RolePermission } from '@/stores/permission'
+import { usePermissionStore } from '@/stores/permission'
 import RetryBtn from '@/components/RetryBtn.vue'
-import type { suportedScopes } from '@/types/common'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import SYSTEM from '@/config/system'
 import { useThrottleStore } from '@/stores/throttle'
 
+import type { RolePermission } from '@/types/role'
+import type { suportedScopes } from '@/types/common'
+
 const emit = defineEmits(['update:selectedPermissions'])
 
+// useTableModule composables
 const { permissionScopeHeaders } = useTableModule()
+
+// usePermissionStore store
 const { permissionGroup } = storeToRefs(usePermissionStore())
+const { permissionFetch } = usePermissionStore()
+
+// useThrottleStore store
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const { initThrottle, startThrottle } = useThrottleStore()
-const { permissionFetch } = usePermissionStore()
 
 const selectedPermissions = ref<RolePermission>({})
 const loadingPermission = ref<boolean>(false)
 const searchModule = ref<string>('')
 const isError = ref<boolean>(false)
 
+// handle loadData
 const loadData = async () => {
 	if (isDisabled.value('permissionFetch')) return
 
@@ -44,6 +52,7 @@ const loadData = async () => {
 	}
 }
 
+// handle displayedModules computed property
 const displayedModules = computed(() => {
 	if (!permissionGroup.value) return {}
 
@@ -61,6 +70,7 @@ const displayedModules = computed(() => {
 	return result
 })
 
+// handle updateSelectedPermisions function
 const updateSelectedPermisions = (scope: suportedScopes = 'NONE') => {
 	if (!permissionGroup.value) return
 
@@ -72,6 +82,7 @@ const updateSelectedPermisions = (scope: suportedScopes = 'NONE') => {
 	selectedPermissions.value = newSelected
 }
 
+// handle selectPermisionScope function
 const selectPermisionScope = (permissionId: number, scope: suportedScopes) => {
 	selectedPermissions.value = {
 		...selectedPermissions.value,
@@ -98,7 +109,9 @@ watch(
 </script>
 
 <template>
+	<!-- Permission Section -->
 	<v-row dense class="ga-3">
+		<!-- Loading State -->
 		<v-col cols="12" class="text-center" v-if="loadingPermission">
 			<v-progress-circular indeterminate></v-progress-circular>
 		</v-col>
@@ -122,7 +135,7 @@ watch(
 			></throttle-alert>
 		</v-col>
 
-		<!-- Success State: Data loaded -->
+		<!-- Data loaded -->
 		<v-col cols="12" v-else>
 			<!-- Search Module Input -->
 			<div class="mt-3 mb-10">
@@ -132,6 +145,7 @@ watch(
 				></base-search-btn>
 			</div>
 
+			<!-- Permission Table -->
 			<v-table
 				class="elevation-1 border"
 				density="comfortable"
@@ -183,6 +197,7 @@ watch(
 								:key="header.key"
 								class="text-center"
 							>
+								<!-- Permission Radio -->
 								<v-radio
 									v-if="
 										permission.supported_scopes.includes(header.key) ||
@@ -194,6 +209,8 @@ watch(
 									color="primary"
 									class="d-flex justify-center"
 								></v-radio>
+
+								<!-- Disable Scope -->
 								<v-icon class="text-center" v-else>mdi-minus-thick</v-icon>
 							</td>
 						</tr>

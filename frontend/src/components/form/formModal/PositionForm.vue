@@ -8,63 +8,64 @@ import DepartmentForm from './DepartmentForm.vue'
 import CreatePrependItem from '../AddItemListBtn.vue'
 import AnnotationTooltip from '../AnnotationTooltip.vue'
 import ErrorAlert from '../ErrorAlert.vue'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import { useDepartmentStore } from '@/stores/department'
 import { storeToRefs } from 'pinia'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
-import positionValidation from '@/composables/validation/usePositionValidation'
-import defaultConfig from '@/config/default'
+import usePositionValidation from '@/composables/validation/usePositionValidation'
+import CONFIG from '@/config/constants'
 import { usePositionStore } from '@/stores/position'
 import { useThrottleStore } from '@/stores/throttle'
-import requiredLabel from './requiredLabel.vue'
+import RequiredLabel from './RequiredLabel.vue'
 import RetryBtn from '@/components/RetryBtn.vue'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import SYSTEM from '@/config/system'
 
-interface PositionForm {
-	name: string
-	department_id: number | null
-	description: string
-	parent_id: number | null
-}
+import type { PositionFormData, PositionFormError } from '@/types/position'
 
-interface ErrorMessage {
-	name: string
-	department_id: string
-	description: string
-	parent_id: string
-	getDepartmentList: string
-	getPositionList: string
-}
+// title
+const title = 'position.title.create'
 
+// emits
 const emit = defineEmits(['save', 'cancel'])
 
-const toast = useToastStore()
-
+// department stores
 const { departmentsFetch } = useDepartmentStore()
 const { departments } = storeToRefs(useDepartmentStore())
 
+// position stores
 const { positionCreate, positionFetch } = usePositionStore()
 const { positions } = storeToRefs(usePositionStore())
 
+// validation rules
+const { positionValidation } = usePositionValidation()
+
+// throttle
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const { initThrottle, startThrottle } = useThrottleStore()
 
+// toast
+const toast = useToastStore()
+
+// loading state
 const loadingDepartment = ref<boolean>(false)
 const loadingPosition = ref<boolean>(false)
 
+// error state
 const isPositionError = ref<boolean>(false)
 const isDepartmentError = ref<boolean>(false)
 
-const positionData = reactive<PositionForm>({
+// position form data
+const positionFormData = reactive<PositionFormData>({
 	name: '',
 	department_id: null,
 	description: '',
 	parent_id: null,
 })
 
-const errorMessage = reactive<ErrorMessage>({
+// error message
+const errorMessage = reactive<PositionFormError>({
 	name: '',
 	department_id: '',
 	description: '',
@@ -73,8 +74,10 @@ const errorMessage = reactive<ErrorMessage>({
 	getPositionList: '',
 })
 
+// dialog state
 const showDepartmentDialog = ref<boolean>(false)
 
+// handle getDepartmentList
 const getDepartmentList = async () => {
 	if (isDisabled.value('departmentFetch')) return
 
@@ -96,6 +99,7 @@ const getDepartmentList = async () => {
 	}
 }
 
+// handle getPositionList
 const getPositionList = async () => {
 	if (isDisabled.value('positionFetch')) return
 
@@ -117,9 +121,10 @@ const getPositionList = async () => {
 	}
 }
 
+// handle handleSubmit
 const handleSubmit = async () => {
 	try {
-		const response = await positionCreate(positionData)
+		const response = await positionCreate(positionFormData)
 		toast.show(response.data.messageCode, 'success')
 		emit('save')
 	} catch (error: any) {
@@ -131,6 +136,7 @@ const handleSubmit = async () => {
 	}
 }
 
+// handle cancel
 const handleCancel = () => {
 	emit('cancel')
 }
@@ -150,20 +156,21 @@ onMounted(() => {
 </script>
 
 <template>
-	<Form title="position.title.create" @submit-form="handleSubmit">
+	<Form :title @submit-form="handleSubmit">
+		<!-- Error Message -->
 		<error-alert
 			:messages="errorMessage"
 			:ignore="['getDepartmentList', 'getPositionList']"
 		></error-alert>
 
-		<!-- Row 1: Position Name -->
+		<!-- Position Name -->
 		<v-row dense>
 			<v-col cols="12">
 				<Input
 					name="name"
 					:rules="positionValidation.name"
-					v-model="positionData.name"
-					:maxlength="defaultConfig.maxLengthName"
+					v-model="positionFormData.name"
+					:maxlength="CONFIG.maxLengthName"
 					counter
 				>
 					<template #label>
@@ -173,12 +180,12 @@ onMounted(() => {
 			</v-col>
 		</v-row>
 
-		<!-- Row 2: Department Select with tooltip inside (append-inner) -->
+		<!-- Department Select -->
 		<v-row dense>
 			<v-col cols="12" md="6">
 				<list-filter
 					:label="$t('position.input.selectDepartment')"
-					v-model="positionData.department_id"
+					v-model="positionFormData.department_id"
 					:error-messages="
 						isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
 					"
@@ -209,16 +216,18 @@ onMounted(() => {
 						></retry-btn>
 					</template>
 				</list-filter>
+
 				<throttle-alert
 					:show="isDisabled('departmentFetch')"
 					:time="throttle['departmentFetch'] || 0"
 				></throttle-alert>
 			</v-col>
 
+			<!-- Supervisor Select -->
 			<v-col cols="12" md="6">
 				<list-filter
 					:label="$t('position.input.supervisor')"
-					v-model="positionData.parent_id"
+					v-model="positionFormData.parent_id"
 					:error-messages="
 						isDisabled('positionFetch') ? '' : errorMessage.getPositionList
 					"
@@ -241,6 +250,7 @@ onMounted(() => {
 						></retry-btn>
 					</template>
 				</list-filter>
+
 				<throttle-alert
 					:show="isDisabled('positionFetch')"
 					:time="throttle['positionFetch'] || 0"
@@ -248,18 +258,18 @@ onMounted(() => {
 			</v-col>
 		</v-row>
 
-		<!-- Row 3: Description -->
+		<!-- Description -->
 		<v-row dense>
 			<v-col cols="12">
 				<Textarea
 					:label="$t('position.input.positionDesc')"
 					name="description"
-					v-model="positionData.description"
+					v-model="positionFormData.description"
 				></Textarea>
 			</v-col>
 		</v-row>
 
-		<!-- Actions: Cancel + Create -->
+		<!-- Actions -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
 				<BaseBtn
@@ -275,7 +285,7 @@ onMounted(() => {
 	</Form>
 
 	<!-- Dialog Create Department -->
-	<v-dialog v-model="showDepartmentDialog" :max-width="defaultConfig.maxWidthForm" persistent>
+	<v-dialog v-model="showDepartmentDialog" :max-width="CONFIG.maxWidthForm" persistent>
 		<v-card class="pa-4 rounded-lg">
 			<DepartmentForm
 				@save="showDepartmentDialog = false"

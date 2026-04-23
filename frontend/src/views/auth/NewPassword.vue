@@ -5,44 +5,34 @@ import Form from '@/components/Form.vue'
 import Input from '@/components/form/Input.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import { reactive, ref } from 'vue'
-import authValidation from '@/composables/validation/useAuthValidation'
+import useAuthValidation from '@/composables/validation/useAuthValidation'
 import LanguageBtn from '@/components/layout/LanguageBtn.vue'
 import ErrorAlert from '@/components/form/ErrorAlert.vue'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import router from '@/router'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
 import SYSTEM from '@/config/system'
+import { authService } from '@/services/authService'
 
-interface CreatePasswordForm {
-	password: string
-	password_confirmation: string
-	id: number | null
-	hash: string
-}
-
-interface ErrorMessage {
-	password: string
-	id: string
-	hash: string
-}
+import type { NewPasswordFormData, NewPasswordFormError } from '@/types/auth'
 
 const route = useRoute()
-const { authCreatePassword } = useAuthStore()
 const toast = useToastStore()
+
+const { authValidation } = useAuthValidation()
 
 const loading = ref<boolean>(false)
 const visible = ref<boolean>(false)
 
-const CreatePasswordData = reactive<CreatePasswordForm>({
+const newPasswordFormData = reactive<NewPasswordFormData>({
 	password: '',
 	password_confirmation: '',
 	id: null,
 	hash: '',
 })
 
-const errorMessage = reactive<ErrorMessage>({
+const errorMessage = reactive<NewPasswordFormError>({
 	password: '',
 	id: '',
 	hash: '',
@@ -58,10 +48,10 @@ const handleCreatePassword = async () => {
 			return
 		}
 
-		CreatePasswordData.id = Number(route.query.id)
-		CreatePasswordData.hash = route.query.hash as string
+		newPasswordFormData.id = Number(route.query.id)
+		newPasswordFormData.hash = route.query.hash as string
 
-		const response = await authCreatePassword(CreatePasswordData)
+		const response = await authService.createPassword(newPasswordFormData)
 		router.push({ name: 'login' })
 		toast.show(response.data.messageCode, 'success')
 	} catch (error: any) {
@@ -76,36 +66,45 @@ const handleCreatePassword = async () => {
 
 <template>
 	<v-layout>
+		<!-- layout bar -->
 		<layout-bar>
 			<language-btn />
 			<theme-switch />
 		</layout-bar>
 
+		<!-- layout main -->
 		<v-main class="mx-auto my-auto" max-width="420px">
 			<Form title="auth.title.createPassword" @submit-form="handleCreatePassword">
+				<!-- error alert -->
 				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
+				<!-- new password -->
 				<Input
 					:label="$t('auth.input.newPassword')"
 					name="password"
 					:type="visible ? 'text' : 'password'"
 					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
 					@click:append-inner="visible = !visible"
-					v-model="CreatePasswordData.password"
+					v-model="newPasswordFormData.password"
 					:rules="authValidation.password"
 				/>
 
+				<!-- confirm new password -->
 				<Input
 					:label="$t('auth.input.confirmNewPassword')"
 					name="password_confirmation"
 					:type="visible ? 'text' : 'password'"
-					v-model="CreatePasswordData.password_confirmation"
-					:rules="authValidation.passwordConfirm(CreatePasswordData.password)"
+					v-model="newPasswordFormData.password_confirmation"
+					:rules="authValidation.passwordConfirm(newPasswordFormData.password)"
 				/>
 
+				<!-- submit -->
 				<base-btn title="common.btn.confirm" type="submit" :loading="loading" />
 			</Form>
 		</v-main>
+
+		<!-- toast -->
+		<app-toast />
 	</v-layout>
 </template>
 

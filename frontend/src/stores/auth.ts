@@ -1,13 +1,8 @@
 import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-import api from '@/services/api'
+import { authService } from '@/services/authService'
 import router from '@/router'
-
-interface User {
-	name: string
-	email: string
-	avatar: string
-}
+import type { User } from '@/types/auth'
 
 export const useAuthStore = defineStore('auth', () => {
 	const user = ref<User | null>(null)
@@ -20,7 +15,7 @@ export const useAuthStore = defineStore('auth', () => {
 		try {
 			if (isInitialized.value) return
 
-			const response = await api.get('auth/me')
+			const response = await authService.me()
 			user.value = response.data.data?.user
 		} catch (error: any) {
 			console.log('fetch user api error', error)
@@ -31,7 +26,7 @@ export const useAuthStore = defineStore('auth', () => {
 	}
 
 	const authLogin = async (credentials: object) => {
-		const response = await api.post('auth/login', credentials)
+		const response = await authService.login(credentials)
 		user.value = response.data.data?.user
 		isInitialized.value = true
 
@@ -40,7 +35,7 @@ export const useAuthStore = defineStore('auth', () => {
 
 	const authLogout = async () => {
 		try {
-			const response = await api.post('auth/logout')
+			const response = await authService.logout()
 
 			return response
 		} catch (error: any) {
@@ -50,16 +45,6 @@ export const useAuthStore = defineStore('auth', () => {
 			user.value = null
 			router.push({ name: 'login' })
 		}
-	}
-
-	const authCreatePassword = async (payload: object) => {
-		const response = await api.post(`auth/create-password`, payload)
-		return response
-	}
-
-	const authResendVerifyEmail = async (payload: object) => {
-		const response = await api.post(`auth/resend-verify-email`, payload)
-		return response
 	}
 
 	const clearAuth = () => {
@@ -74,8 +59,6 @@ export const useAuthStore = defineStore('auth', () => {
 		authFetch,
 		authLogin,
 		authLogout,
-		authCreatePassword,
-		authResendVerifyEmail,
 		clearAuth,
 	}
 })

@@ -3,30 +3,23 @@ import LayoutBar from '@/components/layout/LayoutBar.vue'
 import ThemeSwitch from '@/components/ThemeSwitch.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import LanguageBtn from '@/components/layout/LanguageBtn.vue'
-import { onMounted, provide, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
 import { useToastStore } from '@/stores/toast'
 import AppToast from '@/components/layout/AppToast.vue'
-import defaultConfig from '@/config/default'
+import CONFIG from '@/config/constants'
 import { useThrottleStore } from '@/stores/throttle'
 import { storeToRefs } from 'pinia'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import SYSTEM from '@/config/system'
+import { authService } from '@/services/authService'
 
-interface Payload {
-	id: number | null
-	hash: string
-}
+import type { VerifyEmailParam } from '@/types/auth'
 
 const title: string = 'auth.title.resendVerifyEmail'
-const LanguageBtnColor: string = 'blue-gray-draken-4'
-
-provide('LanguageBtnColor', LanguageBtnColor)
 
 const route = useRoute()
 const toast = useToastStore()
-const { authResendVerifyEmail } = useAuthStore()
 
 const loading = ref<boolean>(false)
 
@@ -38,7 +31,7 @@ const handleResendEmailVerification = async () => {
 	try {
 		loading.value = true
 
-		const payload: Payload = {
+		const payload: VerifyEmailParam = {
 			id: route.query.id ? Number(route.query.id) : null,
 			hash: route.query.hash ? String(route.query.hash) : '',
 		}
@@ -48,7 +41,7 @@ const handleResendEmailVerification = async () => {
 			return
 		}
 
-		const response = await authResendVerifyEmail(payload)
+		const response = await authService.resendVerifyEmail(payload)
 		toast.show(response.data.messageCode, 'success')
 	} catch (error: any) {
 		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
@@ -71,22 +64,27 @@ onMounted(() => {
 
 <template>
 	<v-layout>
+		<!-- Header -->
 		<layout-bar>
 			<language-btn />
 			<theme-switch />
 		</layout-bar>
 
-		<v-main class="mx-auto my-auto" :max-width="defaultConfig.maxWidthForm">
+		<!-- Content -->
+		<v-main class="mx-auto my-auto" :max-width="CONFIG.maxWidthForm">
 			<v-card
 				density="comfortable"
 				class="border d-flex flex-column justify-center align-center ga-5 pa-5"
 			>
+				<!-- Icon -->
 				<v-icon color="warning" icon="mdi-emoticon-dead-outline" size="72" />
 
+				<!-- Description -->
 				<p class="text-body-1 text-medium-emphasis text-center">
 					{{ $t('common.state.expiredLink') }}
 				</p>
 
+				<!-- Button -->
 				<base-btn
 					:title
 					:loading="loading"
@@ -96,6 +94,7 @@ onMounted(() => {
 					@click.prevent="handleResendEmailVerification"
 				/>
 
+				<!-- Throttle Alert -->
 				<throttle-alert
 					:show="isDisabled('resendEmail')"
 					:time="throttle['resendEmail'] || 0"

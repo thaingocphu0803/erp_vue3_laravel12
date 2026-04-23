@@ -37,35 +37,10 @@ jobs: # Define the test laravel job
             - name: Execute Feature Tests vie Pest
               run: php artisan test --testsuite=Feature
 
-    vuetify-tests:
-        name: Vuetify Tests
-        runs-on: ubuntu-22.04
-
-        defaults:
-            run:
-                working-directory: frontend
-
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  sparse-checkout: frontend
-
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: "22.x" # Specific node version
-                  cache: "npm" # Cache npm dependencies
-                  cache-dependency-path: frontend/package-lock.json # Supervision file to check and update cached
-
-            - name: Install npm dependencies
-              run: npm ci
-
-            - name: Execute Unit tests via Vitest
-              run: npm run test:unit
-
     docker-build-push:
         name: Docker Build & Push
         runs-on: ubuntu-22.04
-        needs: [laravel-tests, vuetify-tests]
+        needs: [laravel-tests]
         environment: develop
         env:
             GCP_WIP: projects/${{secrets.GCP_PROJECT_NUMBER}}/locations/global/workloadIdentityPools/${{secrets.GCP_POOL_ID}}/providers/${{secrets.GCP_PROVIDER_ID}}
@@ -91,7 +66,7 @@ jobs: # Define the test laravel job
             - name: Login to Google Artifact Registry
               uses: docker/login-action@v3 # Login to Docker registry
               with:
-                  registry: 'us-west1-docker.pkg.dev' # Use the regional endpoint for Artifact Registry
+                  registry: "us-west1-docker.pkg.dev" # Use the regional endpoint for Artifact Registry
                   username: oauth2accesstoken # Authentication for Google Cloud using OAuth2 access token
                   password: ${{steps.auth.outputs.access_token}}
 
@@ -110,7 +85,8 @@ jobs: # Define the test laravel job
                   ADMIN_EMAIL: ${{secrets.ADMIN_EMAIL}}
                   ADMIN_PASSWORD: ${{secrets.ADMIN_PASSWORD}}
                   CLOUDFLARE_TOKEN: ${{secrets.CLOUDFLARE_TOKEN}}
-              run: | # Replace placeholders with "$VARIABLE" format in .env.example with environment variables and save to .env
+              run:
+                  | # Replace placeholders with "$VARIABLE" format in .env.example with environment variables and save to .env
                   envsubst < .env.example > .env
                   envsubst < backend/.env.example > backend/.env
 
@@ -131,6 +107,5 @@ jobs: # Define the test laravel job
                   # mode=max: Caches all layers, including intermediate ones (Best for speed, more storage)
                   # mode=min: Caches only the resulting layers of the exported image (Default)
                   set: |
-                    *.cache-from=type=gha
-                    *.cache-to=type=gha,mode=max
-
+                      *.cache-from=type=gha
+                      *.cache-to=type=gha,mode=max

@@ -1,10 +1,11 @@
+import type { PropertyAny, PropertyString } from '@/types/common'
 import { useRoute, useRouter } from 'vue-router'
 
 export const useRouteQuery = () => {
 	const route = useRoute()
 	const router = useRouter()
 
-	const updateQueryParams = (params: Record<string, any>) => {
+	const updateQueryParams = (params: PropertyAny) => {
 		const query = { ...route.query }
 
 		for (const key in params) {
@@ -25,8 +26,8 @@ export const useRouteQuery = () => {
 		return {}
 	}
 
-	const replaceQueryParams = (params: Record<string, any>) => {
-		const query: Record<string, string> = {}
+	const replaceQueryParams = (params: PropertyAny) => {
+		const query: PropertyString = {}
 		for (const key in params) {
 			if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
 				query[key] = String(params[key])

@@ -1,4 +1,4 @@
-import api from '@/services/api'
+import { administrativeUnitService } from '@/services/administrativeUnitService'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -18,7 +18,7 @@ export const useAdministrativeUnitStore = defineStore('administrativeUnit', () =
 	const provincesFetch = async () => {
 		if (isProvincesFetched.value) return
 
-		const response = await api.get('/administrative-units/provinces')
+		const response = await administrativeUnitService.getProvinces()
 		provinces.value = response.data.data
 		isProvincesFetched.value = true
 
@@ -28,7 +28,7 @@ export const useAdministrativeUnitStore = defineStore('administrativeUnit', () =
 	const wardsFetchByProvinceCode = async (provinceCode: string) => {
 		if (isWardsFetched.value) return
 
-		const response = await api.get(`/administrative-units/provinces/${provinceCode}/wards`)
+		const response = await administrativeUnitService.getWards(provinceCode)
 		wards.value = response.data.data
 		isWardsFetched.value = true
 

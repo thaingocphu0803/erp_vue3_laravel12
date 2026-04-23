@@ -4,62 +4,61 @@ import Input from '@/components/form/Input.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import AnnotationTooltip from '../AnnotationTooltip.vue'
 import ErrorAlert from '../ErrorAlert.vue'
-import departmentValidation from '@/composables/validation/useDepartmentValidation'
-import { onMounted, reactive, ref, computed } from 'vue'
+import useDepartmentValidation from '@/composables/validation/useDepartmentValidation'
+import { onMounted, reactive, ref } from 'vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import Textarea from '@/components/form/Textarea.vue'
 import { useDepartmentStore } from '@/stores/department'
 import { storeToRefs } from 'pinia'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
-import defaultConfig from '@/config/default'
-import RequiredLabel from './requiredLabel.vue'
+import CONFIG from '@/config/constants'
+import RequiredLabel from './RequiredLabel.vue'
 import RetryBtn from '@/components/RetryBtn.vue'
 import { useThrottleStore } from '@/stores/throttle'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import SYSTEM from '@/config/system'
 
-interface DepartmentForm {
-	name: string
-	code: string | null
-	parent_id: number | null
-	description: string
-}
+import type { DepartmentFormData, DepartmentFormError } from '@/types/department'
 
-interface ErrorMessage {
-	name: string
-	code: string
-	parent_id: string
-	description: string
-	getDepartmentList: string
-}
-
+// title
 const title = 'department.title.create'
 
+// emits
 const emit = defineEmits(['save', 'cancel'])
 
+// department stores
 const { departmentsFetch, departmentCreate } = useDepartmentStore()
 
+// toast
 const toast = useToastStore()
 
+// validation rules
+const { departmentValidation } = useDepartmentValidation()
+
+// department data
 const { departments } = storeToRefs(useDepartmentStore())
 
-const { isDisabled, throttle } = storeToRefs(useThrottleStore())
-
+// throttle
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const { initThrottle, startThrottle } = useThrottleStore()
 
+// loading state
 const loading = ref<boolean>(false)
 
+// error state
 const isError = ref<boolean>(false)
 
-const departmentData = reactive<DepartmentForm>({
+// department form data
+const departmentFormData = reactive<DepartmentFormData>({
 	name: '',
 	code: '',
 	parent_id: null,
 	description: '',
 })
 
-const errorMessage = reactive<ErrorMessage>({
+// error messages
+const errorMessage = reactive<DepartmentFormError>({
 	name: '',
 	code: '',
 	parent_id: '',
@@ -67,6 +66,7 @@ const errorMessage = reactive<ErrorMessage>({
 	getDepartmentList: '',
 })
 
+// get department list
 const getDepartmentList = async () => {
 	if (isDisabled.value('departmentFetch')) return
 
@@ -88,9 +88,10 @@ const getDepartmentList = async () => {
 	}
 }
 
+// handle create department
 const handleCreate = async () => {
 	try {
-		const response = await departmentCreate(departmentData)
+		const response = await departmentCreate(departmentFormData)
 
 		toast.show(response.data.messageCode, 'success')
 
@@ -104,6 +105,7 @@ const handleCreate = async () => {
 	}
 }
 
+// handle cancel
 const handleCancel = () => {
 	emit('cancel')
 }
@@ -119,15 +121,17 @@ onMounted(() => {
 
 <template>
 	<Form :title @submit-form="handleCreate">
+		<!-- Error Alert -->
 		<error-alert :messages="errorMessage" :ignore="['getDepartmentList']"></error-alert>
 
+		<!-- Department Name -->
 		<v-row dense>
 			<v-col cols="12">
 				<Input
 					name="name"
 					:rules="departmentValidation.name"
-					v-model="departmentData.name"
-					:maxlength="defaultConfig.maxLengthName"
+					v-model="departmentFormData.name"
+					:maxlength="CONFIG.maxLengthName"
 					counter
 				>
 					<template #label>
@@ -139,13 +143,14 @@ onMounted(() => {
 			</v-col>
 		</v-row>
 
+		<!-- Department Code & Parent -->
 		<v-row dense>
 			<v-col cols="12" md="6">
 				<Input
 					:label="$t('department.input.departmentCode')"
 					name="code"
-					v-model="departmentData.code"
-					:maxlength="defaultConfig.maxLengthCode"
+					v-model="departmentFormData.code"
+					:maxlength="CONFIG.maxLengthCode"
 					counter
 				>
 					<template #append-inner>
@@ -156,10 +161,11 @@ onMounted(() => {
 				</Input>
 			</v-col>
 
+			<!-- Department Parent -->
 			<v-col cols="12" md="6">
 				<list-filter
 					:label="$t('department.input.departmentParent')"
-					v-model="departmentData.parent_id"
+					v-model="departmentFormData.parent_id"
 					:error-messages="
 						isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
 					"
@@ -187,17 +193,18 @@ onMounted(() => {
 			</v-col>
 		</v-row>
 
+		<!-- Department Description -->
 		<v-row dense>
 			<v-col cols="12">
 				<Textarea
 					:label="$t('department.input.departmentDesc')"
 					name="description"
-					v-model="departmentData.description"
+					v-model="departmentFormData.description"
 				></Textarea>
 			</v-col>
 		</v-row>
 
-		<!-- Actions: Cancel (red) + Create (blue) -->
+		<!-- Actions -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
 				<BaseBtn

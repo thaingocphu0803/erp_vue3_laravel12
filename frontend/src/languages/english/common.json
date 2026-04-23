@@ -30,7 +30,7 @@
 			"addRole": "Create a role"
 		},
 		"state": {
-			"comeSoon": "Comming Soon...",
+			"comingSoon": "Coming Soon...",
 			"expiredLink": "The link you used is no longer valid. Please click the button below to request the system to send a new link to your email address.",
 			"error": "Error"
 		},
@@ -132,4 +132,3 @@
 		}
 	}
 }
-

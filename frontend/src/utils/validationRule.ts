@@ -1,5 +1,3 @@
-import { t } from '@/plugins/vueI18n'
-
 // required rule
 export const required = (msg: string) => (v: any) => !!v || msg
 

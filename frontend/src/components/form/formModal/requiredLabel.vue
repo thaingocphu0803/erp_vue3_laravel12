@@ -9,3 +9,4 @@ const props = defineProps<Props>()
 <template>
 	<span>{{ props.label }}</span> <span class="text-error">*</span>
 </template>
+

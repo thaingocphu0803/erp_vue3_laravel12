@@ -4,7 +4,7 @@ import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
-import defaultConfig from '@/config/default'
+import CONFIG from '@/config/constants'
 
 const search = ref('')
 const itemsPerPage = ref(10)
@@ -26,10 +26,10 @@ const headers = [
 	{ title: 'Trạng thái', key: 'status' },
 ]
 
-// Tạo 150 nhân viên giả lập để có đủ 15 trang
+// Tạo 150 nhân viên giả lập đềEcó đủ 15 trang
 const allEmployees = Array.from({ length: 150 }, (_, i) => ({
 	id: i + 1,
-	name: `Nguyễn Văn ${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
+	name: `NguyềE Văn ${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
 	code: `${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
 	department: departments[i % 5],
 	position: positions[i % 5],
@@ -140,7 +140,7 @@ const pageCount = computed(() => {
 						<list-filter
 							class="d-none d-sm-block"
 							v-model="itemsPerPage"
-							:items="defaultConfig.perPage"
+							:items="CONFIG.perPage"
 							:label="$t('common.filter.itemPerPage')"
 							max-width="200"
 							min-width="200"
@@ -159,3 +159,4 @@ const pageCount = computed(() => {
 		</v-card>
 	</v-container>
 </template>
+

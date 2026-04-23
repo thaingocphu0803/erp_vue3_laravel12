@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import BaseIconBtn from '../BaseIconBtn.vue'
 import { languageMenu } from '@/config/menu'
-import { changeLanguage } from '@/composables/useLanguage'
+import { useLocaleStore } from '@/stores/locale'
 
+const { setLocale } = useLocaleStore()
 const tooltip: string = 'common.button.language'
 </script>
 <template>
@@ -22,7 +23,7 @@ const tooltip: string = 'common.button.language'
 				:key="item.value"
 				:value="item.value"
 				:title="$t(item.title)"
-				@click="changeLanguage(item.value)"
+				@click="setLocale(item.value)"
 			>
 			</v-list-item>
 		</v-list>

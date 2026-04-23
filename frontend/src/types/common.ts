@@ -6,5 +6,7 @@ export type commonGender = 'MALE' | 'FEMALE'
 
 export type commonLocale = 'vi' | 'en'
 
-export type serverErrorCode = 500 | 404 | 401 | 422 | 429
+export type PropertyString = Record<string, string>
+
+export type PropertyAny = Record<string, any>
 

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import ComeSoon from '@/components/ComeSoon.vue';
+import ComingSoon from '@/components/ComingSoon.vue'
 </script>
 
 <template>
-    <come-soon/>
+	<!-- Coming Soon -->
+	<coming-soon />
 </template>
