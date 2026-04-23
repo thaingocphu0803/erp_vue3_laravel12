@@ -15,6 +15,7 @@ import SYSTEM from '@/config/system'
 import { authService } from '@/services/authService'
 
 import type { VerifyEmailParam } from '@/types/auth'
+import { formatLaravelRetryAfter } from '@/utils/errorHandler'
 
 const title: string = 'auth.title.resendVerifyEmail'
 
@@ -49,7 +50,7 @@ const handleResendEmailVerification = async () => {
 		}
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['resendEmail'] = Number(error.response.headers['retry-after'])
+			throttle.value['resendEmail'] = formatLaravelRetryAfter(error)
 			startThrottle('resendEmail')
 		}
 	} finally {
@@ -72,10 +73,7 @@ onMounted(() => {
 
 		<!-- Content -->
 		<v-main class="mx-auto my-auto" :max-width="CONFIG.maxWidthForm">
-			<v-card
-				density="comfortable"
-				class="border d-flex flex-column justify-center align-center ga-5 pa-5"
-			>
+			<v-card density="comfortable" class="border d-flex flex-column justify-center align-center ga-5 pa-5">
 				<!-- Icon -->
 				<v-icon color="warning" icon="mdi-emoticon-dead-outline" size="72" />
 
@@ -85,20 +83,11 @@ onMounted(() => {
 				</p>
 
 				<!-- Button -->
-				<base-btn
-					:title
-					:loading="loading"
-					type="button"
-					class="mt-5"
-					:disabled="isDisabled('resendEmail')"
-					@click.prevent="handleResendEmailVerification"
-				/>
+				<base-btn :title :loading="loading" type="button" class="mt-5" :disabled="isDisabled('resendEmail')"
+					@click.prevent="handleResendEmailVerification" />
 
 				<!-- Throttle Alert -->
-				<throttle-alert
-					:show="isDisabled('resendEmail')"
-					:time="throttle['resendEmail'] || 0"
-				/>
+				<throttle-alert :show="isDisabled('resendEmail')" :time="throttle['resendEmail'] || 0" />
 			</v-card>
 		</v-main>
 
@@ -116,4 +105,3 @@ onMounted(() => {
 	margin-left: unset;
 }
 </style>
-

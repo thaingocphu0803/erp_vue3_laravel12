@@ -25,17 +25,11 @@ class RoleService
 
 		$newPermissions = $this->getNewPermissionPayload($permissions);
 
-		try {
-			return DB::transaction(function () use ($role, $newPermissions) {
-				$relation = Table::PERMISSION->value;
+		return DB::transaction(function () use ($role, $newPermissions) {
+			$relation = Table::PERMISSION->value;
 
-				$this->roleRepositoryInterface->create($role, $relation, $newPermissions);
-
-				return true;
-			});
-		} catch (\Exception $e) {
-			return false;
-		}
+			return $this->roleRepositoryInterface->create($role, $relation, $newPermissions);
+		});
 	}
 
 	public function paginate(array $data)

@@ -18,6 +18,7 @@ const CONFIG = {
 	maxSizeAvatar: 2 * 1024 * 1024,
 	validTypesAvatar: ['image/jpeg', 'image/png', 'image/jpg'],
 	minLengthPassword: 8,
+	retryAfter: 60,
 }
 
 export default CONFIG

@@ -22,14 +22,10 @@ class DepartmentController extends Controller
 	public function create(StoreDepartmentRequest $storeDepartmentRequest)
 	{
 		$data = $storeDepartmentRequest->validated();
+		$this->departmentService->create($data);
 
-		if ($this->departmentService->create($data) !== false) {
-			$message = 'department.alert.success.create';
-			return $this->jsonResponse($message, Response::HTTP_OK);
-		}
-
-		$message = 'department.alert.error.create';
-		return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+		$message = 'department.alert.success.create';
+		return $this->jsonResponse($message, Response::HTTP_OK);
 	}
 
 	public function index(IndexDepartmentRequest $indexDepartmentRequest)

@@ -16,6 +16,7 @@ import { useThrottleStore } from '@/stores/throttle'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import RetryBtn from '@/components/RetryBtn.vue'
 import SYSTEM from '@/config/system'
+import { formatLaravelRetryAfter } from '@/utils/errorHandler'
 
 interface ErrorMessage {
 	province: string
@@ -76,7 +77,7 @@ const getProvinces = async () => {
 		isProvinceError.value = true
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['provinceFetch'] = Number(error.response.headers['retry-after'])
+			throttle.value['provinceFetch'] = formatLaravelRetryAfter(error)
 			startThrottle('provinceFetch')
 		}
 	} finally {
@@ -102,7 +103,7 @@ const getWards = async (provinceCode: string | null) => {
 		isWardError.value = true
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['wardFetch'] = Number(error.response.headers['retry-after'])
+			throttle.value['wardFetch'] = formatLaravelRetryAfter(error)
 			startThrottle('wardFetch')
 		}
 
@@ -138,12 +139,7 @@ onMounted(() => {
 	<v-row dense>
 		<!-- Full Name -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<Input
-				v-model="name"
-				:maxlength="CONFIG.maxLengthName"
-				counter
-				:rules="employeeValidation.name"
-			>
+			<Input v-model="name" :maxlength="CONFIG.maxLengthName" counter :rules="employeeValidation.name">
 				<template #label>
 					<required-label :label="$t('employee.input.fullName')"></required-label>
 				</template>
@@ -152,30 +148,17 @@ onMounted(() => {
 
 		<!-- Employee Code -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<Input
-				v-model="code"
-				:label="$t('employee.input.employeeCode')"
-				:maxlength="CONFIG.maxLengthCode"
-				counter
-			>
+			<Input v-model="code" :label="$t('employee.input.employeeCode')" :maxlength="CONFIG.maxLengthCode" counter>
 				<template #append-inner>
-					<annotation-tooltip
-						text="employee.tooltip.codeAutoGenerate"
-					></annotation-tooltip>
+					<annotation-tooltip text="employee.tooltip.codeAutoGenerate"></annotation-tooltip>
 				</template>
 			</Input>
 		</v-col>
 
 		<!-- Gender -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter
-				v-model="gender"
-				:items="genders"
-				item-title="name"
-				item-value="id"
-				:rules="employeeValidation.gender"
-				:clearable="false"
-			>
+			<list-filter v-model="gender" :items="genders" item-title="name" item-value="id"
+				:rules="employeeValidation.gender" :clearable="false">
 				<template #label>
 					<required-label :label="$t('employee.input.gender')"></required-label>
 				</template>
@@ -184,17 +167,9 @@ onMounted(() => {
 
 		<!-- Birth Date -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<v-date-input
-				v-model="formatBirthdate"
-				density="compact"
-				variant="outlined"
-				input-format="yyyy/mm/dd"
-				prepend-inner-icon="mdi-calendar"
-				prepend-icon=""
-				:rules="employeeValidation.birthDate"
-				:max="CONFIG.currentDate"
-				@keydown.prevent
-			>
+			<v-date-input v-model="formatBirthdate" density="compact" variant="outlined" input-format="yyyy/mm/dd"
+				prepend-inner-icon="mdi-calendar" prepend-icon="" :rules="employeeValidation.birthDate"
+				:max="CONFIG.currentDate" @keydown.prevent>
 				<template #label>
 					<required-label :label="$t('employee.input.birthDate')"></required-label>
 				</template>
@@ -204,14 +179,8 @@ onMounted(() => {
 
 		<!-- Phone -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<Input
-				v-model="phone_number"
-				placeholder="0987654321"
-				prefix="+84"
-				:maxlength="CONFIG.sizePhone"
-				counter
-				:rules="employeeValidation.phone"
-			>
+			<Input v-model="phone_number" placeholder="0987654321" prefix="+84" :maxlength="CONFIG.sizePhone" counter
+				:rules="employeeValidation.phone">
 				<template #label>
 					<required-label :label="$t('employee.input.phone')"></required-label>
 				</template>
@@ -219,95 +188,57 @@ onMounted(() => {
 		</v-col>
 
 		<v-col cols="12" sm="6">
-			<list-filter
-				v-model="locale"
-				:items="locales"
-				item-title="name"
-				item-value="id"
-				:clearable="false"
-				:label="$t('employee.input.locale')"
-			>
+			<list-filter v-model="locale" :items="locales" item-title="name" item-value="id" :clearable="false"
+				:label="$t('employee.input.locale')">
 			</list-filter>
 		</v-col>
 
 		<!-- Address Split (1 row) -->
 		<v-col cols="12" sm="4" class="mb-3">
-			<list-filter
-				v-model="province_code"
-				:items="provinces"
-				searchable
-				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
-				item-value="code"
+			<list-filter v-model="province_code" :items="provinces" searchable
+				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'" item-value="code"
 				:rules="isProvinceError ? [] : employeeValidation.province"
-				:error-messages="isDisabled('provinceFetch') ? '' : errorMessage.province"
-				:loading="provinceLoading"
-				:clearable="false"
-				@click="getProvinces()"
-			>
+				:error-messages="isDisabled('provinceFetch') ? '' : errorMessage.province" :loading="provinceLoading"
+				:clearable="false" @click="getProvinces()">
 				<template #label>
 					<required-label :label="$t('employee.input.province')"></required-label>
 				</template>
 
 				<template #append v-if="isProvinceError">
-					<retry-btn
-						@click.stop="getProvinces()"
-						only-icon
-						:disabled="isDisabled('provinceFetch')"
-					></retry-btn>
+					<retry-btn @click.stop="getProvinces()" only-icon
+						:disabled="isDisabled('provinceFetch')"></retry-btn>
 				</template>
 			</list-filter>
 
 			<!-- Throttle Alert -->
-			<throttle-alert
-				:show="isDisabled('provinceFetch')"
-				:time="throttle['provinceFetch'] || 0"
-			></throttle-alert>
+			<throttle-alert :show="isDisabled('provinceFetch')" :time="throttle['provinceFetch'] || 0"></throttle-alert>
 		</v-col>
 
 		<!-- Ward -->
 		<v-col cols="12" sm="4" class="mb-3">
-			<list-filter
-				v-model="ward_code"
-				:items="wards"
-				searchable
-				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'"
-				item-value="code"
+			<list-filter v-model="ward_code" :items="wards" searchable
+				:item-title="i18n.global.locale.value === 'vi' ? 'full_name' : 'full_name_en'" item-value="code"
 				:rules="isWardError ? [] : employeeValidation.ward"
-				:error-messages="isDisabled('wardFetch') ? '' : errorMessage.ward"
-				:disabled="disableWard"
-				:clearable="false"
-				:loading="wardLoading"
-				@click="getWards(province_code)"
-			>
+				:error-messages="isDisabled('wardFetch') ? '' : errorMessage.ward" :disabled="disableWard"
+				:clearable="false" :loading="wardLoading" @click="getWards(province_code)">
 				<template #label>
 					<required-label :label="$t('employee.input.ward')"></required-label>
 				</template>
 
 				<template #append v-if="isWardError">
-					<retry-btn
-						@click.stop="getWards(province_code)"
-						only-icon
-						:disabled="isDisabled('wardFetch')"
-					></retry-btn>
+					<retry-btn @click.stop="getWards(province_code)" only-icon
+						:disabled="isDisabled('wardFetch')"></retry-btn>
 				</template>
 			</list-filter>
 
 			<!-- Throttle Alert -->
-			<throttle-alert
-				:show="isDisabled('wardFetch')"
-				:time="throttle['wardFetch'] || 0"
-			></throttle-alert>
+			<throttle-alert :show="isDisabled('wardFetch')" :time="throttle['wardFetch'] || 0"></throttle-alert>
 		</v-col>
 
 		<!-- Address -->
 		<v-col cols="12" sm="4" class="mb-3">
-			<Input
-				v-model="address"
-				:placeholder="$t('employee.placeholder.addressExample')"
-				:maxlength="CONFIG.maxLengthAddress"
-				counter
-				:rules="employeeValidation.address"
-			>
+			<Input v-model="address" :placeholder="$t('employee.placeholder.addressExample')"
+				:maxlength="CONFIG.maxLengthAddress" counter :rules="employeeValidation.address">
 				<template #label>
 					<required-label :label="$t('employee.input.address')"></required-label>
 				</template>

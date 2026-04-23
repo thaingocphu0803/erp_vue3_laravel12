@@ -55,7 +55,7 @@ class EmployeeService
 			});
 		} catch (\Exception $e) {
 			$this->fileService->delete($avatarPath);
-			return false;
+			throw $e;
 		}
 	}
 

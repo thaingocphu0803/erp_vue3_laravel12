@@ -23,14 +23,10 @@ class PositionController extends Controller
 	public function create(StorePositionRequest $request)
 	{
 		$data = $request->validated();
+		$this->positionService->create($data);
 
-		if ($this->positionService->create($data) !== false) {
-			$message = 'position.alert.success.create';
-			return $this->jsonResponse($message, Response::HTTP_OK);
-		}
-
-		$message = 'position.alert.error.create';
-		return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+		$message = 'position.alert.success.create';
+		return $this->jsonResponse($message, Response::HTTP_OK);
 	}
 
 	public function index(IndexPositionRequest $indexPositionRequest)
@@ -58,11 +54,6 @@ class PositionController extends Controller
 		$departmentId = $listByDepartmentRequest->validated('department_id');
 
 		$positions = $this->positionService->listByDepartment($departmentId);
-
-		if ($positions === false) {
-			$message = 'position.alert.error.getTableData';
-			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
 
 		return PositionListResource::collection($positions)->response();
 	}

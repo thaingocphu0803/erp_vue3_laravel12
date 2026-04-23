@@ -13,6 +13,7 @@ import { storeToRefs } from 'pinia'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import RetryBtn from '@/components/RetryBtn.vue'
 import SYSTEM from '@/config/system'
+import { formatLaravelRetryAfter } from '@/utils/errorHandler'
 
 const email = defineModel<string>('email')
 const role_ids = defineModel<number[]>('role_ids', { default: [] })
@@ -44,7 +45,7 @@ const getRoleList = async () => {
 		getRolesErrorMessage.value = 'common.error.fetchDataFailed'
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['roleFetch'] = Number(error.response.headers['retry-after'])
+			throttle.value['roleFetch'] = formatLaravelRetryAfter(error)
 			startThrottle('roleFetch')
 		}
 	} finally {
@@ -64,11 +65,7 @@ onMounted(() => {
 	<v-row dense>
 		<!-- Email -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<Input
-				v-model="email"
-				placeholder="example@company.com"
-				:rules="employeeValidation.email"
-			>
+			<Input v-model="email" placeholder="example@company.com" :rules="employeeValidation.email">
 				<template #label>
 					<required-label :label="$t('employee.input.email')"></required-label>
 				</template>
@@ -77,24 +74,12 @@ onMounted(() => {
 
 		<!-- Role -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter
-				v-model="role_ids"
-				:items="roles"
-				searchable
-				item-title="name"
-				item-value="id"
+			<list-filter v-model="role_ids" :items="roles" searchable item-title="name" item-value="id"
 				:rules="isError ? [] : employeeValidation.role"
-				:error-messages="isDisabled('roleFetch') ? '' : getRolesErrorMessage"
-				:loading="loadingRole"
-				:clearable="false"
-				multiple
-				@click="getRoleList"
-			>
+				:error-messages="isDisabled('roleFetch') ? '' : getRolesErrorMessage" :loading="loadingRole"
+				:clearable="false" multiple @click="getRoleList">
 				<template #prepend-item>
-					<create-prepend-item
-						title="role.title.create"
-						@open-model="showRoleDialog = true"
-					/>
+					<create-prepend-item title="role.title.create" @open-model="showRoleDialog = true" />
 					<v-divider />
 				</template>
 
@@ -103,11 +88,7 @@ onMounted(() => {
 				</template>
 
 				<template #append v-if="isError">
-					<retry-btn
-						@click.stop="getRoleList"
-						only-icon
-						:disabled="isDisabled('roleFetch')"
-					/>
+					<retry-btn @click.stop="getRoleList" only-icon :disabled="isDisabled('roleFetch')" />
 				</template>
 			</list-filter>
 

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import Form from '@/components/Form.vue'
 import ErrorAlert from '../ErrorAlert.vue'
-import { reactive, watch } from 'vue'
-import { mapLaravelError } from '@/utils/errorHandler'
+import { onMounted, reactive, watch } from 'vue'
+import { formatLaravelRetryAfter, mapLaravelError } from '@/utils/errorHandler'
 import { useRoleStore } from '@/stores/role'
 import PermissionSection from '@/views/main/organization/role/components/PermissionSection.vue'
 import InformationSection from '@/views/main/organization/role/components/InformationSection.vue'
@@ -10,6 +10,9 @@ import BaseBtn from '@/components/BaseBtn.vue'
 import { useToastStore } from '@/stores/toast'
 import SYSTEM from '@/config/system'
 import type { RoleFormError, RoleFormData, RolePermission } from '@/types/role'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import { useThrottleStore } from '@/stores/throttle'
+import { storeToRefs } from 'pinia'
 
 // title
 const title = 'role.title.create'
@@ -22,6 +25,10 @@ const { roleCreate } = useRoleStore()
 
 // toast
 const toast = useToastStore()
+
+// throttle
+const { initThrottle, startThrottle } = useThrottleStore()
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 
 // role form data
 const roleFormData = reactive<RoleFormData>({
@@ -52,9 +59,17 @@ const handleSubmit = async () => {
 	} catch (error: any) {
 		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			mapLaravelError(errorMessage, error)
-			return
 		}
-		toast.show(error.response?.data?.messageCode, 'error')
+
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			const messageCode = 'role.alert.error.create'
+			toast.show(messageCode, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['roleCreate'] = formatLaravelRetryAfter(error)
+			startThrottle('roleCreate')
+		}
 	}
 }
 
@@ -66,6 +81,10 @@ const updatePermision = (permissionsRecord: RolePermission) => {
 
 	roleFormData.permissions = { ...newPermissions }
 }
+
+onMounted(() => {
+	initThrottle('roleCreate')
+})
 
 // watch permission
 watch(
@@ -96,12 +115,8 @@ const handleCancel = () => {
 			<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
 
 			<!-- Step 1: Information -->
-			<information-section
-				v-if="section.id === 1"
-				v-model:role-name="roleFormData.name"
-				v-model:role-description="roleFormData.description"
-				class="mt-2"
-			/>
+			<information-section v-if="section.id === 1" v-model:role-name="roleFormData.name"
+				v-model:role-description="roleFormData.description" class="mt-2" />
 
 			<!-- Step 2: Permission -->
 			<permission-section v-else @update:selected-permissions="updatePermision" />
@@ -109,19 +124,22 @@ const handleCancel = () => {
 			<v-divider v-if="section.id !== sections.length"></v-divider>
 		</template>
 
+		<v-row dense justify="center">
+			<!-- Throttle Alert -->
+			<throttle-alert :time="throttle['roleCreate'] || 0" :show="isDisabled('roleCreate')" />
+		</v-row>
+
 		<!-- Actions -->
 		<v-row dense justify="space-between" class="mt-2">
+			<!-- cancel button -->
 			<v-col cols="auto">
-				<BaseBtn
-					title="common.btn.cancel"
-					color="red-darken-1"
-					@click.prevent="handleCancel"
-				/>
+				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
 			</v-col>
+
+			<!-- create button -->
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.create" color="primary" type="submit" />
+				<BaseBtn title="common.btn.create" color="primary" type="submit" :disabled="isDisabled('roleCreate')" />
 			</v-col>
 		</v-row>
 	</Form>
 </template>
-

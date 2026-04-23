@@ -18,13 +18,9 @@ class EmployeeController extends Controller
 	public function create(StoreEmployeeRequest $storeEmployeeRequest)
 	{
 		$data = $storeEmployeeRequest->validated();
+		$this->employeeService->create($data);
 
-		if ($this->employeeService->create($data) !== false) {
-			$message = 'employee.alert.success.create';
-			return $this->jsonResponse($message, Response::HTTP_OK);
-		}
-
-		$message = 'employee.alert.error.create';
-		return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+		$message = 'employee.alert.success.create';
+		return $this->jsonResponse($message, Response::HTTP_CREATED);
 	}
 }

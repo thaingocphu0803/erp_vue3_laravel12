@@ -21,7 +21,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 
 // DepartmentController
 Route::controller(DepartmentController::class)->prefix('department')->middleware(['auth:sanctum', 'verified'])->group(function () {
-	Route::post('create', 'create');
+	Route::post('create', 'create')->middleware(['throttle:retry']);
 	Route::get('index', 'index');
 	Route::get('list', 'list')->middleware(['throttle:retry']);
 });
@@ -33,7 +33,7 @@ Route::controller(PermissionController::class)->prefix('permission')->middleware
 
 // PositionController
 Route::controller(PositionController::class)->prefix('position')->middleware(['auth:sanctum', 'verified'])->group(function () {
-	Route::post('create', 'create');
+	Route::post('create', 'create')->middleware(['throttle:retry']);
 	Route::get('index', 'index');
 	Route::get('list', 'list')->middleware(['throttle:retry']);
 	Route::get('list-by-department', 'listByDepartment')->middleware(['throttle:retry']);
@@ -41,7 +41,7 @@ Route::controller(PositionController::class)->prefix('position')->middleware(['a
 
 // RoleController
 Route::controller(RoleController::class)->prefix('role')->middleware(['auth:sanctum', 'verified'])->group(function () {
-	Route::post('create', 'create');
+	Route::post('create', 'create')->middleware(['throttle:retry']);
 	Route::get('index', 'index');
 	Route::get('list', 'list')->middleware(['throttle:retry']);
 });
@@ -54,5 +54,5 @@ Route::controller(AdministrativeUnitController::class)->prefix('administrative-u
 
 // EmployeeController
 Route::controller(EmployeeController::class)->prefix('employee')->middleware(['auth:sanctum', 'verified'])->group(function () {
-	Route::post('create', 'create');
+	Route::post('create', 'create')->middleware(['throttle:retry']);
 });

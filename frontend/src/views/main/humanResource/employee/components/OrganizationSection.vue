@@ -15,6 +15,7 @@ import SYSTEM from '@/config/system'
 import { useThrottleStore } from '@/stores/throttle'
 import RetryBtn from '@/components/RetryBtn.vue'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import { formatLaravelRetryAfter } from '@/utils/errorHandler'
 
 interface ErrorMessage {
 	getDepartmentList: string
@@ -76,7 +77,7 @@ const getDepartmentList = async () => {
 		errorMessage.value.getDepartmentList = 'common.error.fetchDataFailed'
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['departmentFetch'] = Number(error.response.headers['retry-after'])
+			throttle.value['departmentFetch'] = formatLaravelRetryAfter(error)
 			startThrottle('departmentFetch')
 		}
 	} finally {
@@ -102,7 +103,7 @@ const getPositionList = async (departmentId: number | null) => {
 		errorMessage.value.getPositionList = 'common.error.fetchDataFailed'
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['positionFetch'] = Number(error.response.headers['retry-after'])
+			throttle.value['positionFetch'] = formatLaravelRetryAfter(error)
 			startThrottle('positionFetch')
 		}
 
@@ -136,25 +137,12 @@ watch(department_id, (newValue) => {
 	<v-row dense>
 		<!-- Department -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter
-				v-model="department_id"
-				:items="departments"
-				searchable
-				item-title="name"
-				item-value="id"
-				:loading="loadingDepartments"
-				:rules="isDepartmentError ? [] : employeeValidation.department"
-				:error-messages="
-					isDisabled('departmentFetch') ? errorMessage.getDepartmentList : ''
-				"
-				@click="getDepartmentList"
-				:clearable="false"
-			>
+			<list-filter v-model="department_id" :items="departments" searchable item-title="name" item-value="id"
+				:loading="loadingDepartments" :rules="isDepartmentError ? [] : employeeValidation.department"
+				:error-messages="isDisabled('departmentFetch') ? errorMessage.getDepartmentList : ''
+					" @click="getDepartmentList" :clearable="false">
 				<template #prepend-item>
-					<create-prepend-item
-						title="department.title.create"
-						@open-model="showDepartmentDialog = true"
-					>
+					<create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true">
 					</create-prepend-item>
 					<v-divider />
 				</template>
@@ -162,41 +150,25 @@ watch(department_id, (newValue) => {
 					<required-label :label="$t('employee.input.department')"></required-label>
 				</template>
 				<template #append v-if="isDepartmentError">
-					<retry-btn
-						@click.stop="getDepartmentList"
-						only-icon
-						:disabled="isDisabled('departmentFetch')"
-					></retry-btn>
+					<retry-btn @click.stop="getDepartmentList" only-icon
+						:disabled="isDisabled('departmentFetch')"></retry-btn>
 				</template>
 			</list-filter>
 
 			<!-- Throttle Alert -->
-			<throttle-alert
-				:show="isDisabled('departmentFetch')"
-				:time="throttle['departmentFetch'] || 0"
-			></throttle-alert>
+			<throttle-alert :show="isDisabled('departmentFetch')"
+				:time="throttle['departmentFetch'] || 0"></throttle-alert>
 		</v-col>
 
 		<!-- Position -->
 		<v-col cols="12" sm="6" class="mb-3">
-			<list-filter
-				v-model="position_id"
-				:items="positionByDepartment"
-				searchable
-				item-title="name"
-				item-value="id"
-				:loading="loadingPositions"
-				:disabled="disablePosition"
+			<list-filter v-model="position_id" :items="positionByDepartment" searchable item-title="name"
+				item-value="id" :loading="loadingPositions" :disabled="disablePosition"
 				:rules="isPositionError ? [] : employeeValidation.position"
 				:error-messages="isDisabled('positionFetch') ? '' : errorMessage.getPositionList"
-				@click="getPositionList(department_id)"
-				:clearable="false"
-			>
+				@click="getPositionList(department_id)" :clearable="false">
 				<template #prepend-item>
-					<create-prepend-item
-						title="position.title.create"
-						@open-model="showPositionDialog = true"
-					>
+					<create-prepend-item title="position.title.create" @open-model="showPositionDialog = true">
 					</create-prepend-item>
 					<v-divider />
 				</template>
@@ -204,30 +176,19 @@ watch(department_id, (newValue) => {
 					<required-label :label="$t('employee.input.position')"></required-label>
 				</template>
 				<template #append v-if="isPositionError">
-					<retry-btn
-						@click.stop="getPositionList(department_id)"
-						only-icon
-						:disabled="isDisabled('positionFetch')"
-					></retry-btn>
+					<retry-btn @click.stop="getPositionList(department_id)" only-icon
+						:disabled="isDisabled('positionFetch')"></retry-btn>
 				</template>
 			</list-filter>
 
 			<!-- Throttle Alert -->
-			<throttle-alert
-				:show="isDisabled('positionFetch')"
-				:time="throttle['positionFetch'] || 0"
-			></throttle-alert>
+			<throttle-alert :show="isDisabled('positionFetch')" :time="throttle['positionFetch'] || 0"></throttle-alert>
 		</v-col>
 
 		<!-- Is Leader -->
 		<v-col cols="12" class="mt-n4">
-			<Checkbox
-				:style="{ visibility: showIsLeader ? 'visible' : 'hidden' }"
-				color="primary"
-				v-model="is_leader"
-				:label="$t('employee.input.isLeader')"
-				name="is_leader"
-			/>
+			<Checkbox :style="{ visibility: showIsLeader ? 'visible' : 'hidden' }" color="primary" v-model="is_leader"
+				:label="$t('employee.input.isLeader')" name="is_leader" />
 		</v-col>
 	</v-row>
 
@@ -238,9 +199,6 @@ watch(department_id, (newValue) => {
 
 	<!-- Dialog Create Department -->
 	<v-dialog v-model="showDepartmentDialog" :max-width="CONFIG.maxWidthForm" persistent>
-		<DepartmentForm
-			@save="showDepartmentDialog = false"
-			@cancel="showDepartmentDialog = false"
-		/>
+		<DepartmentForm @save="showDepartmentDialog = false" @cancel="showDepartmentDialog = false" />
 	</v-dialog>
 </template>

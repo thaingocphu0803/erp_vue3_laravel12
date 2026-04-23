@@ -25,14 +25,10 @@ class DepartmentService
 			$data['code'] = $this->generateCode(Table::DEPARTMENT->value, 'DEPT');
 		}
 
-		try {
-			return DB::transaction(function () use ($data) {
-				$department = $this->departmentRepositoryInterface->create($data);
-				return $department;
-			});
-		} catch (\Exception $e) {
-			return false;
-		}
+		return DB::transaction(function () use ($data) {
+			$department = $this->departmentRepositoryInterface->create($data);
+			return $department;
+		});
 	}
 
 	public function paginate(array $data)

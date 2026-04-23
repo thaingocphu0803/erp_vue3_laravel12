@@ -19,14 +19,10 @@ class PositionService
 	{
 		$data['created_by'] = Auth::id();
 
-		try {
-			return DB::transaction(function () use ($data) {
-				$this->positionRepositoryInterface->create($data);
-				return true;
-			});
-		} catch (\Exception $e) {
-			return false;
-		}
+		return DB::transaction(function () use ($data) {
+			$this->positionRepositoryInterface->create($data);
+			return true;
+		});
 	}
 
 	public function paginate(array $data)
@@ -47,11 +43,7 @@ class PositionService
 
 	public function listByDepartment($departmentId)
 	{
-		try {
-			$positions = $this->positionRepositoryInterface->listByDepartment($departmentId);
-			return $positions;
-		} catch (\Exception $e) {
-			return false;
-		}
+		$positions = $this->positionRepositoryInterface->listByDepartment($departmentId);
+		return $positions;
 	}
 }

@@ -22,14 +22,10 @@ class RoleController extends Controller
 	public function create(StoreRoleRequest $storeRoleRequest)
 	{
 		$data =  $storeRoleRequest->validated();
+		$this->roleService->create($data);
 
-		if ($this->roleService->create($data) === false) {
-			$message = 'role.alert.success.create';
-			return $this->jsonResponse($message, Response::HTTP_OK);
-		}
-
-		$message = 'role.alert.error.create';
-		return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
+		$message = 'role.alert.success.create';
+		return $this->jsonResponse($message, Response::HTTP_OK);
 	}
 
 	public function index(IndexRoleRequest $indexRoleRequest)
