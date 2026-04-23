@@ -46,10 +46,8 @@ const formatBirthdate = computed({
 const provinceLoading = ref<boolean>(false)
 const wardLoading = ref<boolean>(false)
 
-const isProvinceError = computed(
-	() => isDisabled.value('provinceFetch') || !!errorMessage.value.province,
-)
-const isWardError = computed(() => isDisabled.value('wardFetch') || !!errorMessage.value.ward)
+const isProvinceError = ref<boolean>(false)
+const isWardError = ref<boolean>(false)
 
 const errorMessage = ref<ErrorMessage>({
 	province: '',
@@ -71,8 +69,10 @@ const getProvinces = async () => {
 		provinceLoading.value = true
 		await provincesFetch()
 		errorMessage.value.province = ''
+		isProvinceError.value = false
 	} catch (error: any) {
 		errorMessage.value.province = 'common.error.fetchDataFailed'
+		isProvinceError.value = true
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
 			throttle.value['provinceFetch'] = Number(error.response.headers['retry-after'])
@@ -95,8 +95,10 @@ const getWards = async (provinceCode: string | null) => {
 		wardLoading.value = true
 		await wardsFetchByProvinceCode(provinceCode)
 		errorMessage.value.ward = ''
+		isWardError.value = false
 	} catch (error: any) {
 		errorMessage.value.ward = 'common.error.fetchDataFailed'
+		isWardError.value = true
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
 			throttle.value['wardFetch'] = Number(error.response.headers['retry-after'])
@@ -123,6 +125,10 @@ watch(province_code, async (newVal) => {
 onMounted(() => {
 	initThrottle('provinceFetch')
 	initThrottle('wardFetch')
+
+	if (isDisabled.value('provinceFetch')) {
+		isProvinceError.value = true
+	}
 })
 </script>
 

@@ -51,12 +51,8 @@ const showIsLeader = computed(() => {
 const loadingDepartments = ref<boolean>(false)
 const loadingPositions = ref<boolean>(false)
 
-const isDepartmentError = computed(
-	() => isDisabled.value('departmentFetch') || !!errorMessage.value.getDepartmentList,
-)
-const isPositionError = computed(
-	() => isDisabled.value('positionFetch') || !!errorMessage.value.getPositionList,
-)
+const isDepartmentError = ref<boolean>(false)
+const isPositionError = ref<boolean>(false)
 
 const showPositionDialog = ref<boolean>(false)
 const showDepartmentDialog = ref<boolean>(false)
@@ -72,8 +68,10 @@ const getDepartmentList = async () => {
 	try {
 		loadingDepartments.value = true
 		await departmentsFetch()
+		isDepartmentError.value = false
 		errorMessage.value.getDepartmentList = ''
 	} catch (error: any) {
+		isDepartmentError.value = true
 		errorMessage.value.getDepartmentList = 'common.error.fetchDataFailed'
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
@@ -96,8 +94,10 @@ const getPositionList = async (departmentId: number | null) => {
 	try {
 		loadingPositions.value = true
 		await positionsFetchByDepartmentId(departmentId)
+		isPositionError.value = false
 		errorMessage.value.getPositionList = ''
 	} catch (error: any) {
+		isPositionError.value = true
 		errorMessage.value.getPositionList = 'common.error.fetchDataFailed'
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
@@ -116,6 +116,8 @@ const getPositionList = async (departmentId: number | null) => {
 onMounted(() => {
 	initThrottle('departmentFetch')
 	initThrottle('positionFetch')
+
+	if (isDisabled.value('departmentFetch')) isDepartmentError.value = true
 })
 
 watch(department_id, (newValue) => {
@@ -140,7 +142,7 @@ watch(department_id, (newValue) => {
 				:loading="loadingDepartments"
 				:rules="isDepartmentError ? [] : employeeValidation.department"
 				:error-messages="
-					isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
+					isDisabled('departmentFetch') ? errorMessage.getDepartmentList : ''
 				"
 				@click="getDepartmentList"
 				:clearable="false"

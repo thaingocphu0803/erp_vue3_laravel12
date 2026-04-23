@@ -14,6 +14,7 @@ import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
 import router from '@/router'
 import type { commonGender, commonLocale } from '@/types/common'
+import SYSTEM from '@/config/system'
 
 interface EmployeeForm {
 	avatar: File | null
@@ -110,7 +111,7 @@ const handleSubmit = async () => {
 		toast.show(response.data.messageCode, 'success')
 		router.push({ name: 'hr.employee' })
 	} catch (error: any) {
-		if (error.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			mapLaravelError(errorMessage, error)
 			return
 		}

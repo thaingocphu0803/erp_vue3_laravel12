@@ -13,6 +13,7 @@ import { useAuthStore } from '@/stores/auth'
 import router from '@/router'
 import { mapLaravelError } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
+import SYSTEM from '@/config/system'
 
 interface CreatePasswordForm {
 	password: string
@@ -64,7 +65,7 @@ const handleCreatePassword = async () => {
 		router.push({ name: 'login' })
 		toast.show(response.data.messageCode, 'success')
 	} catch (error: any) {
-		if (error.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			mapLaravelError(errorMessage, error)
 		}
 	} finally {

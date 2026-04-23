@@ -14,6 +14,7 @@ import api from '@/services/api'
 import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
 import type { commonStatus } from '@/types/common'
+import SYSTEM from '@/config/system'
 
 interface RoleItem {
 	id: number
@@ -110,11 +111,14 @@ const fetchRoleIndex = async (params: object) => {
 			totalPage.value = data.meta.last_page
 		}
 	} catch (error: any) {
-		if (error.response?.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			resetURLToDefault()
 		}
 
-		if (error.response?.status === 422 || error.response?.status === 500) {
+		if (
+			error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY ||
+			error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR
+		) {
 			const errorMesssage = error.response.data.message
 			toast.show(errorMesssage, 'error')
 		}

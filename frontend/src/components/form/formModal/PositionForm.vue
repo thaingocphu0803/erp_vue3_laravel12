@@ -103,6 +103,7 @@ const getPositionList = async () => {
 		loadingPosition.value = true
 		await positionFetch()
 		errorMessage.getPositionList = ''
+		isPositionError.value = false
 	} catch (error: any) {
 		errorMessage.getPositionList = 'common.error.fetchDataFailed'
 		isPositionError.value = true

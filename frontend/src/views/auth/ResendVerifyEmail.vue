@@ -51,7 +51,7 @@ const handleResendEmailVerification = async () => {
 		const response = await authResendVerifyEmail(payload)
 		toast.show(response.data.messageCode, 'success')
 	} catch (error: any) {
-		if (error.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			toast.show(error.response.data.messageCode, 'error')
 		}
 

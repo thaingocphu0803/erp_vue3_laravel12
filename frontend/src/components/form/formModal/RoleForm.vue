@@ -9,6 +9,7 @@ import InformationSection from '@/views/main/organization/role/components/Inform
 import BaseBtn from '@/components/BaseBtn.vue'
 import type { RolePermission } from '@/stores/permission'
 import { useToastStore } from '@/stores/toast'
+import SYSTEM from '@/config/system'
 
 interface RoleForm {
 	name: string
@@ -50,7 +51,7 @@ const handleSubmit = async () => {
 		toast.show(response.data.messageCode, 'success')
 		emit('save')
 	} catch (error: any) {
-		if (error.status === 422) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			mapLaravelError(errorMessage, error)
 			return
 		}
@@ -89,8 +90,12 @@ const handleCancel = () => {
 
 		<template v-for="section in sections" :key="section.id">
 			<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
-			<information-section v-if="section.id === 1" v-model:role-name="roleData.name"
-				v-model:role-description="roleData.description" class="mt-2" />
+			<information-section
+				v-if="section.id === 1"
+				v-model:role-name="roleData.name"
+				v-model:role-description="roleData.description"
+				class="mt-2"
+			/>
 
 			<!-- content for step 2: select role -->
 			<permission-section v-else @update:selected-permissions="updatePermision" />
@@ -101,7 +106,11 @@ const handleCancel = () => {
 		<!-- Actions: Cancel (red) + Create (blue) -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
+				<BaseBtn
+					title="common.btn.cancel"
+					color="red-darken-1"
+					@click.prevent="handleCancel"
+				/>
 			</v-col>
 			<v-col cols="auto">
 				<BaseBtn title="common.btn.create" color="primary" type="submit" />
@@ -109,3 +118,4 @@ const handleCancel = () => {
 		</v-row>
 	</Form>
 </template>
+

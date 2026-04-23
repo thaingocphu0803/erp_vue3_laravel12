@@ -26,9 +26,7 @@ const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const showRoleDialog = ref<boolean>(false)
 const loadingRole = ref<boolean>(false)
 
-const isError = computed<boolean>(
-	() => isDisabled.value('roleFetch') || !!getRolesErrorMessage.value,
-)
+const isError = ref<boolean>(false)
 
 const getRolesErrorMessage = ref<string>('')
 
@@ -38,8 +36,10 @@ const getRoleList = async () => {
 	try {
 		loadingRole.value = true
 		await rolesFetch()
+		isError.value = false
 		getRolesErrorMessage.value = ''
 	} catch (error: any) {
+		isError.value = true
 		getRolesErrorMessage.value = 'common.error.fetchDataFailed'
 
 		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
@@ -53,6 +53,8 @@ const getRoleList = async () => {
 
 onMounted(() => {
 	initThrottle('roleFetch')
+
+	if (isDisabled.value('roleFetch')) isError.value = true
 })
 </script>
 

@@ -18,6 +18,7 @@ import { useToastStore } from '@/stores/toast'
 import { useThrottleStore } from '@/stores/throttle'
 import { storeToRefs } from 'pinia'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import SYSTEM from '@/config/system'
 
 interface LoginForm {
 	email: string
@@ -84,13 +85,11 @@ const handleLogin = async () => {
 	} catch (error: any) {
 		clearAuth()
 
-		const status = error.response.status
-
-		if (status === 401) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNAUTHORIZED) {
 			errorMessage.unauthorized = error.response.data.messageCode
-		} else if (status == 422) {
+		} else if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			mapLaravelError(errorMessage, error)
-		} else if (status === 429) {
+		} else if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
 			throttle.value['login'] = Number(error.response.headers['retry-after'])
 			startThrottle('login')
 		}

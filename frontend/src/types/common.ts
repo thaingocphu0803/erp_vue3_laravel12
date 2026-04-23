@@ -6,5 +6,5 @@ export type commonGender = 'MALE' | 'FEMALE'
 
 export type commonLocale = 'vi' | 'en'
 
-export type serverErrorCode = 500 | 404 | 422 | 429
+export type serverErrorCode = 500 | 404 | 401 | 422 | 429
 

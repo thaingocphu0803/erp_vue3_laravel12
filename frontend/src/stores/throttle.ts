@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, reactive, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 type Interval = ReturnType<typeof setInterval> | null
 
@@ -11,6 +11,7 @@ export const useThrottleStore = defineStore(
 		const throttle = ref<Record<string, number | undefined>>({})
 
 		const isDisabled = computed(() => (key: string): boolean => {
+			console.log((throttle.value[key] || 0) > 0)
 			return (throttle.value[key] || 0) > 0
 		})
 
