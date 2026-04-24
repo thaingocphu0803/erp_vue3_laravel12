@@ -12,14 +12,16 @@ export interface Role {
 
 export interface RoleFormData {
 	name: string
+	code: string
 	description: string
 	permissions: RolePermission
 }
 
 export interface RoleFormError {
 	name: string
-	permissions: string
+	code: string
 	description: string
+	permissions: string
 }
 
 export interface Permission {

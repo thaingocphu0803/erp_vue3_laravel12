@@ -3,10 +3,10 @@
 namespace App\Http\Requests\Organization\Department;
 
 use App\Enum\Status;
-use App\Http\Requests\StoreCommonRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreDepartmentRequest extends StoreCommonRequest
+class StoreDepartmentRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -23,25 +23,23 @@ class StoreDepartmentRequest extends StoreCommonRequest
 	 */
 	public function rules(): array
 	{
-		$parentRules = parent::rules();
-
-		$departmentRules = [
-			'code'      => ['bail', 'nullable', 'max:20', Rule::unique('departments', 'code')->ignore($this->id)->where('status', Status::ACTIVE->value)],
+		return [
+			'name' => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('departments', 'name')->ignore($this->id)->where('status', Status::ACTIVE->value)],
+			'code' => ['bail', 'nullable', 'max:20', Rule::unique('departments', 'code')->ignore($this->id)->where('status', Status::ACTIVE->value)],
+			'description' => ['bail', 'nullable', 'string'],
 			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
 		];
-
-		return array_merge($parentRules, $departmentRules);
 	}
 
 	public function messages(): array
 	{
 		return [
 			'name.required' => 'department.validate.name.required',
-			'name.max'      => 'department.validate.name.max',
+			'name.max' => 'department.validate.name.max',
 			'name.regex' => 'department.validate.name.noSpecialChars',
 			'name.unique' => 'department.validate.name.unique',
-			'code.max'      => 'department.validate.code.max',
-			'code.unique' =>  'department.validate.code.unique',
+			'code.max' => 'department.validate.code.max',
+			'code.unique' => 'department.validate.code.unique',
 			'parent_id.integer' => 'department.validate.parent_id.format',
 			'parent_id.exists' => 'department.validate.parent_id.exists',
 			'description.string' => 'department.validate.description.format'

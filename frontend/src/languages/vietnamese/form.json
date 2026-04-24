@@ -106,11 +106,13 @@
 			"positionName": "Tên chức vụ",
 			"selectDepartment": "Chọn phòng ban",
 			"positionDesc": "Mô tả chức vụ",
-			"supervisor": "Người giám sát"
+			"supervisor": "Người giám sát",
+			"positionCode": "Mã chức vụ"
 		},
 		"tooltip": {
 			"unselectDepartment": "Nếu không chọn phòng ban, chức vụ sẽ áp dụng cho tất cả phòng ban",
-			"unselectSupervisor": "Nếu không chọn người giám sát, chức vụ sẽ không có người giám sát"
+			"unselectSupervisor": "Nếu không chọn người giám sát, chức vụ sẽ không có người giám sát",
+			"codeAutoGenerate": "Hệ thống tự tạo mã chức vụ nếu để trống"
 		},
 		"validate": {
 			"name": {
@@ -129,6 +131,10 @@
 			"parent_id": {
 				"format": "Sai định dạng thông tin người giám sát",
 				"exists": "Không tìm thấy người giám sát"
+			},
+			"code": {
+				"unique": "Mã chức vụ đã tồn tại",
+				"max": "Mã chức vụ không được vượt quá 20 ký tự"
 			}
 		},
 		"alert": {
@@ -151,11 +157,13 @@
 		},
 		"input": {
 			"roleName": "Tên vai trò",
+			"roleCode": "Mã vai trò",
 			"assignPermission": "Phân quyền",
 			"roleDescription": "Mô tả vai trò"
 		},
 		"tooltip": {
-			"applyToAll": "Click vào để áp dụng phạm vi này cho tất cả quyền"
+			"applyToAll": "Click vào để áp dụng phạm vi này cho tất cả quyền",
+			"codeAutoGenerate": "Hệ thống tự động sinh mã vai trò nếu để trống"
 		},
 		"validate": {
 			"name": {
@@ -172,6 +180,10 @@
 				"format": "Sai định dạng quyền",
 				"exists": "Quyền không tồn tại",
 				"distinct": "Không được chọn quyền trùng lặp"
+			},
+			"code": {
+				"max": "Mã vai trò không được vượt quá 20 ký tự",
+				"unique": "Mã vai trò đã tồn tại"
 			}
 		},
 		"alert": {

@@ -104,13 +104,15 @@
 		},
 		"input": {
 			"positionName": "Position Name",
+			"positionCode": "Position Code",
 			"selectDepartment": "Department",
 			"positionDescription": "Position Description",
 			"supervisor": "Supervisor"
 		},
 		"tooltip": {
 			"unselectDepartment": "If no department is selected, this position will apply to all departments.",
-			"unselectSupervisor": "If no supervisor is selected, this position will not have a supervisor."
+			"unselectSupervisor": "If no supervisor is selected, this position will not have a supervisor.",
+			"codeAutoGenerate": "The system will automatically generate a position code if left blank"
 		},
 		"validate": {
 			"name": {
@@ -132,6 +134,10 @@
 			},
 			"position": {
 				"required": "Position is required"
+			},
+			"code": {
+				"unique": "Position code already existed",
+				"max": "Position code must not exceed 20 characters"
 			}
 		},
 		"alert": {
@@ -154,11 +160,13 @@
 		},
 		"input": {
 			"roleName": "Role Name",
+			"roleCode": "Role Code",
 			"assignPermission": "Assign Permissions",
 			"roleDescription": "Role Description"
 		},
 		"tooltip": {
-			"applyToAll": "Apply to all permissions"
+			"applyToAll": "Apply to all permissions",
+			"codeAutoGenerate": "The system will automatically generate a role code if left blank"
 		},
 		"validate": {
 			"name": {
@@ -175,6 +183,10 @@
 				"format": "Permission format is incorrect",
 				"exists": "Permission does not exist",
 				"distinct": "Duplicate permissions are not allowed"
+			},
+			"code": {
+				"max": "Role code must not exceed 20 characters",
+				"unique": "Role code already existed"
 			}
 		},
 		"alert": {

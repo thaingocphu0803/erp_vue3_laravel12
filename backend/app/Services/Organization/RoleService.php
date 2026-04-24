@@ -4,22 +4,20 @@ namespace App\Services\Organization;
 
 use App\Enum\Table;
 use App\Repositories\Interfaces\Organization\RoleRepositoryInterface;
+use App\Trait\AutoGenerate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class RoleService
 {
+	use AutoGenerate;
 	public function __construct(
 		protected RoleRepositoryInterface $roleRepositoryInterface
 	) {}
 
 	public function create(array $data)
 	{
-		$role = [
-			'name' => $data['name'],
-			'description' => $data['description'],
-			'created_by' => Auth::id(),
-		];
+		$role = $this->getRolePayload($data);
 
 		$permissions = $data['permissions'];
 
@@ -28,7 +26,8 @@ class RoleService
 		return DB::transaction(function () use ($role, $newPermissions) {
 			$relation = Table::PERMISSION->value;
 
-			return $this->roleRepositoryInterface->create($role, $relation, $newPermissions);
+			$role = $this->roleRepositoryInterface->create($role, $relation, $newPermissions);
+			return $role;
 		});
 	}
 
@@ -60,5 +59,17 @@ class RoleService
 		}
 
 		return $newPermissions;
+	}
+
+	private function getRolePayload(array $data)
+	{
+		$code = !is_null($data['code']) ? $data['code'] : $this->generateCode(Table::ROLE->value, 'ROLE');
+
+		return [
+			'code' => $code,
+			'name' => $data['name'],
+			'description' => $data['description'],
+			'created_by' => Auth::id(),
+		];
 	}
 }

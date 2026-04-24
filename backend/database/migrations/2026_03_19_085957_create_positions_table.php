@@ -6,32 +6,33 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('positions', function (Blueprint $table) {
-            $table->id();
+	/**
+	 * Run the migrations.
+	 */
+	public function up(): void
+	{
+		Schema::create('positions', function (Blueprint $table) {
+			$table->id();
+			$table->string('code', 20)->unique();
 			$table->string('name', 100)->unique();
 			$table->text('description')->nullable();
 			$table->enum('status', ['A', 'X'])->default('A');
-			$table->string('path',100)->nullable()->index();
+			$table->string('path', 100)->nullable()->index();
 			$table->tinyInteger('level')->default(1)->index();
 			$table->foreignId('parent_id')->nullable()->constrained('positions')->nullOnDelete();
 			$table->foreignId('department_id')->nullable()->constrained('departments')->nullOnDelete();
 			$table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
 			$table->softDeletes();
-            $table->timestamps();
-        });
-    }
+			$table->timestamps();
+		});
+	}
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('positions');
-    }
+	/**
+	 * Reverse the migrations.
+	 */
+	public function down(): void
+	{
+		Schema::dropIfExists('positions');
+	}
 };

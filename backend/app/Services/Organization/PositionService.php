@@ -2,12 +2,15 @@
 
 namespace App\Services\Organization;
 
+use App\Enum\Table;
 use App\Repositories\Interfaces\Organization\PositionRepositoryInterface;
+use App\Trait\AutoGenerate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PositionService
 {
+	use AutoGenerate;
 	/**
 	 * Create a new class instance.
 	 */
@@ -19,9 +22,13 @@ class PositionService
 	{
 		$data['created_by'] = Auth::id();
 
+		if (is_null($data['code'])) {
+			$data['code'] = $this->generateCode(Table::POSITION->value, 'POS');
+		}
+
 		return DB::transaction(function () use ($data) {
-			$this->positionRepositoryInterface->create($data);
-			return true;
+			$position = $this->positionRepositoryInterface->create($data);
+			return $position;
 		});
 	}
 

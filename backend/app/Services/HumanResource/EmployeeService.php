@@ -3,6 +3,7 @@
 namespace App\Services\HumanResource;
 
 use App\Enum\PhoneCode;
+use App\Enum\Table;
 use App\Repositories\Interfaces\HumanResource\EmployeeRepositoryInterface;
 use App\Repositories\Interfaces\HumanResource\UserRepositoryInterface;
 use App\Repositories\Interfaces\Organization\DepartmentRepositoryInterface;
@@ -73,7 +74,7 @@ class EmployeeService
 	private function getEmployeePayload(array $data, int $userId, ?string $avatar)
 	{
 
-		$code = !is_null($data['code']) ? $data['code'] : $this->generateCode('employees', 'EMP');
+		$code = !is_null($data['code']) ? $data['code'] : $this->generateCode(Table::EMPLOYEE->value, 'EMP');
 
 		$phoneNumber = preg_replace('/^0/', PhoneCode::VIETNAM->value, $data['phone_number']);
 

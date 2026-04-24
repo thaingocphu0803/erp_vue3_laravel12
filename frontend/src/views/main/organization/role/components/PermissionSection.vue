@@ -122,22 +122,38 @@ watch(
 			<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
 				{{ $t('common.error.fetchDataFailed') }}
 			</div>
-			<retry-btn color="primary" :disabled="isDisabled('permissionFetch')" variant="outlined"
-				prepend-icon="mdi-refresh" @click="loadData"></retry-btn>
+			<retry-btn
+				color="primary"
+				:disabled="isDisabled('permissionFetch')"
+				variant="outlined"
+				prepend-icon="mdi-refresh"
+				@click="loadData"
+			></retry-btn>
 
-			<throttle-alert :show="isDisabled('permissionFetch')"
-				:time="throttle['permissionFetch'] || 0"></throttle-alert>
+			<throttle-alert
+				:show="isDisabled('permissionFetch')"
+				:time="throttle['permissionFetch'] || 0"
+			></throttle-alert>
 		</v-col>
 
 		<!-- Data loaded -->
 		<v-col cols="12" v-else>
 			<!-- Search Module Input -->
 			<div class="mt-3 mb-10">
-				<base-search-btn v-model="searchModule" :label="$t('common.filter.permissionModule')"></base-search-btn>
+				<base-search-btn
+					v-model="searchModule"
+					:label="$t('common.filter.permissionModule')"
+				></base-search-btn>
 			</div>
 
 			<!-- Permission Table -->
-			<v-table class="elevation-1 border" density="comfortable" hover height="50vh" fixed-header>
+			<v-table
+				class="elevation-1 border"
+				density="comfortable"
+				hover
+				height="28vh"
+				fixed-header
+			>
 				<thead>
 					<tr>
 						<th></th>
@@ -145,9 +161,13 @@ watch(
 						<th v-for="header in permissionScopeHeaders" class="text-center">
 							<v-tooltip :text="$t('role.tooltip.applyToAll')" location="top">
 								<template #activator="{ props }">
-									<v-btn v-bind="props" class="text-center font-weight-bold text-capitalize"
-										density="compact" variant="text"
-										@click.prevent="updateSelectedPermisions(header.key)">
+									<v-btn
+										v-bind="props"
+										class="text-center font-weight-bold text-capitalize"
+										density="compact"
+										variant="text"
+										@click.prevent="updateSelectedPermisions(header.key)"
+									>
 										{{ header.title }}
 									</v-btn>
 								</template>
@@ -173,14 +193,23 @@ watch(
 								{{ $t(permission.name) }}
 							</td>
 
-							<td v-for="header in permissionScopeHeaders" :key="header.key" class="text-center">
+							<td
+								v-for="header in permissionScopeHeaders"
+								:key="header.key"
+								class="text-center"
+							>
 								<!-- Permission Radio -->
-								<v-radio v-if="
-									permission.supported_scopes.includes(header.key) ||
-									header.key === 'NONE'
-								" :model-value="selectedPermissions[permission.id] === header.key"
-									@click.prevent="selectPermisionScope(permission.id, header.key)" hide-details
-									color="primary" class="d-flex justify-center"></v-radio>
+								<v-radio
+									v-if="
+										permission.supported_scopes.includes(header.key) ||
+										header.key === 'NONE'
+									"
+									:model-value="selectedPermissions[permission.id] === header.key"
+									@click.prevent="selectPermisionScope(permission.id, header.key)"
+									hide-details
+									color="primary"
+									class="d-flex justify-center"
+								></v-radio>
 
 								<!-- Disable Scope -->
 								<v-icon class="text-center" v-else>mdi-minus-thick</v-icon>
@@ -192,3 +221,4 @@ watch(
 		</v-col>
 	</v-row>
 </template>
+

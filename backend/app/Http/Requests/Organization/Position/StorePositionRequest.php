@@ -3,10 +3,10 @@
 namespace App\Http\Requests\Organization\Position;
 
 use App\Enum\Status;
-use App\Http\Requests\StoreCommonRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StorePositionRequest extends StoreCommonRequest
+class StorePositionRequest extends FormRequest
 {
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -23,14 +23,13 @@ class StorePositionRequest extends StoreCommonRequest
 	 */
 	public function rules(): array
 	{
-		$parentRules = parent::rules();
-
-		$positionRules =  [
+		return [
+			'name' => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('positions', 'name')->ignore($this->id)->where('status', Status::ACTIVE->value)],
+			'code' => ['bail', 'nullable', 'max:20', Rule::unique('positions', 'code')->ignore($this->id)->where('status', Status::ACTIVE->value)],
+			'description' => ['bail', 'nullable', 'string'],
 			'department_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
 			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('positions', 'id')->where('status', Status::ACTIVE->value)],
 		];
-
-		return array_merge($parentRules, $positionRules);
 	}
 
 	public function messages()
@@ -40,6 +39,8 @@ class StorePositionRequest extends StoreCommonRequest
 			'name.max'      => 'position.validate.name.max',
 			'name.regex' => 'position.validate.name.noSpecialChars',
 			'name.unique' => 'position.validate.name.unique',
+			'code.max' => 'position.validate.code.max',
+			'code.unique' => 'position.validate.code.unique',
 			'department_id.integer' => 'position.validate.department_id.format',
 			'department_id.exists' => 'position.validate.department_id.exists',
 			'parent_id.integer' => 'position.validate.parent_id.format',

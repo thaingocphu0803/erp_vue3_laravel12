@@ -13,7 +13,8 @@ return new class extends Migration
 	{
 		Schema::create('roles', function (Blueprint $table) {
 			$table->id();
-			$table->string('name', 100);
+			$table->string('code', 20)->unique();
+			$table->string('name', 100)->unique();
 			$table->text('description')->nullable();
 			$table->enum('status', ['A', 'X'])->default('A');
 			$table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();

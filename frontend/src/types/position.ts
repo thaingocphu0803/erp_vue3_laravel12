@@ -12,6 +12,7 @@ export interface PositionFormData {
 	department_id: number | null
 	description: string
 	parent_id: number | null
+	code: string
 }
 
 export interface PositionFormError {
@@ -19,6 +20,7 @@ export interface PositionFormError {
 	department_id: string
 	description: string
 	parent_id: string
+	code: string
 	getDepartmentList: string
 	getPositionList: string
 }

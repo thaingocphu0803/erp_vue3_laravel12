@@ -33,6 +33,7 @@ const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 // role form data
 const roleFormData = reactive<RoleFormData>({
 	name: '',
+	code: '',
 	description: '',
 	permissions: {},
 })
@@ -40,8 +41,9 @@ const roleFormData = reactive<RoleFormData>({
 // error message
 const errorMessage = reactive<RoleFormError>({
 	name: '',
-	permissions: '',
+	code: '',
 	description: '',
+	permissions: '',
 })
 
 // sections
@@ -115,8 +117,13 @@ const handleCancel = () => {
 			<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
 
 			<!-- Step 1: Information -->
-			<information-section v-if="section.id === 1" v-model:role-name="roleFormData.name"
-				v-model:role-description="roleFormData.description" class="mt-2" />
+			<information-section
+				v-if="section.id === 1"
+				v-model:role-name="roleFormData.name"
+				v-model:role-code="roleFormData.code"
+				v-model:role-description="roleFormData.description"
+				class="mt-2"
+			/>
 
 			<!-- Step 2: Permission -->
 			<permission-section v-else @update:selected-permissions="updatePermision" />
@@ -133,13 +140,23 @@ const handleCancel = () => {
 		<v-row dense justify="space-between" class="mt-2">
 			<!-- cancel button -->
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
+				<BaseBtn
+					title="common.btn.cancel"
+					color="red-darken-1"
+					@click.prevent="handleCancel"
+				/>
 			</v-col>
 
 			<!-- create button -->
 			<v-col cols="auto">
-				<BaseBtn title="common.btn.create" color="primary" type="submit" :disabled="isDisabled('roleCreate')" />
+				<BaseBtn
+					title="common.btn.create"
+					color="primary"
+					type="submit"
+					:disabled="isDisabled('roleCreate')"
+				/>
 			</v-col>
 		</v-row>
 	</Form>
 </template>
+

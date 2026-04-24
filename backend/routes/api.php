@@ -40,10 +40,10 @@ Route::controller(PositionController::class)->prefix('position')->middleware(['a
 });
 
 // RoleController
-Route::controller(RoleController::class)->prefix('role')->middleware(['auth:sanctum', 'verified'])->group(function () {
-	Route::post('create', 'create')->middleware(['throttle:retry']);
+Route::controller(RoleController::class)->prefix('role')->middleware(['auth:sanctum', 'verified', 'throttle:retry'])->group(function () {
+	Route::post('create', 'create');
 	Route::get('index', 'index');
-	Route::get('list', 'list')->middleware(['throttle:retry']);
+	Route::get('list', 'list');
 });
 
 // AdministrativeUnitController
