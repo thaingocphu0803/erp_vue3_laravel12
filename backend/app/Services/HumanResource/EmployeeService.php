@@ -26,7 +26,6 @@ class EmployeeService
 	public function create(array $data)
 	{
 		$avatarPath = null;
-		$user = null;
 
 		if (!empty($data['avatar'])) {
 			$filename = Str::uuid() . '.webp';

@@ -4,7 +4,7 @@ import type { commonGender, commonLocale } from './common'
  * Employee related types
  */
 
-export interface EmployeeForm {
+export interface EmployeeFormData {
 	avatar: File | null
 	email: string
 	role_ids: number[]
@@ -20,5 +20,23 @@ export interface EmployeeForm {
 	position_id: number | null
 	is_leader: boolean
 	locale: commonLocale
+}
+
+export interface EmployeeFormError {
+	avatar: string
+	email: string
+	name: string
+	role_ids: string
+	department_id: string
+	position_id: string
+	gender: string
+	birth_date: string
+	phone_number: string
+	province_code: string
+	ward_code: string
+	address: string
+	is_leader: string
+	code: string
+	locale: string
 }
 

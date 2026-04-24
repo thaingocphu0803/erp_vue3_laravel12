@@ -18,6 +18,7 @@ class FileService
 			if ($filename) {
 				return $this->disk->putFileAs($path, $file, $filename);
 			}
+
 			return $this->disk->putFile($path, $file);
 		} catch (\Exception $e) {
 			return false;
@@ -39,6 +40,14 @@ class FileService
 
 	public function delete(?string $path)
 	{
-		return $this->disk->delete($path);
+		if (!$path) {
+			return false;
+		}
+
+		try {
+			return $this->disk->delete($path);
+		} catch (\Exception $e) {
+			return false;
+		}
 	}
 }

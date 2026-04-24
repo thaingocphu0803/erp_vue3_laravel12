@@ -20,8 +20,7 @@ class StoreEmployeeRequest extends FormRequest
 	{
 		$this->merge([
 			'gender' => strtolower($this->gender),
-			'is_leader' => (bool) $this->is_leader,
-			'role_ids' => explode(',', $this->role_ids),
+			'is_leader' => filter_var($this->is_leader, FILTER_VALIDATE_BOOLEAN),
 		]);
 	}
 

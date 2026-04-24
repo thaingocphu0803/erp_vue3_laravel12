@@ -17,26 +17,8 @@ import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import router from '@/router'
 import SYSTEM from '@/config/system'
 
-import type { EmployeeForm } from '@/types/employee'
+import type { EmployeeFormData, EmployeeFormError } from '@/types/employee'
 import { storeToRefs } from 'pinia'
-
-interface ErrorMessage {
-	avatar: string
-	email: string
-	name: string
-	role_ids: string
-	department_id: string
-	position_id: string
-	gender: string
-	birth_date: string
-	phone_number: string
-	province_code: string
-	ward_code: string
-	address: string
-	is_leader: string
-	code: string
-	locale: string
-}
 
 // employee validation
 const { employeeValidation } = useEmployeeValidation()
@@ -52,7 +34,7 @@ const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const { initThrottle, startThrottle } = useThrottleStore()
 
 // employee form data
-const employeeData = reactive<EmployeeForm>({
+const employeeFormData = reactive<EmployeeFormData>({
 	avatar: null,
 	email: '',
 	role_ids: [],
@@ -71,7 +53,7 @@ const employeeData = reactive<EmployeeForm>({
 })
 
 // Validation states (Mock)
-const errorMessage = reactive<ErrorMessage>({
+const errorMessage = reactive<EmployeeFormError>({
 	avatar: '',
 	email: '',
 	name: '',
@@ -98,8 +80,8 @@ const sections = [
 
 // Review avatar
 const avatarReview = computed<string>(() => {
-	if (employeeData.avatar) {
-		return URL.createObjectURL(employeeData.avatar)
+	if (employeeFormData.avatar) {
+		return URL.createObjectURL(employeeFormData.avatar)
 	}
 	return CONFIG.avatar
 })
@@ -107,7 +89,7 @@ const avatarReview = computed<string>(() => {
 // Handle submit
 const handleSubmit = async () => {
 	try {
-		const response = await employeeCreate(employeeData)
+		const response = await employeeCreate(employeeFormData)
 		toast.show(response.data.messageCode, 'success')
 		router.push({ name: 'hr.employee' })
 	} catch (error: any) {
@@ -149,14 +131,29 @@ onMounted(() => {
 			<!-- Avatar Upload (Centered) -->
 			<div class="d-flex flex-column align-center justify-center mb-6">
 				<!-- Avatar -->
-				<v-avatar variant="plain" color="primary" size="150" class="mb-3 text-h3 text-white font-weight-bold"
-					:image="avatarReview" />
+				<v-avatar
+					variant="plain"
+					color="primary"
+					size="150"
+					class="mb-3 text-h3 text-white font-weight-bold"
+					:image="avatarReview"
+				/>
 
 				<!-- Upload Avatar Button -->
-				<v-file-input v-model="employeeData.avatar" accept="image/png, image/jpeg, image/jpg"
-					:label="$t('employee.input.uploadAvatar')" variant="solo-inverted" density="compact"
-					prepend-icon="mdi-camera" glow icon-color="primary" class="mt-2" min-width="250px"
-					validate-on="blur" :rules="employeeValidation.avatar">
+				<v-file-input
+					v-model="employeeFormData.avatar"
+					accept="image/png, image/jpeg, image/jpg"
+					:label="$t('employee.input.uploadAvatar')"
+					variant="solo-inverted"
+					density="compact"
+					prepend-icon="mdi-camera"
+					glow
+					icon-color="primary"
+					class="mt-2"
+					min-width="250px"
+					validate-on="blur"
+					:rules="employeeValidation.avatar"
+				>
 					<template v-slot:message="{ message }">{{ $t(message) }}</template>
 				</v-file-input>
 
@@ -173,38 +170,64 @@ onMounted(() => {
 				<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
 
 				<!-- Account Section -->
-				<account-section v-if="section.id === 1" v-model:email="employeeData.email"
-					v-model:role_ids="employeeData.role_ids" />
+				<account-section
+					v-if="section.id === 1"
+					v-model:email="employeeFormData.email"
+					v-model:role_ids="employeeFormData.role_ids"
+				/>
 
 				<!-- Profile Section -->
-				<profile-section v-else-if="section.id === 2" v-model:name="employeeData.name"
-					v-model:code="employeeData.code" v-model:gender="employeeData.gender"
-					v-model:birth_date="employeeData.birth_date" v-model:phone_number="employeeData.phone_number"
-					v-model:address="employeeData.address" v-model:ward_code="employeeData.ward_code"
-					v-model:province_code="employeeData.province_code" v-model:locale="employeeData.locale" />
+				<profile-section
+					v-else-if="section.id === 2"
+					v-model:name="employeeFormData.name"
+					v-model:code="employeeFormData.code"
+					v-model:gender="employeeFormData.gender"
+					v-model:birth_date="employeeFormData.birth_date"
+					v-model:phone_number="employeeFormData.phone_number"
+					v-model:address="employeeFormData.address"
+					v-model:ward_code="employeeFormData.ward_code"
+					v-model:province_code="employeeFormData.province_code"
+					v-model:locale="employeeFormData.locale"
+				/>
 
 				<!-- Organization Section -->
-				<organization-section v-else v-model:department_id="employeeData.department_id"
-					v-model:position_id="employeeData.position_id" v-model:is_leader="employeeData.is_leader" />
+				<organization-section
+					v-else
+					v-model:department_id="employeeFormData.department_id"
+					v-model:position_id="employeeFormData.position_id"
+					v-model:is_leader="employeeFormData.is_leader"
+				/>
 
 				<v-divider v-if="section.id !== sections.length" class="my-6"></v-divider>
 			</template>
 
 			<!-- Throttle Alert -->
 			<v-row dense justify="center">
-				<throttle-alert :time="throttle['employeeCreate'] || 0" :show="isDisabled('employeeCreate')" />
+				<throttle-alert
+					:time="throttle['employeeCreate'] || 0"
+					:show="isDisabled('employeeCreate')"
+				/>
 			</v-row>
 
 			<!-- Actions-->
 			<v-row dense justify="space-between" class="mt-8">
 				<v-col cols="auto">
-					<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="cancel" />
+					<BaseBtn
+						title="common.btn.cancel"
+						color="red-darken-1"
+						@click.prevent="cancel"
+					/>
 				</v-col>
 				<v-col cols="auto">
-					<BaseBtn title="common.btn.create" color="primary" type="submit"
-						:disabled="isDisabled('employeeCreate')" />
+					<BaseBtn
+						title="common.btn.create"
+						color="primary"
+						type="submit"
+						:disabled="isDisabled('employeeCreate')"
+					/>
 				</v-col>
 			</v-row>
 		</Form>
 	</v-container>
 </template>
+
