@@ -7,6 +7,8 @@ interface TableHeader {
 	key: string
 	align: 'start' | 'center' | 'end'
 	headerProps: object
+	cellProps?: object
+	sortable?: boolean
 }
 
 interface permissionScopeHeaders {
@@ -96,6 +98,14 @@ export const useTableModule = () => {
 			key: 'status',
 			align: 'center',
 			headerProps: { class: 'font-weight-bold' },
+		},
+		{
+			title: t('common.table.commonColumn.action'),
+			key: 'actions',
+			align: 'center',
+			headerProps: { class: 'font-weight-bold' },
+			cellProps: { class: 'text-center' },
+			sortable: false,
 		},
 	])
 

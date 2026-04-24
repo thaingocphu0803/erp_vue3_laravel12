@@ -15,6 +15,7 @@ import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
 import type { commonStatus } from '@/types/common'
 import SYSTEM from '@/config/system'
+import BaseIconBtn from '@/components/BaseIconBtn.vue'
 
 interface RoleItem {
 	id: number
@@ -33,6 +34,12 @@ const roleStatus = ref(route.query.status as commonStatus | undefined)
 const tempSearch = ref((route.query.search as string) || '')
 
 const search = ref((route.query.search as string) || '')
+
+const selectedRoleIds = ref<number[]>([])
+
+watch(selectedRoleIds, (val) => {
+	console.log(val)
+})
 
 const itemsPerPage = ref(Number(route.query.itemsPerPage) || CONFIG.itemPerPage)
 const page = ref(Number(route.query.page) || CONFIG.page)
@@ -132,7 +139,9 @@ const fetchRoleIndex = async (params: object) => {
 	<app-breadcrumb class="mb-2" />
 
 	<v-container fluid class="employee-list">
+		<!-- header -->
 		<list-header title="common.header.listRole">
+			<!-- prepend -->
 			<template v-slot:prepend>
 				<v-btn color="primary" class="text-none" :to="{ name: 'org.role.create' }">
 					<v-icon icon="mdi-plus"></v-icon>
@@ -143,6 +152,7 @@ const fetchRoleIndex = async (params: object) => {
 			</template>
 		</list-header>
 
+		<!-- filter -->
 		<v-card class="elevation-1 mb-4">
 			<v-card-text>
 				<v-row dense>
@@ -168,6 +178,7 @@ const fetchRoleIndex = async (params: object) => {
 			</v-card-text>
 		</v-card>
 
+		<!-- data-table-server -->
 		<v-card class="elevation-1">
 			<v-data-table-server
 				:page
@@ -178,21 +189,40 @@ const fetchRoleIndex = async (params: object) => {
 				:items-length="totalItemLength"
 				:search
 				:loading
+				show-select
+				v-model="selectedRoleIds"
 				@update:options="handleRolePaginate"
 			>
-				<template v-slot:item.name="{ item }">
-					<v-btn variant="text" color="primary" class="text-none custom-link-btn">
-						{{ item.name }}</v-btn
-					>
+				<!-- data-table-server item action -->
+				<template v-slot:item.actions="{ item }">
+					<!-- edit icon button -->
+					<base-icon-btn
+						icon="mdi-pencil"
+						density="compact"
+						variant="tonal"
+						:tooltip="'common.btn.edit'"
+					></base-icon-btn>
+
+					<!-- delete icon button -->
+					<base-icon-btn
+						class="ml-5"
+						icon="mdi-delete"
+						density="compact"
+						variant="tonal"
+						color="error"
+						:tooltip="'common.btn.delete'"
+					></base-icon-btn>
 				</template>
 
 				<template v-slot:item.status="{ value }">
 					<base-status-chip :val="value"></base-status-chip>
 				</template>
 
+				<!-- data-table-server bottom -->
 				<template v-slot:bottom>
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
+						<!-- pagination items per page -->
 						<list-filter
 							class="d-none d-sm-block"
 							v-model="itemsPerPage"
@@ -203,6 +233,7 @@ const fetchRoleIndex = async (params: object) => {
 							:clearable="false"
 						></list-filter>
 
+						<!-- pagination -->
 						<v-pagination
 							v-if="totalPage > 1"
 							v-model="page"
@@ -217,13 +248,4 @@ const fetchRoleIndex = async (params: object) => {
 		</v-card>
 	</v-container>
 </template>
-
-<style scoped>
-.custom-link-btn:deep(.v-btn__overlay) {
-	display: none;
-}
-.custom-link-btn:hover {
-	text-decoration: underline;
-}
-</style>
 

@@ -78,7 +78,9 @@
 			"back": "Quay lại",
 			"confirm": "Xác nhận",
 			"retry": "Tải lại",
-			"backToHome": "Quay về trang chủ"
+			"backToHome": "Quay về trang chủ",
+			"edit": "Cập nhật",
+			"delete": "Xóa"
 		},
 		"table": {
 			"department": {
@@ -95,7 +97,8 @@
 			},
 			"commonColumn": {
 				"createdAt": "Ngày tạo",
-				"createdBy": "Người tạo"
+				"createdBy": "Người tạo",
+				"action": "Hành động"
 			}
 		},
 		"status": {

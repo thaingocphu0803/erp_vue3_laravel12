@@ -78,7 +78,9 @@
 			"back": "Back",
 			"confirm": "Confirm",
 			"retry": "Retry",
-			"backToHome": "Back to home"
+			"backToHome": "Back to home",
+			"edit": "Edit",
+			"delete": "Delete"
 		},
 		"table": {
 			"department": {
@@ -95,7 +97,8 @@
 			},
 			"commonColumn": {
 				"createdAt": "Created at",
-				"createdBy": "Created by"
+				"createdBy": "Created by",
+				"action": "Action"
 			}
 		},
 		"status": {
