@@ -44,7 +44,8 @@
 			"error": {
 				"invalidAuth": "The input data is invalid",
 				"incorrectAuth": "Incorrect username or password",
-				"createPassword": "Failed to create password. Please try again."
+				"createPassword": "Failed to create password. Please try again.",
+				"login": "Failed to login. Please try again."
 			},
 			"success": {
 				"logout": "Logout successfully",
@@ -319,4 +320,3 @@
 		}
 	}
 }
-

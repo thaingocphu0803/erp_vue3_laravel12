@@ -22,7 +22,7 @@ const subtitle = 'common.subtitle.notification'
 		</template>
 
 		<!-- Notification List -->
-		<v-list max-width="420px" density="comfortable" class="pb-0" lines="two">
+		<v-list :max-width="CONFIG.maxWidthAuthForm" density="comfortable" class="pb-0" lines="two">
 			<v-list-subheader :title="$t(subtitle)" sticky></v-list-subheader>
 
 			<v-divider></v-divider>

@@ -21,6 +21,7 @@ import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import SYSTEM from '@/config/system'
 
 import type { LoginFormData, LoginFormError } from '@/types/auth'
+import CONFIG from '@/config/constants'
 
 const title: string = 'auth.title.login'
 const LanguageBtnColor: string = 'blue-gray-draken-4'
@@ -77,11 +78,20 @@ const handleLogin = async () => {
 
 		if (error.status === SYSTEM.SERVER_ERROR.UNAUTHORIZED) {
 			errorMessage.unauthorized = error.response.data.messageCode
-		} else if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			mapLaravelError(errorMessage, error)
-		} else if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
 			throttle.value['login'] = formatLaravelRetryAfter(error)
 			startThrottle('login')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			const message = 'auth.alert.error.login'
+			toast.show(message, 'error')
 		}
 	} finally {
 		loading.value = false
@@ -102,30 +112,54 @@ onMounted(() => {
 		</layout-bar>
 
 		<!-- layout main -->
-		<v-main class="mx-auto my-auto" max-width="420px">
+		<v-main class="mx-auto my-auto" :max-width="CONFIG.maxWidthAuthForm">
 			<Form :title @submit-form="handleLogin">
 				<!-- error alert -->
 				<error-alert :messages="errorMessage" class="text-center"></error-alert>
 
 				<!-- email -->
-				<Input :label="$t('auth.input.email')" name="email" placeholder="example@gmail.com"
-					:rules="authValidation.email" v-model="loginFormData.email" />
+				<Input
+					:label="$t('auth.input.email')"
+					name="email"
+					placeholder="example@gmail.com"
+					:rules="authValidation.email"
+					v-model="loginFormData.email"
+				/>
 
 				<!-- password -->
-				<Input :label="$t('auth.input.password')" name="password" :type="visible ? 'text' : 'password'"
-					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'" @click:append-inner="visible = !visible"
-					:rules="authValidation.password" v-model="loginFormData.password" />
+				<Input
+					:label="$t('auth.input.password')"
+					name="password"
+					:type="visible ? 'text' : 'password'"
+					:append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+					@click:append-inner="visible = !visible"
+					:rules="authValidation.password"
+					v-model="loginFormData.password"
+				/>
 
 				<!-- remember me -->
-				<Checkbox :label="$t('auth.input.rememberMe')" name="remember_me" v-model="loginFormData.rememberMe"
-					:false-value="checkboxData.falseValue" :true-value="checkboxData.trueValue" />
+				<Checkbox
+					:label="$t('auth.input.rememberMe')"
+					name="remember_me"
+					v-model="loginFormData.rememberMe"
+					:false-value="checkboxData.falseValue"
+					:true-value="checkboxData.trueValue"
+				/>
 
 				<!-- submit -->
-				<base-btn :title :loading="loading" type="submit" block :disabled="isDisabled('login')" />
+				<base-btn
+					:title
+					:loading="loading"
+					type="submit"
+					block
+					:disabled="isDisabled('login')"
+				/>
 			</Form>
 
 			<!-- throttle alert -->
-			<throttle-alert :show="isDisabled('login')" :time="throttle['login'] || 0" />
+			<v-row justify="center" dense>
+				<throttle-alert :show="isDisabled('login')" :time="throttle['login'] || 0" />
+			</v-row>
 		</v-main>
 
 		<!-- toast -->
@@ -143,3 +177,4 @@ onMounted(() => {
 	margin-left: unset;
 }
 </style>
+

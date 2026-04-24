@@ -10,6 +10,7 @@ const CONFIG = {
 	itemPerPage: 10,
 	debounceTimeout: 1000,
 	maxWidthForm: 800,
+	maxWidthAuthForm: 500,
 	maxLengthName: 100,
 	maxLengthCode: 20,
 	sizePhone: 10,

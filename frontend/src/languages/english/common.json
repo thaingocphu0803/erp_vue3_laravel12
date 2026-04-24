@@ -128,7 +128,8 @@
 			"tooManyRequests": "Too many requests. Please try again after {time}s"
 		},
 		"error": {
-			"fetchDataFailed": "Failed to fetch data. Please try again."
+			"fetchDataFailed": "Failed to fetch data. Please try again.",
+			"sendEmailFailed": "Send email verification failed. Please try again later."
 		}
 	}
 }

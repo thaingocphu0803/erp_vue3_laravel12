@@ -44,7 +44,8 @@
 			"error": {
 				"invalidAuth": "Dữ liệu nhập vào không hợp lệ",
 				"incorrectAuth": "Tên đăng nhập hoặc mật khẩu không chính xác",
-				"createPassword": "Tạo mật khẩu thất bại"
+				"createPassword": "Tạo mật khẩu thất bại. Vui lòng thử lại sau",
+				"login": "Đăng nhập thất bại. Vui lòng thử lại sau"
 			},
 			"success": {
 				"logout": "Đăng xuất thành công",

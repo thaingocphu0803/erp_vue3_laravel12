@@ -26,10 +26,8 @@ class AuthController extends Controller
 		$data =  $loginRequest->validated();
 
 		if (!$this->authService->login($data)) {
-
 			$message = 'auth.alert.error.incorrectAuth';
-
-			return  $this->jsonResponse($message, Response::HTTP_UNAUTHORIZED);
+			return $this->exceptionResponse($message, Response::HTTP_UNAUTHORIZED);
 		}
 
 		$loginRequest->session()->regenerateToken();
@@ -69,12 +67,12 @@ class AuthController extends Controller
 
 		$user = $this->authService->find($request->route('id'));
 
-		if ($user === false) {
+		if (!$user) {
 			$serverErrorUrl = $this->generateFrontendUrlWithParams('error', ['code' => Response::HTTP_INTERNAL_SERVER_ERROR]);
 			return redirect($serverErrorUrl);
 		}
 
-		if (is_null($user) || !hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
+		if (!hash_equals((string) $request->route('hash'), sha1($user->getEmailForVerification()))) {
 			return redirect($resendVerifyUrl);
 		}
 
@@ -83,14 +81,14 @@ class AuthController extends Controller
 		return redirect($newPassswordUrl);
 	}
 
-	public function createPassword(CreatePasswordRequest $request)
+	public function createPassword(CreatePasswordRequest $createPasswordRequest)
 	{
-		$data = $request->validated();
+		abort(500);
 
-		if ($this->authService->createPassword($data) === false) {
-			$message = 'auth.alert.error.createPassword';
-			return $this->jsonResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
+		$data = $createPasswordRequest->validated();
+		$this->authService->createPassword($data);
+
+		$createPasswordRequest->session()->regenerateToken();
 
 		$message = 'auth.alert.success.createPassword';
 		return $this->jsonResponse($message, Response::HTTP_OK);

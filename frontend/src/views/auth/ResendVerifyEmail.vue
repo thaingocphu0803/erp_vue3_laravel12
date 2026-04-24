@@ -53,6 +53,10 @@ const handleResendEmailVerification = async () => {
 			throttle.value['resendEmail'] = formatLaravelRetryAfter(error)
 			startThrottle('resendEmail')
 		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			toast.show('common.error.sendEmailFailed', 'error')
+		}
 	} finally {
 		loading.value = false
 	}
@@ -73,7 +77,10 @@ onMounted(() => {
 
 		<!-- Content -->
 		<v-main class="mx-auto my-auto" :max-width="CONFIG.maxWidthForm">
-			<v-card density="comfortable" class="border d-flex flex-column justify-center align-center ga-5 pa-5">
+			<v-card
+				density="comfortable"
+				class="border d-flex flex-column justify-center align-center ga-5 pa-5"
+			>
 				<!-- Icon -->
 				<v-icon color="warning" icon="mdi-emoticon-dead-outline" size="72" />
 
@@ -83,11 +90,20 @@ onMounted(() => {
 				</p>
 
 				<!-- Button -->
-				<base-btn :title :loading="loading" type="button" class="mt-5" :disabled="isDisabled('resendEmail')"
-					@click.prevent="handleResendEmailVerification" />
+				<base-btn
+					:title
+					:loading="loading"
+					type="button"
+					class="mt-5"
+					:disabled="isDisabled('resendEmail')"
+					@click.prevent="handleResendEmailVerification"
+				/>
 
 				<!-- Throttle Alert -->
-				<throttle-alert :show="isDisabled('resendEmail')" :time="throttle['resendEmail'] || 0" />
+				<throttle-alert
+					:show="isDisabled('resendEmail')"
+					:time="throttle['resendEmail'] || 0"
+				/>
 			</v-card>
 		</v-main>
 
@@ -105,3 +121,4 @@ onMounted(() => {
 	margin-left: unset;
 }
 </style>
+

@@ -15,7 +15,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 	Route::post('logout', 'logout')->middleware(['auth:sanctum', 'verified']);
 	Route::get('me', 'me')->middleware(['auth:sanctum', 'verified']);
 	Route::get('verify-email/{id}/{hash}', 'verifyEmail')->name('verification.verify');
-	Route::post('create-password', 'createPassword');
+	Route::post('create-password', 'createPassword')->middleware(['throttle:retry']);
 	Route::post('resend-verify-email', 'resendVerifyEmail')->middleware(['throttle:retry']);
 });
 
