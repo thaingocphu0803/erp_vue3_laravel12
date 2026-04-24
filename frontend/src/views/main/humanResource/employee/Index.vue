@@ -62,7 +62,9 @@ const pageCount = computed(() => {
 			<template v-slot:prepend>
 				<v-btn color="primary" class="text-none" :to="{ name: 'hr.employee.create' }">
 					<v-icon icon="mdi-plus"></v-icon>
-					<span class="d-none d-sm-inline ml-sm-2">{{ $t('common.button.addEmployee') }}</span>
+					<span class="d-none d-sm-inline ml-sm-2">{{
+						$t('common.button.addEmployee')
+					}}</span>
 				</v-btn>
 			</template>
 		</list-header>
@@ -71,9 +73,7 @@ const pageCount = computed(() => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" md="3" lg="3">
-						<base-search-btn
-							v-model="search"
-							:label="$t('common.filter.name')">
+						<base-search-btn v-model="search" :label="$t('common.filter.nameOrCode')">
 						</base-search-btn>
 					</v-col>
 
@@ -159,4 +159,3 @@ const pageCount = computed(() => {
 		</v-card>
 	</v-container>
 </template>
-

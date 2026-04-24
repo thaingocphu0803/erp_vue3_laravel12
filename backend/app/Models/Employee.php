@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
+	protected $searchable = [
+		'name',
+		'code'
+	];
+
 	protected $fillable = [
 		'user_id',
 		'code',

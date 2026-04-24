@@ -12,9 +12,13 @@ class Role extends Model
 {
 	use SoftDeletes, FilterableScope;
 
+	protected $searchable = [
+		'name',
+		'code'
+	];
+
 	protected $fillable = [
 		'name',
-		'code',
 		'description',
 		'status',
 		'created_by',

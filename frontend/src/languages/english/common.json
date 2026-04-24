@@ -45,7 +45,7 @@
 		},
 		"filter": {
 			"permissionModule": "Search by permission module",
-			"name": "tìm theo tên",
+			"nameOrCode": "Search by name or code",
 			"position": "Position",
 			"status": "Status",
 			"department": "Department",

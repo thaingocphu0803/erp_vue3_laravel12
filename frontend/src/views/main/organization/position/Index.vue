@@ -148,7 +148,7 @@ const fetchPositionIndex = async (params: object) => {
 					<v-col cols="12" sm="6" lg="4">
 						<base-search-btn
 							v-model="tempSearch"
-							:label="$t('common.filter.name')"
+							:label="$t('common.filter.nameOrCode')"
 							@update:model-value="handleUpdateSearchValue"
 						>
 						</base-search-btn>

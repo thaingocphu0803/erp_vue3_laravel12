@@ -45,7 +45,7 @@
 		},
 		"filter": {
 			"permissionModule": "Tìm theo danh mục quyền",
-			"name": "Tìm theo tên",
+			"nameOrCode": "Tìm theo tên hoặc mã",
 			"position": "Chức vụ",
 			"status": "Trạng thái",
 			"department": "Phòng Ban",

@@ -39,9 +39,13 @@ trait FilterableScope
 
 	public function scopeSearch(Builder $query, string|null $search)
 	{
-		$query->when(!is_null($search), function ($q) use ($search) {
-			$q->where(function ($sq) use ($search) {
-				$sq->where('name', 'LIKE', "%$search%");
+		$columns = property_exists($this, 'searchable') ? $this->searchable : ['name'];
+
+		$query->when(!is_null($search), function ($q) use ($search, $columns) {
+			$q->where(function ($sq) use ($search, $columns) {
+				foreach ($columns as $column) {
+					$sq->orWhere($column, 'LIKE', "%$search%");
+				}
 			});
 		});
 

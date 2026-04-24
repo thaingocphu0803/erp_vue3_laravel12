@@ -16,6 +16,11 @@ class Department extends Model
 {
 	use HasFactory, SoftDeletes, FilterableScope, NestedTrait;
 
+	protected $searchable = [
+		'name',
+		'code'
+	];
+
 	protected $fillable = [
 		'name',
 		'code',

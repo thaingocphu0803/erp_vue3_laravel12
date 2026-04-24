@@ -11,6 +11,11 @@ class Position extends Model
 {
 	use SoftDeletes, FilterableScope, NestedTrait;
 
+	protected $searchable = [
+		'name',
+		'code'
+	];
+
 	protected $fillable = [
 		'name',
 		'code',
