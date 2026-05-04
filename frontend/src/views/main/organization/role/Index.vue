@@ -15,7 +15,7 @@ import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
 import type { commonStatus } from '@/types/common'
 import SYSTEM from '@/config/system'
-import BaseIconBtn from '@/components/BaseIconBtn.vue'
+import ListAction from '@/components/list/ListAction.vue'
 
 interface RoleItem {
 	id: number
@@ -37,9 +37,72 @@ const search = ref((route.query.search as string) || '')
 
 const selectedRoleIds = ref<number[]>([])
 
-watch(selectedRoleIds, (val) => {
-	console.log(val)
-})
+const bulkActionLoading = ref<string | null>(null)
+
+const confirmDeleteDialog = ref(false)
+
+const handleBulkAction = async (action: 'active' | 'inactive' | 'delete') => {
+
+	if (action === 'delete') {
+		confirmDeleteDialog.value = true
+		return
+	}
+
+	try {
+		bulkActionLoading.value = action
+		let url = ''
+		if (action === 'active') url = 'role/bulk-active'
+		if (action === 'inactive') url = 'role/bulk-inactive'
+
+		const response = await api.post(url, { ids: selectedRoleIds.value })
+
+		if (response.status === 200 || response.status === 204) {
+			const successMessage = response.data?.message || 'Thao tác thành công'
+			toast.show(successMessage, 'success')
+			selectedRoleIds.value = []
+
+			const params = {
+				page: page.value,
+				search: search.value,
+				itemsPerPage: itemsPerPage.value,
+				status: roleStatus.value,
+			}
+			await fetchRoleIndex(params)
+		}
+	} catch (error: any) {
+		const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra'
+		toast.show(errorMessage, 'error')
+	} finally {
+		bulkActionLoading.value = null
+	}
+}
+
+const executeBulkDelete = async () => {
+	try {
+		bulkActionLoading.value = 'delete'
+		const response = await api.post('role/bulk-delete', { ids: selectedRoleIds.value })
+
+		if (response.status === 200 || response.status === 204) {
+			const successMessage = response.data?.message || 'Thao tác thành công'
+			toast.show(successMessage, 'success')
+			selectedRoleIds.value = []
+
+			const params = {
+				page: page.value,
+				search: search.value,
+				itemsPerPage: itemsPerPage.value,
+				status: roleStatus.value,
+			}
+			await fetchRoleIndex(params)
+		}
+	} catch (error: any) {
+		const errorMessage = error.response?.data?.message || 'Có lỗi xảy ra'
+		toast.show(errorMessage, 'error')
+	} finally {
+		bulkActionLoading.value = null
+		confirmDeleteDialog.value = false
+	}
+}
 
 const itemsPerPage = ref(Number(route.query.itemsPerPage) || CONFIG.itemPerPage)
 const page = ref(Number(route.query.page) || CONFIG.page)
@@ -157,61 +220,58 @@ const fetchRoleIndex = async (params: object) => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" lg="4">
-						<base-search-btn
-							v-model="tempSearch"
-							:label="$t('common.filter.nameOrCode')"
-							@update:model-value="handleUpdateSearchValue"
-						>
+						<base-search-btn v-model="tempSearch" :label="$t('common.filter.nameOrCode')"
+							@update:model-value="handleUpdateSearchValue">
 						</base-search-btn>
 					</v-col>
 
 					<v-col cols="12" sm="6" lg="3">
-						<list-filter
-							v-model="roleStatus"
-							:items="statuses"
-							item-title="name"
-							item-value="id"
-							:label="$t('common.filter.status')"
-						></list-filter>
+						<list-filter v-model="roleStatus" :items="statuses" item-title="name" item-value="id"
+							:label="$t('common.filter.status')"></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>
 		</v-card>
 
+		<!-- bulk action -->
+		<v-expand-transition>
+			<v-card v-if="selectedRoleIds.length > 0" class="elevation-1 mb-4 pa-4">
+				<v-row dense align="center">
+					<v-col cols="12" class="d-flex align-center flex-wrap">
+						<span class="mr-4 font-weight-medium">
+							{{ $t('common.action.bulkAction.selectedItems', { count: selectedRoleIds.length }) }}
+						</span>
+
+						<v-btn color="success" variant="flat" class="mr-2 text-none" prepend-icon="mdi-check-circle"
+							@click="handleBulkAction('active')" :loading="bulkActionLoading === 'active'"
+							:disabled="bulkActionLoading !== null" size="small">
+							{{ $t('common.btn.active') }}
+						</v-btn>
+
+						<v-btn color="warning" variant="flat" class="mr-2 text-none" prepend-icon="mdi-minus-circle"
+							@click="handleBulkAction('inactive')" :loading="bulkActionLoading === 'inactive'"
+							:disabled="bulkActionLoading !== null" size="small">
+							{{ $t('common.btn.inactive') }}
+						</v-btn>
+
+						<v-btn color="error" variant="flat" class="text-none" prepend-icon="mdi-delete"
+							@click="handleBulkAction('delete')" :loading="bulkActionLoading === 'delete'"
+							:disabled="bulkActionLoading !== null" size="small">
+							{{ $t('common.btn.delete') }}
+						</v-btn>
+					</v-col>
+				</v-row>
+			</v-card>
+		</v-expand-transition>
+
 		<!-- data-table-server -->
 		<v-card class="elevation-1">
-			<v-data-table-server
-				:page
-				:headers="roleHeaders"
-				:items="roleItems"
-				:items-per-page="itemsPerPage"
-				item-value="id"
-				:items-length="totalItemLength"
-				:search
-				:loading
-				show-select
-				v-model="selectedRoleIds"
-				@update:options="handleRolePaginate"
-			>
+			<v-data-table-server :page :headers="roleHeaders" :items="roleItems" :items-per-page="itemsPerPage"
+				item-value="id" :items-length="totalItemLength" :search :loading show-select v-model="selectedRoleIds"
+				@update:options="handleRolePaginate">
 				<!-- data-table-server item action -->
 				<template v-slot:item.actions="{ item }">
-					<!-- edit icon button -->
-					<base-icon-btn
-						icon="mdi-pencil"
-						density="compact"
-						variant="tonal"
-						:tooltip="'common.btn.edit'"
-					></base-icon-btn>
-
-					<!-- delete icon button -->
-					<base-icon-btn
-						class="ml-5"
-						icon="mdi-delete"
-						density="compact"
-						variant="tonal"
-						color="error"
-						:tooltip="'common.btn.delete'"
-					></base-icon-btn>
+					<list-action></list-action>
 				</template>
 
 				<template v-slot:item.status="{ value }">
@@ -223,29 +283,36 @@ const fetchRoleIndex = async (params: object) => {
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
 						<!-- pagination items per page -->
-						<list-filter
-							class="d-none d-sm-block"
-							v-model="itemsPerPage"
-							:items="CONFIG.perPage"
-							:label="$t('common.filter.itemPerPage')"
-							max-width="200"
-							min-width="200"
-							:clearable="false"
-						></list-filter>
+						<list-filter class="d-none d-sm-block" v-model="itemsPerPage" :items="CONFIG.perPage"
+							:label="$t('common.filter.itemPerPage')" max-width="200" min-width="200"
+							:clearable="false"></list-filter>
 
 						<!-- pagination -->
-						<v-pagination
-							v-if="totalPage > 1"
-							v-model="page"
-							:length="totalPage"
-							:total-visible="CONFIG.pageVisible"
-							rounded="shape"
-							density="comfortable"
-						></v-pagination>
+						<v-pagination v-if="totalPage > 1" v-model="page" :length="totalPage"
+							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"></v-pagination>
 					</div>
 				</template>
 			</v-data-table-server>
 		</v-card>
 	</v-container>
-</template>
 
+	<!-- Confirm Delete Dialog -->
+	<v-dialog v-model="confirmDeleteDialog" max-width="400">
+		<v-card>
+			<v-card-title class="text-h6 font-weight-bold d-flex align-center">
+				<v-icon color="error" class="mr-2">mdi-alert</v-icon>
+				{{ $t('common.action.bulkAction.deleteModal.title') }}
+			</v-card-title>
+			<v-card-text>
+				{{ $t('common.action.bulkAction.deleteModal.content', { count: selectedRoleIds.length }) }}
+			</v-card-text>
+			<v-card-actions class="pa-4 pt-0">
+				<v-spacer></v-spacer>
+				<v-btn color="grey-darken-1" variant="text" @click="confirmDeleteDialog = false" class="text-none">{{
+					$t('common.btn.cancel') }}</v-btn>
+				<v-btn color="error" variant="flat" @click="executeBulkDelete" :loading="bulkActionLoading === 'delete'"
+					class="text-none">{{ $t('common.btn.delete') }}</v-btn>
+			</v-card-actions>
+		</v-card>
+	</v-dialog>
+</template>

@@ -69,6 +69,13 @@
 			},
 			"employee": {
 				"create": "Add Employee"
+			},
+			"bulkAction": {
+				"selectedItems": "Selected {count} items",
+				"deleteModal": {
+					"title": "Confirm delete",
+					"content": "Are you sure you want to delete {count} selected items? You will not be able to revert this action."
+				}
 			}
 		},
 		"btn": {
@@ -80,7 +87,9 @@
 			"retry": "Retry",
 			"backToHome": "Back to home",
 			"edit": "Edit",
-			"delete": "Delete"
+			"delete": "Delete",
+			"active": "Active",
+			"inactive": "Inactive"
 		},
 		"table": {
 			"department": {
@@ -136,3 +145,4 @@
 		}
 	}
 }
+

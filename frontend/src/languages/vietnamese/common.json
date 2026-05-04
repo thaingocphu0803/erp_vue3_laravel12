@@ -69,6 +69,13 @@
 			},
 			"employee": {
 				"create": "Thêm Nhân Viên"
+			},
+			"bulkAction": {
+				"selectedItems": "Đã chọn {count} mục",
+				"deleteModal": {
+					"title": "Xác nhận xóa",
+					"content": "Bạn có chắc chắn muốn xóa {count} mục đã chọn? Bạn sẽ không thể hoàn tác hành động này."
+				}
 			}
 		},
 		"btn": {
@@ -80,7 +87,9 @@
 			"retry": "Tải lại",
 			"backToHome": "Quay về trang chủ",
 			"edit": "Cập nhật",
-			"delete": "Xóa"
+			"delete": "Xóa",
+			"active": "Kích hoạt",
+			"inactive": "Hủy kích hoạt"
 		},
 		"table": {
 			"department": {
@@ -136,3 +145,4 @@
 		}
 	}
 }
+
