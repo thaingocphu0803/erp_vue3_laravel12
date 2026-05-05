@@ -12,4 +12,3 @@ const props = defineProps<Props>()
 		{{ $t('common.throttle.tooManyRequests', { time: props.time }) }}
 	</div>
 </template>
-

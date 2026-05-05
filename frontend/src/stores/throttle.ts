@@ -40,7 +40,7 @@ export const useThrottleStore = defineStore(
 			}
 		}
 
-		return { throttle, isDisabled, startThrottle, initThrottle }
+		return { throttle, isDisabled, startThrottle, initThrottle, stopThrottle }
 	},
 	{
 		persist: {

@@ -1,4 +1,4 @@
-import type { commonStatus, suportedScopes } from './common'
+import type { commonStatus, FilterParams, suportedScopes } from './common'
 
 /**
  * Role and Permission related types
@@ -35,6 +35,8 @@ export interface RoleItem extends Role {
 	created_by: string
 	status: commonStatus
 }
+
+export interface RoleFilterParams extends FilterParams {}
 
 export type PermissionGroup = Record<string, Permission[]>
 

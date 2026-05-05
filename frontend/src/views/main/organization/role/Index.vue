@@ -23,6 +23,7 @@ import RetryBtn from '@/components/RetryBtn.vue'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import { useThrottleStore } from '@/stores/throttle'
 import { formatLaravelRetryAfter } from '@/utils/errorHandler'
+import type { RoleFilterParams } from '@/types/role'
 
 // route
 const route = useRoute()
@@ -36,96 +37,107 @@ const { roleIndex } = storeToRefs(useRoleStore())
 
 // throttle store
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
-const { initThrottle, startThrottle } = useThrottleStore()
+const { initThrottle, startThrottle, stopThrottle } = useThrottleStore()
 
+// loading index
 const loading = ref<boolean>(false)
 
+// error retrieve index
 const isError = ref<boolean>(false)
 
+// error message retrieve index
 const errorMessage = ref<string>('')
 
-const roleStatus = ref(route.query.status as commonStatus | undefined)
-
-const tempSearch = ref((route.query.search as string) || '')
-
-const search = ref((route.query.search as string) || '')
-
+// selected role ids
 const selectedRoleIds = ref<number[]>([])
 
+// label for close or open item delete modal
 const itemDeleteDialog = ref(false)
 
+// selected role id
 const selectedRoleId = ref<number>(0)
 
-const itemsPerPage = ref(Number(route.query.itemsPerPage) || CONFIG.itemPerPage)
-const page = ref(Number(route.query.page) || CONFIG.page)
+// filter params
+const filterParams = ref<RoleFilterParams>({
+	status: route.query.status as commonStatus | null,
+	search: route.query.search as string | '',
+	itemsPerPage: Number(route.query.itemsPerPage) | CONFIG.itemPerPage,
+	page: Number(route.query.page) | CONFIG.page,
+	sortKey: null,
+	sortOrder: null,
+})
 
+// total item length
 const totalItemLength = ref<number>(0)
+
+// total page
 const totalPage = ref<number>(0)
 
+// update query params
 const { updateQueryParams, replaceQueryParams } = useRouteQuery()
+
+// statuses
 const { statuses } = useFilterModule()
+
+// role headers
 const { roleHeaders } = useTableModule()
 
+// reset url to default
 const resetURLToDefault = () => {
-	page.value = CONFIG.page
-	itemsPerPage.value = CONFIG.itemPerPage
-	search.value = ''
-	tempSearch.value = ''
-	roleStatus.value = undefined
+	filterParams.value.page = CONFIG.page
+	filterParams.value.itemsPerPage = CONFIG.itemPerPage
+	filterParams.value.search = ''
+	filterParams.value.status = null
+	filterParams.value.sortKey = null
+	filterParams.value.sortOrder = null
 
 	replaceQueryParams({
-		page: page.value,
-		itemsPerPage: itemsPerPage.value,
+		page: filterParams.value.page,
+		itemsPerPage: filterParams.value.itemsPerPage,
 	})
 }
 
-watch(roleStatus, async () => {
+// watch filter status change
+watch(() => filterParams.value.status, async () => {
 	let isPageChanged = false
 
-	if (page.value !== CONFIG.page) {
-		page.value = CONFIG.page
+	if (filterParams.value.page !== CONFIG.page) {
+		filterParams.value.page = CONFIG.page
 		isPageChanged = true
 	}
 
-	const params = {
-		page: page.value,
-		status: roleStatus.value,
-	}
-
-	const newQueryParams = updateQueryParams(params)
+	updateQueryParams(filterParams.value)
 
 	if (!isPageChanged) {
-		await fetchRoleIndex(newQueryParams)
+		await fetchRoleIndex()
 	}
 })
 
 const handleUpdateSearchValue = debounce((val: string) => {
-	search.value = val
+	filterParams.value.search = val
 }, CONFIG.debounceTimeout)
 
 const handleRolePaginate = async (options: any) => {
 	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
 
-	const params = {
-		page: newPage,
-		search: newSearch,
-		itemsPerPage: newItemsPerPage,
-		sortKey: sortBy.length ? sortBy[0].key : undefined,
-		sortOrder: sortBy.length ? sortBy[0].order : undefined,
-	}
 
-	const newQueryParams = updateQueryParams(params)
+	filterParams.value.page = newPage
+	filterParams.value.search = newSearch
+	filterParams.value.itemsPerPage = newItemsPerPage
+	filterParams.value.sortKey = sortBy.length ? sortBy[0].key : undefined
+	filterParams.value.sortOrder = sortBy.length ? sortBy[0].order : undefined
 
-	await fetchRoleIndex(newQueryParams)
+	updateQueryParams(filterParams.value)
+
+	await fetchRoleIndex()
 }
 
-const fetchRoleIndex = async (params: object) => {
+const fetchRoleIndex = async () => {
 	try {
 		loading.value = true
-		const response = await rolesPaginate(params)
+		const response = await rolesPaginate(filterParams.value)
 
 		isError.value = false
-
 		totalItemLength.value = response?.data?.meta.total
 		totalPage.value = response?.data?.meta.last_page
 	} catch (error: any) {
@@ -169,9 +181,6 @@ const handleActionDelete = (roleId: number) => {
 
 onMounted(() => {
 	initThrottle('rolesPaginate')
-	if (isDisabled.value('rolesPaginate')) {
-		isError.value = true
-	}
 })
 </script>
 
@@ -197,22 +206,14 @@ onMounted(() => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" lg="4">
-						<base-search-btn
-							v-model="tempSearch"
-							:label="$t('common.filter.nameOrCode')"
-							@update:model-value="handleUpdateSearchValue"
-						>
+						<base-search-btn :label="$t('common.filter.nameOrCode')"
+							@update:model-value="handleUpdateSearchValue">
 						</base-search-btn>
 					</v-col>
 
 					<v-col cols="12" sm="6" lg="3">
-						<list-filter
-							v-model="roleStatus"
-							:items="statuses"
-							item-title="name"
-							item-value="id"
-							:label="$t('common.filter.status')"
-						></list-filter>
+						<list-filter v-model="filterParams.status" :items="statuses" item-title="name" item-value="id"
+							:label="$t('common.filter.status')"></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>
@@ -227,30 +228,15 @@ onMounted(() => {
 				<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
 					{{ $t(errorMessage) }}
 				</div>
-				<retry-btn
-					:disabled="isDisabled('rolesPaginate')"
-					@click="fetchRoleIndex"
-				></retry-btn>
-				<throttle-alert
-					:show="isDisabled('rolesPaginate')"
-					:time="throttle['rolesPaginate'] || 0"
-				></throttle-alert>
+				<retry-btn :disabled="isDisabled('rolesPaginate')" @click="fetchRoleIndex"></retry-btn>
+				<throttle-alert :show="isDisabled('rolesPaginate')"
+					:time="throttle['rolesPaginate'] || 0"></throttle-alert>
 			</v-col>
 
-			<v-data-table-server
-				v-else
-				:page
-				:headers="roleHeaders"
-				:items="roleIndex"
-				:items-per-page="itemsPerPage"
-				item-value="id"
-				:items-length="totalItemLength"
-				:search
-				:loading
-				show-select
-				v-model="selectedRoleIds"
-				@update:options="handleRolePaginate"
-			>
+			<v-data-table-server v-else :page="filterParams.page" :headers="roleHeaders" :items="roleIndex"
+				:items-per-page="filterParams.itemsPerPage" item-value="id" :items-length="totalItemLength"
+				:search="filterParams.search" :loading show-select v-model="selectedRoleIds"
+				@update:options="handleRolePaginate">
 				<!-- data-table-server item action -->
 				<template v-slot:item.actions="{ item }">
 					<list-action @delete="handleActionDelete(item.id)"></list-action>
@@ -265,25 +251,13 @@ onMounted(() => {
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
 						<!-- pagination items per page -->
-						<list-filter
-							class="d-none d-sm-block"
-							v-model="itemsPerPage"
-							:items="CONFIG.perPage"
-							:label="$t('common.filter.itemPerPage')"
-							max-width="200"
-							min-width="200"
-							:clearable="false"
-						></list-filter>
+						<list-filter class="d-none d-sm-block" v-model="filterParams.itemsPerPage"
+							:items="CONFIG.perPage" :label="$t('common.filter.itemPerPage')" max-width="200"
+							min-width="200" :clearable="false"></list-filter>
 
 						<!-- pagination -->
-						<v-pagination
-							v-if="totalPage > 1"
-							v-model="page"
-							:length="totalPage"
-							:total-visible="CONFIG.pageVisible"
-							rounded="shape"
-							density="comfortable"
-						></v-pagination>
+						<v-pagination v-if="totalPage > 1" v-model="filterParams.page" :length="totalPage"
+							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"></v-pagination>
 					</div>
 				</template>
 			</v-data-table-server>
@@ -291,18 +265,9 @@ onMounted(() => {
 	</v-container>
 
 	<!-- Item Delete Confirm Modal -->
-	<base-confirm-modal
-		v-model="itemDeleteDialog"
-		:title="$t('common.confirmModal.delete.title')"
-		:content="
-			$t('common.confirmModal.delete.content', {
-				name: $t('common.subModule.role').toLocaleLowerCase(),
-			})
-		"
-		:titleConfirmBtn="$t('common.btn.delete')"
-		:loading
-		@confirm="handleItemDelete()"
-		@cancel="itemDeleteDialog = false"
-	></base-confirm-modal>
+	<base-confirm-modal v-model="itemDeleteDialog" :title="$t('common.confirmModal.delete.title')" :content="$t('common.confirmModal.delete.content', {
+		name: $t('common.subModule.role').toLocaleLowerCase(),
+	})
+		" :titleConfirmBtn="$t('common.btn.delete')" :loading @confirm="handleItemDelete()"
+		@cancel="itemDeleteDialog = false"></base-confirm-modal>
 </template>
-

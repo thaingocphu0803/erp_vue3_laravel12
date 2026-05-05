@@ -10,3 +10,14 @@ export type PropertyString = Record<string, string>
 
 export type PropertyAny = Record<string, any>
 
+export type SortOrder = 'asc' | 'desc'
+
+export interface FilterParams {
+	status: commonStatus | null
+	search: string
+	itemsPerPage: number
+	page: number
+	sortKey: string | null
+	sortOrder: SortOrder | null
+}
+

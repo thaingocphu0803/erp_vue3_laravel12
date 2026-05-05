@@ -13,8 +13,6 @@ export const useRoleStore = defineStore('role', () => {
 	const roleIndex = ref<RoleItem[]>([])
 
 	const rolesPaginate = async (payload: object) => {
-		if (isFetchPaginate.value) return
-
 		const response = await roleService.getPaginate(payload)
 		roleIndex.value = response.data.data
 		isFetchPaginate.value = true
@@ -32,6 +30,7 @@ export const useRoleStore = defineStore('role', () => {
 	const roleCreate = async (payload: object) => {
 		const response = await roleService.create(payload)
 		isFetched.value = false
+		isFetchPaginate.value = false
 		return response
 	}
 
@@ -45,3 +44,4 @@ export const useRoleStore = defineStore('role', () => {
 
 	return { roles, roleIndex, rolesPaginate, rolesFetch, roleCreate, roleDelete }
 })
+

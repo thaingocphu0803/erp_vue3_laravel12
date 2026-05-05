@@ -19,7 +19,8 @@ class Permission extends Model
 
 	public $timestamps = false;
 
-	public function roles() : BelongsToMany {
+	public function roles(): BelongsToMany
+	{
 		return $this->belongsToMany(Role::class, 'role_permission', 'permission_id', 'role_id')
 			->withPivot('scope')
 			->withTimestamps();
