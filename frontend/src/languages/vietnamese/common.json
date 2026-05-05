@@ -73,9 +73,14 @@
 			"bulkAction": {
 				"selectedItems": "Đã chọn {count} mục",
 				"deleteModal": {
-					"title": "Xác nhận xóa",
 					"content": "Bạn có chắc chắn muốn xóa {count} mục đã chọn? Bạn sẽ không thể hoàn tác hành động này."
 				}
+			}
+		},
+		"confirmModal": {
+			"delete": {
+				"title": "Xác nhận xóa",
+				"content": "Bạn có chắc chắn muốn xóa vai trò {name} này? Bạn sẽ không thể hoàn tác hành động này."
 			}
 		},
 		"btn": {
@@ -140,9 +145,9 @@
 			"tooManyRequests": "Thao tác quá nhiều lần. Vui lòng chờ {time}s cho đến khi được gửi lại"
 		},
 		"error": {
+			"badRequest": "Yêu cầu không hợp lệ. Vui lòng thử lại.",
 			"fetchDataFailed": "Không thể tải dữ liệu. Vui lòng thử lại.",
 			"sendEmailFailed": "Gửi email không thành công. Vui lòng thử lại sau."
 		}
 	}
 }
-

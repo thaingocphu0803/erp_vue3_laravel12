@@ -122,13 +122,7 @@ watch(
 			<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
 				{{ $t('common.error.fetchDataFailed') }}
 			</div>
-			<retry-btn
-				color="primary"
-				:disabled="isDisabled('permissionFetch')"
-				variant="outlined"
-				prepend-icon="mdi-refresh"
-				@click="loadData"
-			></retry-btn>
+			<retry-btn :disabled="isDisabled('permissionFetch')" @click="loadData"></retry-btn>
 
 			<throttle-alert
 				:show="isDisabled('permissionFetch')"

@@ -31,14 +31,7 @@ class RoleController extends Controller
 	public function index(IndexRoleRequest $indexRoleRequest)
 	{
 		$data = $indexRoleRequest->validated();
-
 		$roles = $this->roleService->paginate($data);
-
-		if ($roles === false) {
-			$message = 'common-list.alert.error.getTableData';
-			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
-
 		return RolePaginateResource::collection($roles)->response();
 	}
 

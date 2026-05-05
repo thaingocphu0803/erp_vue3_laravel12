@@ -20,6 +20,7 @@ const CONFIG = {
 	validTypesAvatar: ['image/jpeg', 'image/png', 'image/jpg'],
 	minLengthPassword: 8,
 	retryAfter: 60,
+	maxWidthConfirmModal: 400,
 }
 
 export default CONFIG

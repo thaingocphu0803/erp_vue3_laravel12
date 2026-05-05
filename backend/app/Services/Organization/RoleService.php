@@ -33,14 +33,10 @@ class RoleService
 
 	public function paginate(array $data)
 	{
-		try {
-			$relation = 'creator';
+		$relation = 'creator';
 
-			$roles =  $this->roleRepositoryInterface->paginate($data, $relation);
-			return $roles;
-		} catch (\Exception $e) {
-			return false;
-		}
+		$roles =  $this->roleRepositoryInterface->paginate($data, $relation);
+		return $roles;
 	}
 
 	public function list()

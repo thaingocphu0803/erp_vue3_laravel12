@@ -1,11 +1,25 @@
 import { roleService } from '@/services/roleService'
+import type { Role, RoleItem } from '@/types/role'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useRoleStore = defineStore('role', () => {
 	const isFetched = ref<boolean>(false)
 
-	const roles = ref<any[]>([])
+	const isFetchPaginate = ref<boolean>(false)
+
+	const roles = ref<Role[]>([])
+
+	const roleIndex = ref<RoleItem[]>([])
+
+	const rolesPaginate = async (payload: object) => {
+		if (isFetchPaginate.value) return
+
+		const response = await roleService.getPaginate(payload)
+		roleIndex.value = response.data.data
+		isFetchPaginate.value = true
+		return response
+	}
 
 	const rolesFetch = async () => {
 		if (isFetched.value) return
@@ -21,5 +35,13 @@ export const useRoleStore = defineStore('role', () => {
 		return response
 	}
 
-	return { roles, rolesFetch, roleCreate }
+	const roleDelete = async (roleId: number) => {
+		if (roleId === 0) return
+
+		const response = await roleService.delete(roleId)
+		isFetchPaginate.value = false
+		return response
+	}
+
+	return { roles, roleIndex, rolesPaginate, rolesFetch, roleCreate, roleDelete }
 })

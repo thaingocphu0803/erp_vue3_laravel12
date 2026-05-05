@@ -73,9 +73,14 @@
 			"bulkAction": {
 				"selectedItems": "Selected {count} items",
 				"deleteModal": {
-					"title": "Confirm delete",
 					"content": "Are you sure you want to delete {count} selected items? You will not be able to revert this action."
 				}
+			}
+		},
+		"confirmModal": {
+			"delete": {
+				"title": "confirm delete",
+				"content": "Are you sure you want to delete {name}? You will not be able to revert this action."
 			}
 		},
 		"btn": {
@@ -140,9 +145,9 @@
 			"tooManyRequests": "Too many requests. Please try again after {time}s"
 		},
 		"error": {
+			"badRequest": "Bad request. Please try again.",
 			"fetchDataFailed": "Failed to fetch data. Please try again.",
 			"sendEmailFailed": "Send email verification failed. Please try again later."
 		}
 	}
 }
-

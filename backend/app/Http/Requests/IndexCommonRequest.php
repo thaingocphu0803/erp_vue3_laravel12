@@ -45,7 +45,7 @@ class IndexCommonRequest extends FormRequest
 	{
 		$errors = $validator->errors()->messages();
 
-		$messageCode = 'common-list.alert.error.badFilter';
+		$messageCode = 'common.error.badRequest';
 
 		return $this->exceptionResponse($messageCode, Response::HTTP_UNPROCESSABLE_ENTITY, $errors);
 	}
