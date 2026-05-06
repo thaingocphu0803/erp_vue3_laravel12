@@ -15,7 +15,7 @@ const loading = ref(false)
 
 <template>
 	<v-expand-transition>
-		<v-card v-if="selectedItems.length > 0" class="elevation-1 mb-4 pa-4">
+		<v-card v-show="selectedItems.length > 0" class="elevation-1 mb-4 pa-4">
 			<v-row dense align="center">
 				<v-col cols="12" class="d-flex align-center flex-wrap ga-2">
 					<span class="mr-4 font-weight-medium">

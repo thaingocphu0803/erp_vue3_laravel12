@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use App\Trait\FormatResponse;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
 class IndexCommonRequest extends FormRequest
@@ -28,11 +29,11 @@ class IndexCommonRequest extends FormRequest
 	{
 		return [
 			'page' => ['bail', 'required', 'integer', 'min:1'],
-			'itemsPerPage' => ['bail', 'required', 'integer', 'in:5,10,15,20'],
+			'itemsPerPage' => ['bail', 'required', 'integer', Rule::in(config('system.items_per_page_rules'))],
 			'search' => ['nullable', 'string'],
-			'sortOrder' => ['nullable', 'in:asc,desc'],
+			'sortOrder' => ['nullable', Rule::in(config('system.sort_order_rules'))],
 			'sortKey' => ['nullable', 'string'],
-			'status' => ['bail', 'nullable', 'string', 'in:A,X']
+			'status' => ['bail', 'nullable', 'string', Rule::in(config('system.status_rules'))]
 		];
 	}
 

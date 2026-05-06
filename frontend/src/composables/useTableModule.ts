@@ -82,6 +82,19 @@ export const useTableModule = () => {
 			headerProps: { class: 'font-weight-bold' },
 		},
 		{
+			title: t('common.table.role.code'),
+			key: 'code',
+			align: 'start',
+			headerProps: { class: 'font-weight-bold' },
+		},
+		{
+			title: t('common.table.commonColumn.staffCount'),
+			key: 'user_count',
+			align: 'center',
+			headerProps: { class: 'font-weight-bold' },
+			sortable: false,
+		},
+		{
 			title: t('common.table.commonColumn.createdBy'),
 			key: 'created_by',
 			align: 'start',

@@ -6,10 +6,19 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait FilterableScope
 {
-	public function scopeWithRelation(Builder $query, string $relation)
+	public function scopeWithRelation(Builder $query, array $relation)
 	{
 		$query->when(!empty($relation), function ($q) use ($relation) {
 			$q->with($relation);
+		});
+
+		return $query;
+	}
+
+	public function scopeWithCount(Builder $query, array $counts)
+	{
+		$query->when(!empty($counts), function ($q) use ($counts) {
+			$q->withCount($counts);
 		});
 
 		return $query;

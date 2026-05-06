@@ -8,9 +8,9 @@ interface BaseRepositoryInterface
 
 	public function update(int $id, array $payload);
 
-	public function find(int $id, string $relation = '');
+	public function find(int $id, array $relations = []);
 
-	public function paginate(array $paginationPayload, string $relation = '');
+	public function paginate(array $paginationPayload, array $relations = [], array $count = []);
 
 	public function list();
 }

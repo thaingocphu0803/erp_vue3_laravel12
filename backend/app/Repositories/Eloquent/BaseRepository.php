@@ -38,20 +38,14 @@ abstract class BaseRepository implements BaseRepositoryInterface
 		return $this->model->where('id', $id)->update($payload);
 	}
 
-	public function find(int $id, string $relation = '')
+	public function find(int $id, array $relations = [])
 	{
-		$query = $this->model;
-
-		if (!empty($relation)) {
-			$query = $query->with($relation);
-		}
-
-		return $query->find($id);
+		return $this->model->withRelation($relations)->find($id);
 	}
 
-	public function paginate(array $paginationPayload, string $relation = '')
+	public function paginate(array $paginationPayload, array $relations = [], array $counts = [])
 	{
-		$defaultPerpage = 10;
+		$defaultPerpage = config('system.default_items_perpage');
 
 		$filters = collect($paginationPayload)->except(['sortKey', 'sortOrder', 'search', 'itemsPerPage', 'page'])->toArray();
 
@@ -65,7 +59,8 @@ abstract class BaseRepository implements BaseRepositoryInterface
 		$itemsPerPage = $paginationPayload['itemsPerPage'] ?? $defaultPerpage;
 
 		$result = $this->model
-			->withRelation($relation)
+			->withRelation($relations)
+			->withCount($counts)
 			->filter($filters)
 			->search($search)
 			->sortOrder($sort)

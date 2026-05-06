@@ -104,6 +104,7 @@
 			},
 			"role": {
 				"name": "Tên vai trò",
+				"code": "Mã vai trò",
 				"numberEmployees": "Số Lượng nhân viên"
 			},
 			"position": {
@@ -112,7 +113,8 @@
 			"commonColumn": {
 				"createdAt": "Ngày tạo",
 				"createdBy": "Người tạo",
-				"action": "Hành động"
+				"action": "Hành động",
+				"staffCount": "Số Lượng nhân viên"
 			}
 		},
 		"status": {
@@ -151,4 +153,3 @@
 		}
 	}
 }
-

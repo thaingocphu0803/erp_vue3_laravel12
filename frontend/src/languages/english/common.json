@@ -104,6 +104,7 @@
 			},
 			"role": {
 				"name": "Role name",
+				"code": "Role code",
 				"numberEmployees": "Number of employees"
 			},
 			"position": {
@@ -112,7 +113,8 @@
 			"commonColumn": {
 				"createdAt": "Created at",
 				"createdBy": "Created by",
-				"action": "Action"
+				"action": "Action",
+				"staffCount": "Number of staff"
 			}
 		},
 		"status": {

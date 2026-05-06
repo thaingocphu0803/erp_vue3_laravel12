@@ -18,7 +18,9 @@ class RolePaginateResource extends JsonResource
 		return [
 			'id' => $this->id,
 			'name' => $this->name,
-			'created_by' => $this->creator->name,
+			'code' => $this->code,
+			'user_count' => $this->users_count,
+			'created_by' => $this->creator?->name ?? config('system.n_a'),
 			'created_at' => Carbon::parse($this->created_at)->format('Y/m/d'),
 			'status' => $this->status
 		];

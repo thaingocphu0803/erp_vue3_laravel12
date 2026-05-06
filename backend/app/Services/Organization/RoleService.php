@@ -33,9 +33,10 @@ class RoleService
 
 	public function paginate(array $data)
 	{
-		$relation = 'creator';
+		$relations = ['creator:id,name'];
+		$counts = ['users'];
 
-		$roles =  $this->roleRepositoryInterface->paginate($data, $relation);
+		$roles =  $this->roleRepositoryInterface->paginate($data, $relations, $counts);
 		return $roles;
 	}
 

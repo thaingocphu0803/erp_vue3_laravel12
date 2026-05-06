@@ -26,6 +26,7 @@ class Role extends Model
 		'updated_by'
 	];
 
+	// relation permission with role
 	public function permissions(): BelongsToMany
 	{
 		return $this->belongsToMany(Permission::class, 'role_permission', 'role_id', 'permission_id')
@@ -33,8 +34,15 @@ class Role extends Model
 			->withTimestamps();
 	}
 
+	// relation creator with role
 	public function creator(): BelongsTo
 	{
 		return $this->belongsTo(User::class, 'created_by');
+	}
+
+	// relation users with role
+	public function users(): BelongsToMany
+	{
+		return $this->belongsToMany(User::class, 'role_user', 'role_id', 'user_id')->withTimestamps();
 	}
 }

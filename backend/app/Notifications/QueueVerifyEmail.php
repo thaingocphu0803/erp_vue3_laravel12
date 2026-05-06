@@ -11,9 +11,9 @@ class QueueVerifyEmail extends VerifyEmail implements ShouldQueue
 {
 	use Queueable;
 
-	public bool $resend  = false;
+	public bool $resend;
 
-	public function __construct(bool $resend)
+	public function __construct(bool $resend = false)
 	{
 		$this->resend = $resend;
 	}

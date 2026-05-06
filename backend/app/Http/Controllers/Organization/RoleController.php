@@ -40,4 +40,9 @@ class RoleController extends Controller
 		$roles = $this->roleService->list();
 		return RoleListResource::collection($roles)->response();
 	}
+
+	public function delete()
+	{
+		dd('delete');
+	}
 }

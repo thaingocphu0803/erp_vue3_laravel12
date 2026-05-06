@@ -55,11 +55,13 @@ class User extends Authenticatable implements MustVerifyEmail
 		$this->notify(new QueueVerifyEmail());
 	}
 
+	// relation employee with user
 	public function employee()
 	{
 		return $this->hasOne(Employee::class, 'user_id');
 	}
 
+	// relation role with user
 	public function roles()
 	{
 		return $this->belongsToMany(Role::class, 'role_user', 'user_id', 'role_id')->withTimestamps();

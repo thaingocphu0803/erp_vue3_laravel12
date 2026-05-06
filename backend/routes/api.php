@@ -44,6 +44,7 @@ Route::controller(RoleController::class)->prefix('role')->middleware(['auth:sanc
 	Route::post('create', 'create');
 	Route::get('index', 'index');
 	Route::get('list', 'list');
+	Route::post('delete', 'delete');
 });
 
 // AdministrativeUnitController
