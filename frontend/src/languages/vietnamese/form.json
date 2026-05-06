@@ -189,10 +189,13 @@
 		"alert": {
 			"error": {
 				"create": "Tạo mới vai trò thất bại. Vui lòng thử lại sau",
-				"getList": "Lấy danh sách vai trò thất bại. Vui lòng thử lại"
+				"getList": "Lấy danh sách vai trò thất bại. Vui lòng thử lại",
+				"notFoundForDelete": "Xóa vai trò thất bại. Không tìm thấy vai trò cần xóa",
+				"delete": "Xóa vai trò thất bại. Vui lòng thử lại sau"
 			},
 			"success": {
-				"create": "Tạo mới vai trò thành công"
+				"create": "Tạo mới vai trò thành công",
+				"delete": "Xóa vai trò thành công"
 			}
 		}
 	},
@@ -329,3 +332,4 @@
 		}
 	}
 }
+

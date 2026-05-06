@@ -9,8 +9,25 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const bulkDeleteDialog = ref(false)
+const showDeleteDialog = ref(false)
 const loading = ref(false)
+
+const emit = defineEmits(['bulkDelete', 'bulkActive', 'bulkInactive'])
+
+// handle bulk delete
+const handleBulkDelete = () => {
+	emit('bulkDelete')
+}
+
+// handle bulk active
+const handleBulkActive = () => {
+	emit('bulkActive')
+}
+
+// handle bulk inactive
+const handleBulkInactive = () => {
+	emit('bulkInactive')
+}
 </script>
 
 <template>
@@ -26,44 +43,23 @@ const loading = ref(false)
 						}}
 					</span>
 
-					<base-btn
-						color="success"
-						variant="flat"
-						prepend-icon="mdi-check-circle"
-						title="common.btn.active"
-					/>
+					<base-btn color="success" variant="flat" prepend-icon="mdi-check-circle" title="common.btn.active"
+						@click.stop="handleBulkActive" />
 
-					<base-btn
-						color="grey"
-						variant="flat"
-						prepend-icon="mdi-minus-circle"
-						title="common.btn.inactive"
-					/>
+					<base-btn color="grey" variant="flat" prepend-icon="mdi-minus-circle" title="common.btn.inactive"
+						@click.stop="handleBulkInactive" />
 
-					<base-btn
-						color="error"
-						variant="flat"
-						prepend-icon="mdi-delete"
-						title="common.btn.delete"
-						@click="bulkDeleteDialog = true"
-					/>
+					<base-btn color="error" variant="flat" prepend-icon="mdi-delete" title="common.btn.delete"
+						@click.stop="showDeleteDialog = true" />
 				</v-col>
 			</v-row>
 		</v-card>
 	</v-expand-transition>
 
 	<!-- Bulk Delete Confirm Modal -->
-	<base-confirm-modal
-		:loading
-		v-model="bulkDeleteDialog"
-		:title="$t('common.confirmModal.delete.title')"
-		:content="
-			$t('common.action.bulkAction.deleteModal.content', {
-				count: selectedItems.length,
-			})
-		"
-		:titleConfirmBtn="$t('common.btn.delete')"
-		@cancel="bulkDeleteDialog = false"
-	></base-confirm-modal>
+	<base-confirm-modal :loading v-model="showDeleteDialog" :title="$t('common.confirmModal.delete.title')" :content="$t('common.action.bulkAction.deleteModal.content', {
+		count: selectedItems.length,
+	})
+		" :titleConfirmBtn="$t('common.btn.delete')" @cancel="showDeleteDialog = false"
+		@confirm="handleBulkDelete"></base-confirm-modal>
 </template>
-

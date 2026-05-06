@@ -13,4 +13,6 @@ interface BaseRepositoryInterface
 	public function paginate(array $paginationPayload, array $relations = [], array $count = []);
 
 	public function list();
+
+	public function delete(array $ids);
 }

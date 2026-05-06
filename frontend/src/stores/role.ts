@@ -38,10 +38,18 @@ export const useRoleStore = defineStore('role', () => {
 		if (roleId === 0) return
 
 		const response = await roleService.delete(roleId)
+		isFetched.value = false
 		isFetchPaginate.value = false
 		return response
 	}
 
-	return { roles, roleIndex, rolesPaginate, rolesFetch, roleCreate, roleDelete }
+	const roleBulkDelete = async (roleIds: number[]) => {
+		const response = await roleService.bulkDelete(roleIds)
+		isFetched.value = false
+		isFetchPaginate.value = false
+		return response
+	}
+
+	return { roles, roleIndex, rolesPaginate, rolesFetch, roleCreate, roleDelete, roleBulkDelete }
 })
 

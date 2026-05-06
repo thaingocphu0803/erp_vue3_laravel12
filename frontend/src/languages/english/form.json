@@ -192,10 +192,13 @@
 		"alert": {
 			"error": {
 				"create": "Failed to create role. Please try again later",
-				"getList": "Failed to load the role list. Click to try again"
+				"getList": "Failed to load the role list. Click to try again",
+				"notFoundForDelete": "Failed to delete role. Role does not exist",
+				"delete": "Failed to delete role. Please try again later"
 			},
 			"success": {
-				"create": "Role created successfully"
+				"create": "Role created successfully",
+				"delete": "Role deleted successfully"
 			}
 		}
 	},

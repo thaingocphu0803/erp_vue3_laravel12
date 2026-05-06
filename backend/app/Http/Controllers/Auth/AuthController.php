@@ -83,8 +83,6 @@ class AuthController extends Controller
 
 	public function createPassword(CreatePasswordRequest $createPasswordRequest)
 	{
-		abort(500);
-
 		$data = $createPasswordRequest->validated();
 		$this->authService->createPassword($data);
 

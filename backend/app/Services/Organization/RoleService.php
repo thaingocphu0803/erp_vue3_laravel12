@@ -15,6 +15,7 @@ class RoleService
 		protected RoleRepositoryInterface $roleRepositoryInterface
 	) {}
 
+	// Create a new role
 	public function create(array $data)
 	{
 		$role = $this->getRolePayload($data);
@@ -31,6 +32,7 @@ class RoleService
 		});
 	}
 
+	// Get paginate roles with search and pagination
 	public function paginate(array $data)
 	{
 		$relations = ['creator:id,name'];
@@ -40,12 +42,24 @@ class RoleService
 		return $roles;
 	}
 
+	// Get list of roles without pagination
 	public function list()
 	{
 		$roles = $this->roleRepositoryInterface->list();
 		return $roles;
 	}
 
+	// Delete a role
+	public function delete(array|int $data)
+	{
+		$roleIds = $this->getDeletedRoleIds($data);
+
+		return DB::transaction(function () use ($roleIds) {
+			return $this->roleRepositoryInterface->delete($roleIds);
+		});
+	}
+
+	// Get new permission payload
 	private function getNewPermissionPayload(array $permissions)
 	{
 
@@ -58,6 +72,7 @@ class RoleService
 		return $newPermissions;
 	}
 
+	// Get role payload
 	private function getRolePayload(array $data)
 	{
 		$code = !is_null($data['code']) ? $data['code'] : $this->generateCode(Table::ROLE->value, 'ROLE');
@@ -68,5 +83,18 @@ class RoleService
 			'description' => $data['description'],
 			'created_by' => Auth::id(),
 		];
+	}
+
+	// Get deleted role ids
+	private function getDeletedRoleIds(array|int $data): array
+	{
+		$ids = [];
+		if (is_array($data)) {
+			$ids = $data;
+		} else if (is_int($data)) {
+			$ids[] = $data;
+		}
+
+		return $ids;
 	}
 }

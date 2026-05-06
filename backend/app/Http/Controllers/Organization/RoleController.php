@@ -7,6 +7,7 @@ use App\Http\Requests\Organization\Role\IndexRoleRequest;
 use App\Http\Requests\Organization\Role\StoreRoleRequest;
 use App\Http\Resources\Organization\Role\RoleListResource;
 use App\Http\Resources\Organization\Role\RolePaginateResource;
+use App\Models\Role;
 use App\Services\Organization\RoleService;
 use App\Trait\FormatResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,8 +42,12 @@ class RoleController extends Controller
 		return RoleListResource::collection($roles)->response();
 	}
 
-	public function delete()
+	public function delete(Role $role)
 	{
-		dd('delete');
+		$roleId = $role->id;
+		$this->roleService->delete($roleId);
+
+		$message = 'role.alert.success.delete';
+		return $this->jsonResponse($message, Response::HTTP_OK);
 	}
 }

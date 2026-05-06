@@ -24,6 +24,12 @@ export const roleService = {
 	 * Delete a role by ID
 	 * @param roleId - The ID of the role to delete
 	 */
-	delete: (roleId: number) => api.delete(`role/delete/${roleId}`),
+	delete: (roleId: number) => api.delete(`role/${roleId}`),
+
+	/**
+	 * Delete multiple roles by IDs
+	 * @param roleIds - The IDs of the roles to delete
+	 */
+	bulkDelete: (roleIds: number[]) => api.post('role/bulk-delete', roleIds),
 }
 
