@@ -5,7 +5,7 @@ namespace App\Trait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-trait NestedTrait
+trait NestedRelationTrait
 {
     /**
      * Get the parent of the model.

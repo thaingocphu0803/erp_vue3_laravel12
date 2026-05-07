@@ -33,12 +33,9 @@ class DepartmentService
 
 	public function paginate(array $data)
 	{
-		try {
-			$departments = $this->departmentRepositoryInterface->paginate($data);
-			return $departments;
-		} catch (\Exception $e) {
-			return false;
-		}
+		$relations = ['creator', 'leader'];
+		$departments = $this->departmentRepositoryInterface->paginate($data, $relations);
+		return $departments;
 	}
 
 	public function list()

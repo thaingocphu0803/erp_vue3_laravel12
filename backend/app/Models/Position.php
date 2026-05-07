@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use App\QueryScope\FilterableScope;
-use App\Trait\NestedTrait;
+use App\Trait\NestedRelationTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Position extends Model
 {
-	use SoftDeletes, FilterableScope, NestedTrait;
+	use SoftDeletes, FilterableScope, NestedRelationTrait;
 
 	protected $searchable = [
 		'name',

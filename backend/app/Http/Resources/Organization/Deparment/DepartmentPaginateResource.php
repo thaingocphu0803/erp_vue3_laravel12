@@ -18,7 +18,9 @@ class DepartmentPaginateResource extends JsonResource
 		return [
 			'id'          => $this->id,
 			'name'        => $this->name,
-			'created_by'  => $this->name,
+			'code'        => $this->code,
+			'leader'      => $this->leader?->name,
+			'created_by'  => $this->creator->name,
 			'created_at'  => Carbon::parse($this->created_at)->format('Y/m/d'),
 			'status'      => $this->status,
 		];

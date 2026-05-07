@@ -146,43 +146,26 @@ const fetchPositionIndex = async (params: object) => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" lg="4">
-						<base-search-btn
-							v-model="tempSearch"
-							:label="$t('common.filter.nameOrCode')"
-							@update:model-value="handleUpdateSearchValue"
-						>
+						<base-search-btn v-model="tempSearch" :label="$t('common.filter.nameOrCode')"
+							@update:model-value="handleUpdateSearchValue">
 						</base-search-btn>
 					</v-col>
 
 					<v-col cols="12" sm="6" lg="3">
-						<list-filter
-							v-model="positionStatus"
-							:items="statuses"
-							item-title="name"
-							item-value="id"
-							:label="$t('common.filter.status')"
-						></list-filter>
+						<list-filter v-model="positionStatus" :items="statuses" item-title="name" item-value="id"
+							:label="$t('common.filter.status')"></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>
 		</v-card>
 
 		<v-card class="elevation-1">
-			<v-data-table-server
-				:page
-				:headers="positionHeaders"
-				:items="positionItems"
-				:items-per-page="itemsPerPage"
-				item-value="id"
-				:items-length="totalItemLength"
-				:search
-				:loading
-				@update:options="handlePositionPaginate"
-			>
+			<v-data-table-server :page :headers="positionHeaders" :items="positionItems" :items-per-page="itemsPerPage"
+				item-value="id" :items-length="totalItemLength" :search :loading
+				@update:options="handlePositionPaginate">
 				<template v-slot:item.name="{ item }">
 					<v-btn variant="text" color="primary" class="text-none custom-link-btn">
-						{{ item.name }}</v-btn
-					>
+						{{ item.name }}</v-btn>
 				</template>
 
 				<template v-slot:item.status="{ value }">
@@ -192,24 +175,12 @@ const fetchPositionIndex = async (params: object) => {
 				<template v-slot:bottom>
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
-						<list-filter
-							class="d-none d-sm-block"
-							v-model="itemsPerPage"
-							:items="CONFIG.perPage"
-							:label="$t('common.filter.itemPerPage')"
-							max-width="200"
-							min-width="200"
-							:clearable="false"
-						></list-filter>
+						<list-filter class="d-none d-sm-block" v-model="itemsPerPage" :items="CONFIG.perPage"
+							:label="$t('common.filter.itemPerPage')" max-width="200" min-width="200"
+							:clearable="false"></list-filter>
 
-						<v-pagination
-							v-if="totalPage > 1"
-							v-model="page"
-							:length="totalPage"
-							:total-visible="CONFIG.pageVisible"
-							rounded="shape"
-							density="comfortable"
-						></v-pagination>
+						<v-pagination v-if="totalPage > 1" v-model="page" :length="totalPage"
+							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"></v-pagination>
 					</div>
 				</template>
 			</v-data-table-server>
@@ -221,6 +192,7 @@ const fetchPositionIndex = async (params: object) => {
 .custom-link-btn:deep(.v-btn__overlay) {
 	display: none;
 }
+
 .custom-link-btn:hover {
 	text-decoration: underline;
 }
