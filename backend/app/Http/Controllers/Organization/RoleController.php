@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Organization;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Organization\Role\BulkDeleteRoleRequest;
+use App\Http\Requests\Organization\Role\BulkUpdateStatusRoleRequest;
 use App\Http\Requests\Organization\Role\IndexRoleRequest;
 use App\Http\Requests\Organization\Role\StoreRoleRequest;
 use App\Http\Resources\Organization\Role\RoleListResource;
@@ -48,6 +50,24 @@ class RoleController extends Controller
 		$this->roleService->delete($roleId);
 
 		$message = 'role.alert.success.delete';
+		return $this->jsonResponse($message, Response::HTTP_OK);
+	}
+
+	public function bulkDelete(BulkDeleteRoleRequest $bulkDeleteRoleRequest)
+	{
+		$data = $bulkDeleteRoleRequest->validated();
+		$this->roleService->bulkDelete($data);
+
+		$message = 'role.alert.success.bulkDelete';
+		return $this->jsonResponse($message, Response::HTTP_OK);
+	}
+
+	public function bulkUpdateStatus(BulkUpdateStatusRoleRequest $bulkUpdateStatusRoleRequest)
+	{
+		$data = $bulkUpdateStatusRoleRequest->validated();
+		$this->roleService->bulkUpdateStatus($data);
+
+		$message = 'role.alert.success.bulkUpdateStatus';
 		return $this->jsonResponse($message, Response::HTTP_OK);
 	}
 }

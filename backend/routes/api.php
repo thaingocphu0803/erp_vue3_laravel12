@@ -24,6 +24,9 @@ Route::controller(DepartmentController::class)->prefix('department')->middleware
 	Route::post('create', 'create')->middleware(['throttle:retry']);
 	Route::get('index', 'index');
 	Route::get('list', 'list')->middleware(['throttle:retry']);
+	Route::delete('{department}', 'delete')->middleware(['throttle:retry']);
+	Route::post('bulk-delete', 'bulkDelete')->middleware(['throttle:bulk-action']);
+	Route::post('bulk-update-status', 'bulkUpdateStatus')->middleware(['throttle:bulk-action']);
 });
 
 // PermissionController
@@ -37,18 +40,22 @@ Route::controller(PositionController::class)->prefix('position')->middleware(['a
 	Route::get('index', 'index');
 	Route::get('list', 'list')->middleware(['throttle:retry']);
 	Route::get('list-by-department', 'listByDepartment')->middleware(['throttle:retry']);
+	Route::delete('{position}', 'delete')->middleware(['throttle:retry']);
+	Route::post('bulk-delete', 'bulkDelete')->middleware(['throttle:bulk-action']);
+	Route::post('bulk-update-status', 'bulkUpdateStatus')->middleware(['throttle:bulk-action']);
 });
 
 // RoleController
-Route::controller(RoleController::class)->prefix('role')->middleware(['auth:sanctum', 'verified', 'throttle:retry'])->group(function () {
-	Route::post('create', 'create');
-	Route::get('index', 'index');
-	Route::get('list', 'list');
-	Route::delete('{role}', 'delete');
-	Route::post('bulk-delete', 'bulkDelete');
+Route::controller(RoleController::class)->prefix('role')->middleware(['auth:sanctum', 'verified'])->group(function () {
+	Route::post('create', 'create')->middleware(['throttle:retry']);
+	Route::get('index', 'index')->middleware(['throttle:index']);
+	Route::get('list', 'list')->middleware(['throttle:retry']);
+	Route::delete('{role}', 'delete')->middleware(['throttle:retry']);
+	Route::post('bulk-delete', 'bulkDelete')->middleware(['throttle:bulk-action']);
+	Route::post('bulk-update-status', 'bulkUpdateStatus')->middleware(['throttle:bulk-action']);
 });
 
-// AdministrativeUnitController
+// AdministrativeUnitController	
 Route::controller(AdministrativeUnitController::class)->prefix('administrative-units')->middleware(['auth:sanctum', 'verified', 'throttle:retry'])->group(function () {
 	Route::get('provinces', 'provinces');
 	Route::get('provinces/{provinceCode}/wards', 'wards');

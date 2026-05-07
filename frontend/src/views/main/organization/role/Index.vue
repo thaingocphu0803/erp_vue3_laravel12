@@ -13,17 +13,16 @@ import { useTableModule } from '@/composables/useTableModule'
 import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
 import SYSTEM from '@/config/system'
-import ListAction from '@/components/list/ListAction.vue'
-import BaseConfirmModal from '@/components/BaseConfirmModal.vue'
 import ListBulkAction from '@/components/list/ListBulkAction.vue'
 import { useRoleStore } from '@/stores/role'
 import { storeToRefs } from 'pinia'
-import type { commonStatus } from '@/types/common'
+import type { bulkActionStatus, commonStatus } from '@/types/common'
 import RetryBtn from '@/components/RetryBtn.vue'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import { useThrottleStore } from '@/stores/throttle'
 import { formatLaravelRetryAfter } from '@/utils/errorHandler'
 import type { RoleFilterParams } from '@/types/role'
+import BaseBtn from '@/components/BaseBtn.vue'
 
 // route
 const route = useRoute()
@@ -32,7 +31,7 @@ const route = useRoute()
 const toast = useToastStore()
 
 // role store
-const { roleDelete, rolesPaginate } = useRoleStore()
+const { rolesPaginate, roleBulkDelete, roleBulkUpdateStatus } = useRoleStore()
 const { roleIndex } = storeToRefs(useRoleStore())
 
 // throttle store
@@ -42,6 +41,9 @@ const { initThrottle, startThrottle } = useThrottleStore()
 // loading index
 const loading = ref<boolean>(false)
 
+// is bulk proccessing
+const isBulkProccessing = ref<bulkActionStatus | null>(null)
+
 // error retrieve index
 const isError = ref<boolean>(false)
 
@@ -50,12 +52,6 @@ const errorMessage = ref<string>('')
 
 // selected role ids
 const selectedRoleIds = ref<number[]>([])
-
-// label for close or open item delete modal
-const itemDeleteDialog = ref(false)
-
-// role id for delete
-const roleIdForDelete = ref<number>(0)
 
 // filter params
 const filterParams = ref<RoleFilterParams>({
@@ -171,48 +167,72 @@ const fetchRolePaginate = async () => {
 	}
 }
 
-const handleItemDelete = async () => {
+// handle bulk delete
+const handleBulkDelete = async () => {
 	try {
-		const response = await roleDelete(roleIdForDelete.value)
+		isBulkProccessing.value = CONFIG.delete
+		const response = await roleBulkDelete(selectedRoleIds.value)
+		const message = response?.data?.messageCode
+		toast.show(message, 'success')
+		selectedRoleIds.value = []
+		await fetchRolePaginate()
+	} catch (error: any) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			errorMessage.value = 'role.alert.error.bulkDelete'
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['roleBulkDelete'] = formatLaravelRetryAfter(error)
+			startThrottle('roleBulkDelete')
+
+			toast.show('common.throttle.tooManyRequestsAlert', 'error')
+		}
+	} finally {
+		isBulkProccessing.value = null
+	}
+}
+
+// handle bulk change status
+const handleBulkChangeStatus = async (status: commonStatus) => {
+	try {
+		isBulkProccessing.value = status
+		const response = await roleBulkUpdateStatus(selectedRoleIds.value, status)
 		const message = response?.data?.messageCode
 		toast.show(message, 'success')
 		await fetchRolePaginate()
 	} catch (error: any) {
-		// handle not found error
-		if (error.status === SYSTEM.SERVER_ERROR.NOT_FOUND) {
-			errorMessage.value = 'role.alert.error.notFoundForDelete'
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
 			toast.show(errorMessage.value, 'error')
 		}
 
-		// handle internal server error
 		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
-			errorMessage.value = 'role.alert.error.delete'
+			errorMessage.value = 'role.alert.error.bulkUpdateStatus'
 			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value[`roleBulkUpdateStatus:${status}`] = formatLaravelRetryAfter(error)
+			startThrottle(`roleBulkUpdateStatus:${status}`)
+
+			toast.show('common.throttle.tooManyRequestsAlert', 'error')
 		}
 	} finally {
-		itemDeleteDialog.value = false
+		isBulkProccessing.value = null
 	}
-}
-
-const handleDeleteAction = (roleId: number) => {
-	itemDeleteDialog.value = true
-	roleIdForDelete.value = roleId
-}
-
-const handleBulkDelete = () => {
-	console.log('bulkDelete')
-}
-
-const handleBulkActive = () => {
-	console.log('bulkActive')
-}
-
-const handleBulkInactive = () => {
-	console.log('bulkInactive')
 }
 
 onMounted(() => {
 	initThrottle('rolesPaginate')
+	initThrottle('roleBulkDelete')
+	initThrottle(`roleBulkUpdateStatus:${CONFIG.active}`)
+	initThrottle(`roleBulkUpdateStatus:${CONFIG.inactive}`)
 })
 </script>
 
@@ -238,48 +258,80 @@ onMounted(() => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" lg="4">
-						<base-search-btn :label="$t('common.filter.nameOrCode')"
-							@update:model-value="handleUpdateSearchValue">
+						<base-search-btn
+							:label="$t('common.filter.nameOrCode')"
+							@update:model-value="handleUpdateSearchValue"
+						>
 						</base-search-btn>
 					</v-col>
 
 					<v-col cols="12" sm="6" lg="3">
-						<list-filter v-model="filterParams.status" :items="statuses" item-title="name" item-value="id"
-							:label="$t('common.filter.status')"></list-filter>
+						<list-filter
+							v-model="filterParams.status"
+							:items="statuses"
+							item-title="name"
+							item-value="id"
+							:label="$t('common.filter.status')"
+						></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>
 		</v-card>
 
 		<!-- bulk action -->
-		<list-bulk-action :selected-items="selectedRoleIds" @bulk-delete="handleBulkDelete"
-			@bulk-active="handleBulkActive" @bulk-inactive="handleBulkInactive"></list-bulk-action>
+		<list-bulk-action
+			:selected-items="selectedRoleIds"
+			:is-bulk-proccessing="isBulkProccessing"
+			@bulk-delete="handleBulkDelete"
+			@bulk-active="handleBulkChangeStatus"
+			@bulk-inactive="handleBulkChangeStatus"
+		></list-bulk-action>
 
 		<!-- data-table-server -->
 		<v-card class="elevation-1">
 			<!-- error state -->
 			<v-col cols="12" align="center" justify="center" v-show="isError">
 				<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
-					{{ $t(errorMessage) }}
+					{{ errorMessage.length ? $t(errorMessage) : '' }}
 				</div>
 
 				<!-- retry btn -->
-				<retry-btn :disabled="isDisabled('rolesPaginate')" :loading="loading"
-					@click="fetchRolePaginate"></retry-btn>
+				<retry-btn
+					:disabled="isDisabled('rolesPaginate')"
+					:loading="loading"
+					@click="fetchRolePaginate"
+				></retry-btn>
 
 				<!-- throttle alert -->
-				<throttle-alert :show="isDisabled('rolesPaginate')"
-					:time="throttle['rolesPaginate'] || 0"></throttle-alert>
+				<throttle-alert
+					:show="isDisabled('rolesPaginate')"
+					:time="throttle['rolesPaginate'] || 0"
+				></throttle-alert>
 			</v-col>
 
 			<!-- table data -->
-			<v-data-table-server v-show="!isError" :page="filterParams.page" :headers="roleHeaders" :items="roleIndex"
-				:items-per-page="filterParams.itemsPerPage" item-value="id" :items-length="totalItemLength"
-				:search="filterParams.search" :loading show-select v-model="selectedRoleIds"
-				@update:options="handleRolePaginate">
+			<v-data-table-server
+				v-show="!isError"
+				:page="filterParams.page"
+				:headers="roleHeaders"
+				:items="roleIndex"
+				:items-per-page="filterParams.itemsPerPage"
+				item-value="id"
+				:items-length="totalItemLength"
+				:search="filterParams.search"
+				:loading
+				show-select
+				v-model="selectedRoleIds"
+				@update:options="handleRolePaginate"
+			>
 				<!-- data-table-server item action -->
-				<template v-slot:item.actions="{ item }">
-					<list-action @delete="handleDeleteAction(item.id)"></list-action>
+				<template v-slot:item.name="{ item }">
+					<base-btn
+						:title="item.name"
+						variant="plain"
+						color="primary"
+						class="text-none"
+					></base-btn>
 				</template>
 
 				<template v-slot:item.status="{ value }">
@@ -291,23 +343,29 @@ onMounted(() => {
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
 						<!-- pagination items per page -->
-						<list-filter class="d-none d-sm-block" v-model="filterParams.itemsPerPage"
-							:items="CONFIG.perPage" :label="$t('common.filter.itemPerPage')" max-width="200"
-							min-width="200" :clearable="false"></list-filter>
+						<list-filter
+							class="d-none d-sm-block"
+							v-model="filterParams.itemsPerPage"
+							:items="CONFIG.perPage"
+							:label="$t('common.filter.itemPerPage')"
+							max-width="200"
+							min-width="200"
+							:clearable="false"
+						></list-filter>
 
 						<!-- pagination -->
-						<v-pagination v-if="totalPage > 1" v-model="filterParams.page" :length="totalPage"
-							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"></v-pagination>
+						<v-pagination
+							v-if="totalPage > 1"
+							v-model="filterParams.page"
+							:length="totalPage"
+							:total-visible="CONFIG.pageVisible"
+							rounded="shape"
+							density="comfortable"
+						></v-pagination>
 					</div>
 				</template>
 			</v-data-table-server>
 		</v-card>
 	</v-container>
-
-	<!-- Item Delete Confirm Modal -->
-	<base-confirm-modal v-model="itemDeleteDialog" :title="$t('common.confirmModal.delete.title')" :content="$t('common.confirmModal.delete.content', {
-		name: $t('common.subModule.role').toLocaleLowerCase(),
-	})
-		" :titleConfirmBtn="$t('common.btn.delete')" :loading @confirm="handleItemDelete()"
-		@cancel="itemDeleteDialog = false"></base-confirm-modal>
 </template>
+

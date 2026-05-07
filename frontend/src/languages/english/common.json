@@ -99,13 +99,11 @@
 		"table": {
 			"department": {
 				"name": "Department name",
-				"code": "Department code",
-				"numberEmployees": "Number of employees"
+				"code": "Department code"
 			},
 			"role": {
 				"name": "Role name",
-				"code": "Role code",
-				"numberEmployees": "Number of employees"
+				"code": "Role code"
 			},
 			"position": {
 				"name": "Position name"
@@ -144,12 +142,13 @@
 			"notFound": "Page Not Found"
 		},
 		"throttle": {
-			"tooManyRequests": "Too many requests. Please try again after {time}s"
+			"tooManyRequests": "Too many requests. Please try again after {time}s",
+			"tooManyRequestsAlert": "Too many requests. Please try again later"
 		},
 		"error": {
 			"badRequest": "Bad request. Please try again.",
 			"fetchDataFailed": "Failed to fetch data. Please try again.",
-			"sendEmailFailed": "Send email verification failed. Please try again later."
+			"sendEmailFailed": "Send email verification failed. Please try again later"
 		}
 	}
 }

@@ -11,6 +11,7 @@ abstract class BaseRepository implements BaseRepositoryInterface
 		protected Model $model
 	) {}
 
+	// Create
 	public function create(array $payload, string $relation = '', array $pivotPayload = [])
 	{
 		$model = $this->model->create($payload);
@@ -22,27 +23,13 @@ abstract class BaseRepository implements BaseRepositoryInterface
 		return $model;
 	}
 
-	public function createWithPivote(array $payload, string $relation, array $pivotPayload)
-	{
-		$model = $this->create($payload);
-
-		if (!empty($pivotPayload)) {
-			$model->$relation()->attach($pivotPayload);
-		}
-
-		return $model;
-	}
-
-	public function update(int $id, array $payload)
-	{
-		return $this->model->where('id', $id)->update($payload);
-	}
-
+	// Find
 	public function find(int $id, array $relations = [])
 	{
 		return $this->model->withRelation($relations)->find($id);
 	}
 
+	// Paginate
 	public function paginate(array $paginationPayload, array $relations = [], array $counts = [])
 	{
 		$defaultPerpage = config('system.default_items_perpage');
@@ -69,13 +56,21 @@ abstract class BaseRepository implements BaseRepositoryInterface
 		return $result;
 	}
 
+	// List
 	public function list()
 	{
 		return $this->model->all();
 	}
 
-	public function delete(array $ids)
+	// Update
+	public function update(int $id, array $payload)
 	{
-		return $this->model->whereIn('id', $ids)->delete();
+		return $this->model->where('id', $id)->update($payload);
+	}
+
+	// Delete
+	public function delete(int $id)
+	{
+		return $this->model->where('id', $id)->delete();
 	}
 }

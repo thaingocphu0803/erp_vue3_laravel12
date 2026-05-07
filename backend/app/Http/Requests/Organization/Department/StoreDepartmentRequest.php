@@ -3,17 +3,14 @@
 namespace App\Http\Requests\Organization\Department;
 
 use App\Enum\Status;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\StoreCommonRequest;
 use Illuminate\Validation\Rule;
 
-class StoreDepartmentRequest extends FormRequest
+class StoreDepartmentRequest extends StoreCommonRequest
 {
-	/**
-	 * Determine if the user is authorized to make this request.
-	 */
-	public function authorize(): bool
+	protected function getTableName(): string
 	{
-		return true;
+		return 'departments';
 	}
 
 	/**
@@ -23,12 +20,11 @@ class StoreDepartmentRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [
-			'name' => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('departments', 'name')->ignore($this->id)->where('status', Status::ACTIVE->value)],
-			'code' => ['bail', 'nullable', 'max:20', Rule::unique('departments', 'code')->ignore($this->id)->where('status', Status::ACTIVE->value)],
-			'description' => ['bail', 'nullable', 'string'],
+		$parentRules = parent::rules();
+
+		return array_merge($parentRules, [
 			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
-		];
+		]);
 	}
 
 	public function messages(): array

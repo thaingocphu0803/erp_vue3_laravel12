@@ -112,14 +112,6 @@ export const useTableModule = () => {
 			align: 'center',
 			headerProps: { class: 'font-weight-bold' },
 		},
-		{
-			title: t('common.table.commonColumn.action'),
-			key: 'actions',
-			align: 'center',
-			headerProps: { class: 'font-weight-bold' },
-			cellProps: { class: 'text-center' },
-			sortable: false,
-		},
 	])
 
 	//permission scope table header

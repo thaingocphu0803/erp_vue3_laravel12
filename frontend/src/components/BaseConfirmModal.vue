@@ -6,7 +6,6 @@ interface Props {
 	titleIcon?: string
 	content: string
 	titleConfirmBtn: string
-	loading: boolean
 }
 
 const props = defineProps<Props>()
@@ -42,14 +41,9 @@ const handleCancel = () => {
 					@click="handleCancel"
 					>{{ $t('common.btn.cancel') }}</v-btn
 				>
-				<v-btn
-					color="error"
-					variant="flat"
-					class="text-none"
-					:loading
-					@click="handleConfirm"
-					>{{ titleConfirmBtn }}</v-btn
-				>
+				<v-btn color="error" variant="flat" class="text-none" @click="handleConfirm">{{
+					titleConfirmBtn
+				}}</v-btn>
 			</v-card-actions>
 		</v-card>
 	</v-dialog>

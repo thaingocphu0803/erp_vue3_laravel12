@@ -176,7 +176,7 @@
 				"format": "Sai định dạng mô tả vai trò"
 			},
 			"permissions": {
-				"atLeastOne": "Vui lòng chọn ít nhất một quyền với phạm vi Tất cả hệ thống, phòng ban hoặc cá nhân",
+				"atLeastOne": "Vui lòng chọn ít nhất một quyền với phạm vi toàn hệ thống, phòng ban hoặc cá nhân",
 				"format": "Sai định dạng quyền",
 				"exists": "Quyền không tồn tại",
 				"distinct": "Không được chọn quyền trùng lặp"
@@ -184,6 +184,10 @@
 			"code": {
 				"max": "Mã vai trò không được vượt quá 20 ký tự",
 				"unique": "Mã vai trò đã tồn tại"
+			},
+			"bulkAction": {
+				"delete": "Yêu cầu không hợp lệ. Không thể xóa các vai trò được chọn",
+				"updateStatus": "Yêu cầu không hợp lệ. Không thể cập nhật trạng thái cho các vai trò được chọn"
 			}
 		},
 		"alert": {
@@ -191,11 +195,15 @@
 				"create": "Tạo mới vai trò thất bại. Vui lòng thử lại sau",
 				"getList": "Lấy danh sách vai trò thất bại. Vui lòng thử lại",
 				"notFoundForDelete": "Xóa vai trò thất bại. Không tìm thấy vai trò cần xóa",
-				"delete": "Xóa vai trò thất bại. Vui lòng thử lại sau"
+				"delete": "Xóa vai trò thất bại. Vui lòng thử lại sau",
+				"bulkDelete": "Xóa các vai trò được chọn thất bại. Vui lòng thử lại sau",
+				"bulkUpdateStatus": "Cập nhật trạng thái các vai trò được chọn thất bại. Vui lòng thử lại sau"
 			},
 			"success": {
 				"create": "Tạo mới vai trò thành công",
-				"delete": "Xóa vai trò thành công"
+				"delete": "Xóa vai trò thành công",
+				"bulkDelete": "Xóa các vai trò được chọn thành công",
+				"bulkUpdateStatus": "Cập nhật trạng thái các vai trò được chọn thành công"
 			}
 		}
 	},
@@ -332,4 +340,3 @@
 		}
 	}
 }
-

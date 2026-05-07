@@ -50,12 +50,28 @@ class RoleService
 	}
 
 	// Delete a role
-	public function delete(array|int $data)
+	public function delete(int $id)
 	{
-		$roleIds = $this->getDeletedRoleIds($data);
+		return DB::transaction(function () use ($id) {
+			return $this->roleRepositoryInterface->delete($id);
+		});
+	}
 
-		return DB::transaction(function () use ($roleIds) {
-			return $this->roleRepositoryInterface->delete($roleIds);
+	public function bulkDelete(array $data)
+	{
+		$ids = $data['ids'];
+		return DB::transaction(function () use ($ids) {
+			return $this->roleRepositoryInterface->bulkDelete($ids);
+		});
+	}
+
+	public function bulkUpdateStatus(array $data)
+	{
+		$ids = $data['ids'];
+		$payload = ['status' => $data['status']];
+
+		return DB::transaction(function () use ($ids, $payload) {
+			return $this->roleRepositoryInterface->bulkUpdate($ids, $payload);
 		});
 	}
 
@@ -83,18 +99,5 @@ class RoleService
 			'description' => $data['description'],
 			'created_by' => Auth::id(),
 		];
-	}
-
-	// Get deleted role ids
-	private function getDeletedRoleIds(array|int $data): array
-	{
-		$ids = [];
-		if (is_array($data)) {
-			$ids = $data;
-		} else if (is_int($data)) {
-			$ids[] = $data;
-		}
-
-		return $ids;
 	}
 }

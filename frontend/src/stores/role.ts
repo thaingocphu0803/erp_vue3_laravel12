@@ -1,4 +1,5 @@
 import { roleService } from '@/services/roleService'
+import type { commonStatus } from '@/types/common'
 import type { Role, RoleItem } from '@/types/role'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -44,12 +45,35 @@ export const useRoleStore = defineStore('role', () => {
 	}
 
 	const roleBulkDelete = async (roleIds: number[]) => {
-		const response = await roleService.bulkDelete(roleIds)
+		const payload = {
+			ids: roleIds,
+		}
+		const response = await roleService.bulkDelete(payload)
 		isFetched.value = false
 		isFetchPaginate.value = false
 		return response
 	}
 
-	return { roles, roleIndex, rolesPaginate, rolesFetch, roleCreate, roleDelete, roleBulkDelete }
+	const roleBulkUpdateStatus = async (roleIds: number[], status: commonStatus) => {
+		const payload = {
+			ids: roleIds,
+			status,
+		}
+		const response = await roleService.bulkUpdateStatus(payload)
+		isFetched.value = false
+		isFetchPaginate.value = false
+		return response
+	}
+
+	return {
+		roles,
+		roleIndex,
+		rolesPaginate,
+		rolesFetch,
+		roleCreate,
+		roleDelete,
+		roleBulkDelete,
+		roleBulkUpdateStatus,
+	}
 })
 

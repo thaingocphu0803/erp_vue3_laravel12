@@ -6,9 +6,11 @@ export const mapLaravelError = (target: any, error: any) => {
 
 	if (!serverError) return
 
-	Object.keys(serverError).forEach((key) => {
-		if (key in target) {
+	Object.keys(target).forEach((key) => {
+		if (key in serverError) {
 			target[key] = serverError[key][0]
+		} else {
+			target[key] = ''
 		}
 	})
 }

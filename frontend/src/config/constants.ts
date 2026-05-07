@@ -1,4 +1,5 @@
 import noAvatar from '@/public/images/no-avatar.webp'
+import type { bulkActionStatus } from '@/types/common'
 import { getYesterdayISO } from '@/utils/dateFormat'
 
 const CONFIG = {
@@ -21,6 +22,9 @@ const CONFIG = {
 	minLengthPassword: 8,
 	retryAfter: 60,
 	maxWidthConfirmModal: 400,
+	active: 'A' as bulkActionStatus,
+	inactive: 'X' as bulkActionStatus,
+	delete: 'D' as bulkActionStatus,
 }
 
 export default CONFIG

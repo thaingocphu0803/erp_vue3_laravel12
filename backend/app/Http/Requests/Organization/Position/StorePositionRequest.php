@@ -3,17 +3,14 @@
 namespace App\Http\Requests\Organization\Position;
 
 use App\Enum\Status;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\StoreCommonRequest;
 use Illuminate\Validation\Rule;
 
-class StorePositionRequest extends FormRequest
+class StorePositionRequest extends StoreCommonRequest
 {
-	/**
-	 * Determine if the user is authorized to make this request.
-	 */
-	public function authorize(): bool
+	protected function getTableName(): string
 	{
-		return true;
+		return 'positions';
 	}
 
 	/**
@@ -23,13 +20,12 @@ class StorePositionRequest extends FormRequest
 	 */
 	public function rules(): array
 	{
-		return [
-			'name' => ['bail', 'required', 'max:100', 'regex:/^[\p{L}\p{M}\p{N}\s]+$/u', Rule::unique('positions', 'name')->ignore($this->id)->where('status', Status::ACTIVE->value)],
-			'code' => ['bail', 'nullable', 'max:20', Rule::unique('positions', 'code')->ignore($this->id)->where('status', Status::ACTIVE->value)],
-			'description' => ['bail', 'nullable', 'string'],
+		$parentRules = parent::rules();
+
+		return array_merge($parentRules, [
 			'department_id' => ['bail', 'nullable', 'integer', Rule::exists('departments', 'id')->where('status', Status::ACTIVE->value)],
 			'parent_id' => ['bail', 'nullable', 'integer', Rule::exists('positions', 'id')->where('status', Status::ACTIVE->value)],
-		];
+		]);
 	}
 
 	public function messages()

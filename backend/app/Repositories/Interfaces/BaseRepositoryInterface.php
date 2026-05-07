@@ -6,7 +6,6 @@ interface BaseRepositoryInterface
 {
 	public function create(array $payload, string $relation = '', array $pivotPayload = []);
 
-	public function update(int $id, array $payload);
 
 	public function find(int $id, array $relations = []);
 
@@ -14,5 +13,7 @@ interface BaseRepositoryInterface
 
 	public function list();
 
-	public function delete(array $ids);
+	public function update(int $id, array $payload);
+
+	public function delete(int $id);
 }

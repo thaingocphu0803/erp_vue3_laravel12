@@ -99,13 +99,11 @@
 		"table": {
 			"department": {
 				"name": "Tên phòng ban",
-				"code": "Mã phòng ban",
-				"numberEmployees": "Số Lượng nhân viên"
+				"code": "Mã phòng ban"
 			},
 			"role": {
 				"name": "Tên vai trò",
-				"code": "Mã vai trò",
-				"numberEmployees": "Số Lượng nhân viên"
+				"code": "Mã vai trò"
 			},
 			"position": {
 				"name": "Tên chức vụ"
@@ -144,12 +142,13 @@
 			"notFound": "Không tìm thấy trang"
 		},
 		"throttle": {
-			"tooManyRequests": "Thao tác quá nhiều lần. Vui lòng chờ {time} giây"
+			"tooManyRequests": "Thao tác quá nhiều lần. Vui lòng chờ {time} giây",
+			"tooManyRequestsAlert": "Thao tác quá nhanh. Vui lòng thử lại sau"
 		},
 		"error": {
 			"badRequest": "Yêu cầu không hợp lệ. Vui lòng thử lại.",
-			"fetchDataFailed": "Không thể tải dữ liệu. Vui lòng thử lại.",
-			"sendEmailFailed": "Gửi email không thành công. Vui lòng thử lại sau."
+			"fetchDataFailed": "Không thể tải dữ liệu. Vui lòng thử lại",
+			"sendEmailFailed": "Gửi email không thành công. Vui lòng thử lại sau"
 		}
 	}
 }

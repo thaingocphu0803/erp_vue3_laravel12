@@ -31,7 +31,19 @@ class AppServiceProvider extends ServiceProvider
 		// Rate limiter for retry
 		RateLimiter::for('retry', function ($request) {
 			$identifier = $request->user()->id ?? $request->ip();
-			return Limit::perMinute(3, 1)->by($identifier . $request->path());
+			return Limit::perMinute(5, 1)->by($identifier . $request->path());
+		});
+
+		// Rate limiter for bulk action
+		RateLimiter::for('bulk-action', function ($request) {
+			$identifier = $request->user()->id ?? $request->ip();
+			return Limit::perMinute(10, 1)->by($identifier . $request->path());
+		});
+
+		// Rate limiter for pagination
+		RateLimiter::for('index', function ($request) {
+			$identifier = $request->user()->id ?? $request->ip();
+			return Limit::perMinute(20, 1)->by($identifier . $request->path());
 		});
 	}
 }

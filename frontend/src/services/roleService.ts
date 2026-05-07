@@ -28,8 +28,14 @@ export const roleService = {
 
 	/**
 	 * Delete multiple roles by IDs
-	 * @param roleIds - The IDs of the roles to delete
+	 * @param payload - The IDs of the roles to delete
 	 */
-	bulkDelete: (roleIds: number[]) => api.post('role/bulk-delete', roleIds),
+	bulkDelete: (payload: object) => api.post('role/bulk-delete', payload),
+
+	/**
+	 * Update status of multiple roles by IDs
+	 * @param payload - The IDs of the roles to update and the status
+	 */
+	bulkUpdateStatus: (payload: object) => api.post('role/bulk-update-status', payload),
 }
 
