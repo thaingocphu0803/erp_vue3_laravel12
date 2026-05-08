@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
@@ -10,20 +10,19 @@ import { debounce } from 'vuetify/lib/util/helpers.mjs'
 import { useRouteQuery } from '@/composables/useRouteQuery'
 import { useFilterModule } from '@/composables/useFilterModule'
 import { useTableModule } from '@/composables/useTableModule'
-import api from '@/services/api'
 import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
-import type { commonStatus } from '@/types/common'
+import type { bulkActionStatus, commonStatus } from '@/types/common'
 import SYSTEM from '@/config/system'
 import type { DepartmentFilterParams } from '@/types/department'
-
-interface DepartmentItem {
-	id: number
-	name: string
-	code: string
-	description: string
-	status: commonStatus
-}
+import { useDepartmentStore } from '@/stores/department'
+import { storeToRefs } from 'pinia'
+import { useThrottleStore } from '@/stores/throttle'
+import { formatLaravelRetryAfter } from '@/utils/errorHandler'
+import BaseBtn from '@/components/BaseBtn.vue'
+import RetryBtn from '@/components/RetryBtn.vue'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import ListBulkAction from '@/components/list/ListBulkAction.vue'
 
 // route
 const route = useRoute()
@@ -31,8 +30,29 @@ const route = useRoute()
 // toast store
 const toast = useToastStore()
 
+// department store
+const { departmentsPaginate, departmentBulkUpdateStatus, departmentBulkDelete } = useDepartmentStore()
+const { departmentIndex } = storeToRefs(useDepartmentStore())
+
+// throttle store
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
+const { initThrottle, startThrottle } = useThrottleStore()
+
 // loading index
 const loading = ref<boolean>(false)
+
+// is bulk proccessing
+const isBulkProccessing = ref<bulkActionStatus | null>(null)
+
+
+// error retrieve index
+const isError = ref<boolean>(false)
+
+// error message retrieve index
+const errorMessage = ref<string>('')
+
+// selected department ids
+const selectedDepartmentIds = ref<number[]>([])
 
 // filter params
 const filterParams = ref<DepartmentFilterParams>({
@@ -93,12 +113,13 @@ watch(
 	},
 )
 
+// handle update search value
 const handleUpdateSearchValue = debounce((val: string) => {
-	search.value = val
+	filterParams.value.search = val
 }, CONFIG.debounceTimeout)
 
-// handle role pagination
-const handleRolePaginate = async (options: any) => {
+// handle department pagination
+const handleDepartmentPaginate = async (options: any) => {
 	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
 
 	filterParams.value.page = newPage
@@ -116,31 +137,105 @@ const handleRolePaginate = async (options: any) => {
 const fetchDepartmentIndex = async () => {
 	try {
 		loading.value = true
-		const response = await api.get('department/index', { params: filterParams.value })
+		const response = await departmentsPaginate(filterParams.value)
 
-		if (response.status === 200) {
-			const data = response?.data
-
-			departmentItems.value = data.data
-			totalItemLength.value = data.meta.total
-			totalPage.value = data.meta.last_page
-		}
+		isError.value = false
+		totalItemLength.value = response?.data?.meta.total
+		totalPage.value = response?.data?.meta.last_page
 	} catch (error: any) {
+		isError.value = true
+
+		// handle unprocessable entity error
 		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
+			toast.show(errorMessage.value, 'error')
 			resetURLToDefault()
 		}
 
-		if (
-			error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY ||
-			error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR
-		) {
-			const errorMesssage = error.response.data.message
-			toast.show(errorMesssage, 'error')
+		// handle too many request error
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['departmentsPaginate'] = formatLaravelRetryAfter(error)
+			startThrottle('departmentsPaginate')
+		}
+
+		// handle internal server error
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			errorMessage.value = 'common.error.fetchDataFailed'
+			toast.show(errorMessage.value, 'error')
 		}
 	} finally {
 		loading.value = false
 	}
 }
+
+// handle bulk delete
+const handleBulkDelete = async () => {
+	try {
+		isBulkProccessing.value = CONFIG.delete
+		const response = await departmentBulkDelete(selectedDepartmentIds.value)
+		const message = response?.data?.messageCode
+		toast.show(message, 'success')
+		selectedDepartmentIds.value = []
+		await fetchDepartmentIndex()
+	} catch (error: any) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			errorMessage.value = 'department.alert.error.bulkDelete'
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['departmentBulkDelete'] = formatLaravelRetryAfter(error)
+			startThrottle('departmentBulkDelete')
+
+			toast.show('common.throttle.tooManyRequestsAlert', 'error')
+		}
+	} finally {
+		isBulkProccessing.value = null
+	}
+}
+
+// handle bulk change status
+const handleBulkChangeStatus = async (status: commonStatus) => {
+	try {
+		isBulkProccessing.value = status
+		const response = await departmentBulkUpdateStatus(selectedDepartmentIds.value, status)
+		const message = response?.data?.messageCode
+		toast.show(message, 'success')
+		await fetchDepartmentIndex()
+	} catch (error: any) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			errorMessage.value = 'department.alert.error.bulkUpdateStatus'
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value[`departmentBulkUpdateStatus:${status}`] = formatLaravelRetryAfter(error)
+			startThrottle(`departmentBulkUpdateStatus:${status}`)
+
+			toast.show('common.throttle.tooManyRequestsAlert', 'error')
+		}
+	} finally {
+		isBulkProccessing.value = null
+	}
+}
+
+// on mounted
+onMounted(async () => {
+	initThrottle('departmentsPaginate')
+	initThrottle(`departmentBulkUpdateStatus:${CONFIG.active}`)
+	initThrottle(`departmentBulkUpdateStatus:${CONFIG.inactive}`)
+	initThrottle('departmentBulkDelete')
+})
 </script>
 
 <template>
@@ -162,43 +257,50 @@ const fetchDepartmentIndex = async () => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" lg="4">
-						<base-search-btn
-							v-model="tempSearch"
-							:label="$t('common.filter.nameOrCode')"
-							@update:model-value="handleUpdateSearchValue"
-						>
+						<base-search-btn :label="$t('common.filter.nameOrCode')"
+							@update:model-value="handleUpdateSearchValue">
 						</base-search-btn>
 					</v-col>
 
 					<v-col cols="12" sm="6" lg="3">
-						<list-filter
-							v-model="filterParams.status"
-							:items="statuses"
-							item-title="name"
-							item-value="id"
-							:label="$t('common.filter.status')"
-						></list-filter>
+						<list-filter v-model="filterParams.status" :items="statuses" item-title="name" item-value="id"
+							:label="$t('common.filter.status')"></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>
 		</v-card>
 
+		<!-- bulk action -->
+		<list-bulk-action :selected-items="selectedDepartmentIds" :is-bulk-proccessing="isBulkProccessing"
+			@bulk-delete="handleBulkDelete" @bulk-active="handleBulkChangeStatus"
+			@bulk-inactive="handleBulkChangeStatus"></list-bulk-action>
+
+		<!-- data-table-server -->
 		<v-card class="elevation-1">
-			<v-data-table-server
-				:page
-				:headers="departmentHeaders"
-				:items="departmentItems"
-				:items-per-page="itemsPerPage"
-				item-value="id"
-				:items-length="totalItemLength"
-				:search
-				:loading
-				@update:options="handleDepartmentPaginate"
-			>
+			<!-- error state -->
+			<v-col cols="12" align="center" justify="center" v-show="isError">
+				<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
+					{{ errorMessage.length ? $t(errorMessage) : '' }}
+				</div>
+
+				<!-- retry btn -->
+				<retry-btn :disabled="isDisabled('departmentsPaginate')" :loading="loading"
+					@click="fetchDepartmentIndex"></retry-btn>
+
+				<!-- throttle alert -->
+				<throttle-alert :show="isDisabled('departmentsPaginate')"
+					:time="throttle['departmentsPaginate'] || 0"></throttle-alert>
+			</v-col>
+
+			<!-- data-table-server -->
+			<v-data-table-server v-show="!isError" :page="filterParams.page" :headers="departmentHeaders"
+				:items="departmentIndex" :items-per-page="filterParams.itemsPerPage" item-value="id"
+				:items-length="totalItemLength" :search="filterParams.search" :loading show-select
+				v-model="selectedDepartmentIds" @update:options="handleDepartmentPaginate">
+
+				<!-- data-table-server item action -->
 				<template v-slot:item.name="{ item }">
-					<v-btn variant="text" color="primary" class="text-none custom-link-btn">
-						{{ item.name }}</v-btn
-					>
+					<base-btn :title="item.name" variant="plain" color="primary" class="text-none"></base-btn>
 				</template>
 
 				<template v-slot:item.status="{ value }">
@@ -208,36 +310,15 @@ const fetchDepartmentIndex = async () => {
 				<template v-slot:bottom>
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
-						<list-filter
-							class="d-none d-sm-block"
-							v-model="itemsPerPage"
-							:items="CONFIG.perPage"
-							:label="$t('common.filter.itemPerPage')"
-							max-width="200"
-							min-width="200"
-							:clearable="false"
-						></list-filter>
+						<list-filter class="d-none d-sm-block" v-model="filterParams.itemsPerPage"
+							:items="CONFIG.perPage" :label="$t('common.filter.itemPerPage')" max-width="200"
+							min-width="200" :clearable="false"></list-filter>
 
-						<v-pagination
-							v-if="totalPage > 1"
-							v-model="page"
-							:length="totalPage"
-							:total-visible="CONFIG.pageVisible"
-							rounded="shape"
-							density="comfortable"
-						></v-pagination>
+						<v-pagination v-if="totalPage > 1" v-model="filterParams.page" :length="totalPage"
+							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"></v-pagination>
 					</div>
 				</template>
 			</v-data-table-server>
 		</v-card>
 	</v-container>
 </template>
-
-<style scoped>
-.custom-link-btn:deep(.v-btn__overlay) {
-	display: none;
-}
-.custom-link-btn:hover {
-	text-decoration: underline;
-}
-</style>

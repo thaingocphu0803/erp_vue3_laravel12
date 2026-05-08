@@ -19,7 +19,7 @@ export const departmentService = {
 	 * Get paginate departments
 	 * @param payload - Pagination data
 	 */
-	getPaginate: (payload: object) => api.get('department/paginate', { params: payload }),
+	getPaginate: (payload: object) => api.get('department/index', { params: payload }),
 
 	/**
 	 * Delete a department

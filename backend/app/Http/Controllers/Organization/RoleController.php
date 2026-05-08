@@ -46,8 +46,7 @@ class RoleController extends Controller
 
 	public function delete(Role $role)
 	{
-		$roleId = $role->id;
-		$this->roleService->delete($roleId);
+		$this->roleService->delete($role->id);
 
 		$message = 'role.alert.success.delete';
 		return $this->jsonResponse($message, Response::HTTP_OK);

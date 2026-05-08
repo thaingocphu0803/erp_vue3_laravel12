@@ -83,6 +83,10 @@
 			},
 			"description": {
 				"format": "Department's description format is incorrect"
+			},
+			"bulkAction": {
+				"delete": "Bad request. Failed to delete selected departments",
+				"updateStatus": "Bad request. Failed to update status for selected departments"
 			}
 		},
 		"tooltip": {
@@ -91,10 +95,17 @@
 		"alert": {
 			"error": {
 				"create": "Failed to create department",
-				"getList": "Failed to load the department list. Click to try again"
+				"getList": "Failed to load the department list. Click to try again",
+				"notFoundForDelete": "Failed to delete department. Department does not exist",
+				"delete": "Failed to delete department. Please try again later",
+				"bulkDelete": "Failed to delete selected departments. Please try again later",
+				"bulkUpdateStatus": "Failed to update status for selected departments. Please try again later"
 			},
 			"success": {
-				"create": "Department created successfully"
+				"create": "Department created successfully",
+				"delete": "Department deleted successfully",
+				"bulkDelete": "Selected departments deleted successfully",
+				"bulkUpdateStatus": "Selected departments updated successfully"
 			}
 		}
 	},
@@ -343,3 +354,4 @@
 		}
 	}
 }
+

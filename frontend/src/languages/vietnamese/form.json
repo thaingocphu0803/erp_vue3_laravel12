@@ -83,6 +83,10 @@
 			},
 			"description": {
 				"format": "Sai định dạng mô tả phòng ban"
+			},
+			"bulkAction": {
+				"delete": "Yêu cầu không hợp lệ. Không thể xóa các phòng ban được chọn",
+				"updateStatus": "Yêu cầu không hợp lệ. Không thể cập nhật trạng thái cho các phòng ban được chọn"
 			}
 		},
 		"tooltip": {
@@ -91,10 +95,17 @@
 		"alert": {
 			"error": {
 				"create": "Tạo mới phòng ban thất bại",
-				"getList": "Lấy danh sách phòng ban thất bại. Vui lòng thử lại"
+				"getList": "Lấy danh sách phòng ban thất bại. Vui lòng thử lại",
+				"notFoundForDelete": "Không thể xóa phòng ban. Phòng ban không tồn tại",
+				"delete": "Xóa phòng ban thất bại. Vui lòng thử lại",
+				"bulkDelete": "Không thể xóa các phòng ban đã chọn. Vui lòng thử lại sau",
+				"bulkUpdateStatus": "Không thể cập nhật trạng thái cho các phòng ban đã chọn. Vui lòng thử lại sau"
 			},
 			"success": {
-				"create": "Tạo mới phòng ban thành công"
+				"create": "Tạo mới phòng ban thành công",
+				"delete": "Xóa phòng ban thành công",
+				"bulkDelete": "Xóa các phòng ban đã chọn thành công",
+				"bulkUpdateStatus": "Cập nhật trạng thái cho các phòng ban đã chọn thành công"
 			}
 		}
 	},
@@ -340,3 +351,4 @@
 		}
 	}
 }
+

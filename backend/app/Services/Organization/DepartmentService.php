@@ -43,4 +43,30 @@ class DepartmentService
 		$departments = $this->departmentRepositoryInterface->list();
 		return $departments;
 	}
+
+
+	public function delete(int $id)
+	{
+		return DB::transaction(function () use ($id) {
+			return $this->departmentRepositoryInterface->delete($id);
+		});
+	}
+
+	public function bulkDelete(array $data)
+	{
+		$ids = $data['ids'];
+		return DB::transaction(function () use ($ids) {
+			return $this->departmentRepositoryInterface->bulkDelete($ids);
+		});
+	}
+
+	public function bulkUpdateStatus(array $data)
+	{
+		$ids = $data['ids'];
+		$payload = ['status' => $data['status']];
+
+		return DB::transaction(function () use ($ids, $payload) {
+			return $this->departmentRepositoryInterface->bulkUpdate($ids, $payload);
+		});
+	}
 }

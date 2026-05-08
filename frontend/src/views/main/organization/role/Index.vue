@@ -258,34 +258,23 @@ onMounted(() => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="6" lg="4">
-						<base-search-btn
-							:label="$t('common.filter.nameOrCode')"
-							@update:model-value="handleUpdateSearchValue"
-						>
+						<base-search-btn :label="$t('common.filter.nameOrCode')"
+							@update:model-value="handleUpdateSearchValue">
 						</base-search-btn>
 					</v-col>
 
 					<v-col cols="12" sm="6" lg="3">
-						<list-filter
-							v-model="filterParams.status"
-							:items="statuses"
-							item-title="name"
-							item-value="id"
-							:label="$t('common.filter.status')"
-						></list-filter>
+						<list-filter v-model="filterParams.status" :items="statuses" item-title="name" item-value="id"
+							:label="$t('common.filter.status')"></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>
 		</v-card>
 
 		<!-- bulk action -->
-		<list-bulk-action
-			:selected-items="selectedRoleIds"
-			:is-bulk-proccessing="isBulkProccessing"
-			@bulk-delete="handleBulkDelete"
-			@bulk-active="handleBulkChangeStatus"
-			@bulk-inactive="handleBulkChangeStatus"
-		></list-bulk-action>
+		<list-bulk-action :selected-items="selectedRoleIds" :is-bulk-proccessing="isBulkProccessing"
+			@bulk-delete="handleBulkDelete" @bulk-active="handleBulkChangeStatus"
+			@bulk-inactive="handleBulkChangeStatus"></list-bulk-action>
 
 		<!-- data-table-server -->
 		<v-card class="elevation-1">
@@ -296,42 +285,22 @@ onMounted(() => {
 				</div>
 
 				<!-- retry btn -->
-				<retry-btn
-					:disabled="isDisabled('rolesPaginate')"
-					:loading="loading"
-					@click="fetchRolePaginate"
-				></retry-btn>
+				<retry-btn :disabled="isDisabled('rolesPaginate')" :loading="loading"
+					@click="fetchRolePaginate"></retry-btn>
 
 				<!-- throttle alert -->
-				<throttle-alert
-					:show="isDisabled('rolesPaginate')"
-					:time="throttle['rolesPaginate'] || 0"
-				></throttle-alert>
+				<throttle-alert :show="isDisabled('rolesPaginate')"
+					:time="throttle['rolesPaginate'] || 0"></throttle-alert>
 			</v-col>
 
 			<!-- table data -->
-			<v-data-table-server
-				v-show="!isError"
-				:page="filterParams.page"
-				:headers="roleHeaders"
-				:items="roleIndex"
-				:items-per-page="filterParams.itemsPerPage"
-				item-value="id"
-				:items-length="totalItemLength"
-				:search="filterParams.search"
-				:loading
-				show-select
-				v-model="selectedRoleIds"
-				@update:options="handleRolePaginate"
-			>
+			<v-data-table-server v-show="!isError" :page="filterParams.page" :headers="roleHeaders" :items="roleIndex"
+				:items-per-page="filterParams.itemsPerPage" item-value="id" :items-length="totalItemLength"
+				:search="filterParams.search" :loading show-select v-model="selectedRoleIds"
+				@update:options="handleRolePaginate">
 				<!-- data-table-server item action -->
 				<template v-slot:item.name="{ item }">
-					<base-btn
-						:title="item.name"
-						variant="plain"
-						color="primary"
-						class="text-none"
-					></base-btn>
+					<base-btn :title="item.name" variant="plain" color="primary" class="text-none"></base-btn>
 				</template>
 
 				<template v-slot:item.status="{ value }">
@@ -343,29 +312,16 @@ onMounted(() => {
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
 						<!-- pagination items per page -->
-						<list-filter
-							class="d-none d-sm-block"
-							v-model="filterParams.itemsPerPage"
-							:items="CONFIG.perPage"
-							:label="$t('common.filter.itemPerPage')"
-							max-width="200"
-							min-width="200"
-							:clearable="false"
-						></list-filter>
+						<list-filter class="d-none d-sm-block" v-model="filterParams.itemsPerPage"
+							:items="CONFIG.perPage" :label="$t('common.filter.itemPerPage')" max-width="200"
+							min-width="200" :clearable="false"></list-filter>
 
 						<!-- pagination -->
-						<v-pagination
-							v-if="totalPage > 1"
-							v-model="filterParams.page"
-							:length="totalPage"
-							:total-visible="CONFIG.pageVisible"
-							rounded="shape"
-							density="comfortable"
-						></v-pagination>
+						<v-pagination v-if="totalPage > 1" v-model="filterParams.page" :length="totalPage"
+							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"></v-pagination>
 					</div>
 				</template>
 			</v-data-table-server>
 		</v-card>
 	</v-container>
 </template>
-

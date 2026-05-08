@@ -1,9 +1,11 @@
 {
-  "$schema": "https://json.schemastore.org/prettierrc",
-  "semi": false,
-  "singleQuote": true,
-  "printWidth": 100,
-  "tabWidth": 4,
-  "useTabs": true,
-  "endOfLine": "crlf"
+	"$schema": "https://json.schemastore.org/prettierrc",
+	"semi": false,
+	"singleQuote": true,
+	"printWidth": 100,
+	"tabWidth": 4,
+	"useTabs": true,
+	"endOfLine": "crlf",
+	"singleAttributePerLine": true
 }
+

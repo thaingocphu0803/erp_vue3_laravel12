@@ -22,7 +22,7 @@ Route::controller(AuthController::class)->prefix('auth')->group(function () {
 // DepartmentController
 Route::controller(DepartmentController::class)->prefix('department')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create')->middleware(['throttle:retry']);
-	Route::get('index', 'index');
+	Route::get('index', 'index')->middleware(['throttle:index']);
 	Route::get('list', 'list')->middleware(['throttle:retry']);
 	Route::delete('{department}', 'delete')->middleware(['throttle:retry']);
 	Route::post('bulk-delete', 'bulkDelete')->middleware(['throttle:bulk-action']);
@@ -37,7 +37,7 @@ Route::controller(PermissionController::class)->prefix('permission')->middleware
 // PositionController
 Route::controller(PositionController::class)->prefix('position')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create')->middleware(['throttle:retry']);
-	Route::get('index', 'index');
+	Route::get('index', 'index')->middleware(['throttle:index']);
 	Route::get('list', 'list')->middleware(['throttle:retry']);
 	Route::get('list-by-department', 'listByDepartment')->middleware(['throttle:retry']);
 	Route::delete('{position}', 'delete')->middleware(['throttle:retry']);
