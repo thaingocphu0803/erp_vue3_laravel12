@@ -2,11 +2,19 @@
 
 namespace App\Repositories\Eloquent;
 
+use App\Enum\Status;
 use App\Repositories\Interfaces\BaseRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 abstract class BaseRepository implements BaseRepositoryInterface
 {
+
+	protected function withAggregates(Builder $query)
+	{
+		return $query;
+	}
+
 	public function __construct(
 		protected Model $model
 	) {}
@@ -45,21 +53,22 @@ abstract class BaseRepository implements BaseRepositoryInterface
 
 		$itemsPerPage = $paginationPayload['itemsPerPage'] ?? $defaultPerpage;
 
-		$result = $this->model
+		$query = $this->model
 			->withRelation($relations)
 			->withCount($counts)
 			->filter($filters)
 			->search($search)
-			->sortOrder($sort)
-			->paginate($itemsPerPage);
+			->sortOrder($sort);
 
-		return $result;
+		$query = $this->withAggregates($query);
+
+		return $query->paginate($itemsPerPage);
 	}
 
 	// List
 	public function list()
 	{
-		return $this->model->all();
+		return $this->model->where('status', Status::ACTIVE->value)->get();
 	}
 
 	// Update

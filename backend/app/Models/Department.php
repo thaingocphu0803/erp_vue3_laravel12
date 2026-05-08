@@ -8,8 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Trait\AuthorRelationTrait;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\DB;
 
 class Department extends Model
 {
@@ -31,6 +34,24 @@ class Department extends Model
 		'path',
 		'level'
 	];
+
+	#[Scope]
+	protected function withEmployeeCount(Builder $query): Builder
+	{
+		return $query->addSelect([
+			'users_count' => DB::table('employees')
+				->selectRaw('COUNT(*)')
+				->whereNull('employees.deleted_at')
+				->whereIn('employees.department_id', function ($subQuery) {
+					$subQuery->select('id')
+						->from('departments as dept')
+						->whereNull('dept.deleted_at')
+						->where('dept.status', 'A')
+						->where('dept.path', 'LIKE', DB::raw("CONCAT(departments.path, '%')"))
+						->orWhereColumn('dept.id', 'departments.id');
+				}),
+		]);
+	}
 
 	public function leader(): BelongsTo
 	{

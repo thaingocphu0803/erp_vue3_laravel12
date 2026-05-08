@@ -15,6 +15,7 @@ import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
 import type { commonStatus } from '@/types/common'
 import SYSTEM from '@/config/system'
+import type { DepartmentFilterParams } from '@/types/department'
 
 interface DepartmentItem {
 	id: number
@@ -24,84 +25,98 @@ interface DepartmentItem {
 	status: commonStatus
 }
 
+// route
 const route = useRoute()
+
+// toast store
 const toast = useToastStore()
 
+// loading index
 const loading = ref<boolean>(false)
 
-const departmentStatus = ref(route.query.status as 'A' | 'X' | undefined)
+// filter params
+const filterParams = ref<DepartmentFilterParams>({
+	status: route.query.status as commonStatus | null,
+	search: route.query.search as string | '',
+	itemsPerPage: Number(route.query.itemsPerPage) | CONFIG.itemPerPage,
+	page: Number(route.query.page) | CONFIG.page,
+	sortKey: null,
+	sortOrder: null,
+})
 
-const tempSearch = ref((route.query.search as string) || '')
-
-const search = ref((route.query.search as string) || '')
-const itemsPerPage = ref(Number(route.query.itemsPerPage) || CONFIG.itemPerPage)
-const page = ref(Number(route.query.page) || CONFIG.page)
-
-const departmentItems = ref<DepartmentItem[]>([])
+// total item length
 const totalItemLength = ref<number>(0)
+
+// total page
 const totalPage = ref<number>(0)
 
+// update query params
 const { updateQueryParams, replaceQueryParams } = useRouteQuery()
+
+// statuses
 const { statuses } = useFilterModule()
+
+// department headers
 const { departmentHeaders } = useTableModule()
 
+// reset url to default
 const resetURLToDefault = () => {
-	page.value = CONFIG.page
-	itemsPerPage.value = CONFIG.itemPerPage
-	search.value = ''
-	tempSearch.value = ''
-	departmentStatus.value = undefined
+	filterParams.value.page = CONFIG.page
+	filterParams.value.itemsPerPage = CONFIG.itemPerPage
+	filterParams.value.search = ''
+	filterParams.value.status = null
+	filterParams.value.sortKey = null
+	filterParams.value.sortOrder = null
 
 	replaceQueryParams({
-		page: page.value,
-		itemsPerPage: itemsPerPage.value,
+		page: filterParams.value.page,
+		itemsPerPage: filterParams.value.itemsPerPage,
 	})
 }
 
-watch(departmentStatus, async () => {
-	let isPageChanged = false
+// watch filter status change
+watch(
+	() => filterParams.value.status,
+	async () => {
+		let isPageChanged = false
 
-	if (page.value !== CONFIG.page) {
-		page.value = CONFIG.page
-		isPageChanged = true
-	}
+		if (filterParams.value.page !== CONFIG.page) {
+			filterParams.value.page = CONFIG.page
+			isPageChanged = true
+		}
 
-	const params = {
-		page: page.value,
-		status: departmentStatus.value,
-	}
+		updateQueryParams(filterParams.value)
 
-	const newQueryParams = updateQueryParams(params)
-
-	if (!isPageChanged) {
-		await fetchDepartmentIndex(newQueryParams)
-	}
-})
+		if (!isPageChanged) {
+			await fetchDepartmentIndex()
+		}
+	},
+)
 
 const handleUpdateSearchValue = debounce((val: string) => {
 	search.value = val
 }, CONFIG.debounceTimeout)
 
-const handleDepartmentPaginate = async (options: any) => {
+// handle role pagination
+const handleRolePaginate = async (options: any) => {
 	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
 
-	const params = {
-		page: newPage,
-		search: newSearch,
-		itemsPerPage: newItemsPerPage,
-		sortKey: sortBy.length ? sortBy[0].key : undefined,
-		sortOrder: sortBy.length ? sortBy[0].order : undefined,
-	}
+	filterParams.value.page = newPage
+	filterParams.value.search = newSearch
+	filterParams.value.itemsPerPage = newItemsPerPage
+	filterParams.value.sortKey = sortBy.length ? sortBy[0].key : undefined
+	filterParams.value.sortOrder = sortBy.length ? sortBy[0].order : undefined
 
-	const newQueryParams = updateQueryParams(params)
+	updateQueryParams(filterParams.value)
 
-	await fetchDepartmentIndex(newQueryParams)
+	await fetchDepartmentIndex()
 }
 
-const fetchDepartmentIndex = async (params: object) => {
+// fetch department index
+const fetchDepartmentIndex = async () => {
 	try {
 		loading.value = true
-		const response = await api.get('department/index', { params })
+		const response = await api.get('department/index', { params: filterParams.value })
 
 		if (response.status === 200) {
 			const data = response?.data
@@ -157,7 +172,7 @@ const fetchDepartmentIndex = async (params: object) => {
 
 					<v-col cols="12" sm="6" lg="3">
 						<list-filter
-							v-model="departmentStatus"
+							v-model="filterParams.status"
 							:items="statuses"
 							item-title="name"
 							item-value="id"

@@ -147,8 +147,8 @@ const fetchRolePaginate = async () => {
 		// handle unprocessable entity error
 		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
 			errorMessage.value = error.response.data.messageCode
-			resetURLToDefault()
 			toast.show(errorMessage.value, 'error')
+			resetURLToDefault()
 		}
 
 		// handle too many request error

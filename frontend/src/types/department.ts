@@ -2,6 +2,8 @@
  * Department related types
  */
 
+import type { commonStatus, FilterParams } from './common'
+
 export interface Department {
 	id: number
 	name: string
@@ -24,8 +26,13 @@ export interface DepartmentFormError {
 }
 
 export interface DepartmentItem extends Department {
-	code?: string
-	parent_name?: string
-	status?: string
+	code: string
+	users_count: number
+	parent_name: string
+	leader_name: string
+	created_by: string
+	status: commonStatus
 }
+
+export interface DepartmentFilterParams extends FilterParams {}
 

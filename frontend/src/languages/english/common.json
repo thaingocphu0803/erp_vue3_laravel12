@@ -99,7 +99,9 @@
 		"table": {
 			"department": {
 				"name": "Department name",
-				"code": "Department code"
+				"code": "Department code",
+				"leader": "Department leader",
+				"parent": "Parent department"
 			},
 			"role": {
 				"name": "Role name",

@@ -99,7 +99,9 @@
 		"table": {
 			"department": {
 				"name": "Tên phòng ban",
-				"code": "Mã phòng ban"
+				"code": "Mã phòng ban",
+				"leader": "Trưởng phòng",
+				"parent": "Phòng ban cha"
 			},
 			"role": {
 				"name": "Tên vai trò",

@@ -31,7 +31,8 @@ export interface Permission {
 }
 
 export interface RoleItem extends Role {
-	created_at: string
+	code: string
+	users_count: number
 	created_by: string
 	status: commonStatus
 }

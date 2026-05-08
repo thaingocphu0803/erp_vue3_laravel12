@@ -19,9 +19,11 @@ class DepartmentPaginateResource extends JsonResource
 			'id'          => $this->id,
 			'name'        => $this->name,
 			'code'        => $this->code,
-			'leader'      => $this->leader?->name,
-			'created_by'  => $this->creator->name,
-			'created_at'  => Carbon::parse($this->created_at)->format('Y/m/d'),
+			'users_count' => $this->users_count,
+			'parent'      => $this->parent->name ?? config('system.n_a'),
+			'leader'      => $this->leader->name ?? config('system.n_a'),
+			'leader_id'   => $this->leader_id,
+			'created_by'  => $this->creator->name ?? config('system.n_a'),
 			'status'      => $this->status,
 		];
 	}
