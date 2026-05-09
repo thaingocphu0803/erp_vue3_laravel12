@@ -36,12 +36,6 @@ class DepartmentController extends Controller
 		$data = $indexDepartmentRequest->validated();
 
 		$departments = $this->departmentService->paginate($data);
-
-		if ($departments === false) {
-			$message = 'common-list.alert.error.getTableData';
-			return $this->exceptionResponse($message, Response::HTTP_INTERNAL_SERVER_ERROR);
-		}
-
 		return DepartmentPaginateResource::collection($departments)->response();
 	}
 

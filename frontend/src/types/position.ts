@@ -2,6 +2,8 @@
  * Position related types
  */
 
+import type { commonStatus, FilterParams } from './common'
+
 export interface Position {
 	id: number
 	name: string
@@ -26,7 +28,13 @@ export interface PositionFormError {
 }
 
 export interface PositionItem extends Position {
-	department_name?: string
-	status?: string
+	code: string
+	users_count: number
+	department_name: string
+	parent_name: string
+	created_by: string
+	status: commonStatus
 }
+
+export interface PositionFilterParams extends FilterParams {}
 

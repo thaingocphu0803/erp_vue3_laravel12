@@ -146,15 +146,26 @@
 			"code": {
 				"unique": "Mã chức vụ đã tồn tại",
 				"max": "Mã chức vụ không được vượt quá 20 ký tự"
+			},
+			"bulkAction": {
+				"delete": "Yêu cầu không hợp lệ. Không thể xóa các chức vụ được chọn",
+				"updateStatus": "Yêu cầu không hợp lệ. Không thể cập nhật trạng thái cho các chức vụ được chọn"
 			}
 		},
 		"alert": {
 			"error": {
 				"create": "Tạo mới chức vụ thất bại",
-				"getList": "Lấy danh sách chức vụ thất bại. Vui lòng thử lại"
+				"getList": "Lấy danh sách chức vụ thất bại. Vui lòng thử lại",
+				"notFoundForDelete": "Không thể xóa chức vụ. Chức vụ không tồn tại",
+				"delete": "Xóa chức vụ thất bại. Vui lòng thử lại",
+				"bulkDelete": "Không thể xóa các chức vụ đã chọn. Vui lòng thử lại sau",
+				"bulkUpdateStatus": "Không thể cập nhật trạng thái cho các chức vụ đã chọn. Vui lòng thử lại sau"
 			},
 			"success": {
-				"create": "Tạo mới chức vụ thành công"
+				"create": "Tạo mới chức vụ thành công",
+				"delete": "Xóa chức vụ thành công",
+				"bulkDelete": "Xóa các chức vụ đã chọn thành công",
+				"bulkUpdateStatus": "Cập nhật trạng thái cho các chức vụ đã chọn thành công"
 			}
 		}
 	},

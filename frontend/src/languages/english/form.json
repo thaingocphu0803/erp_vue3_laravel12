@@ -149,15 +149,26 @@
 			"code": {
 				"unique": "Position code already existed",
 				"max": "Position code must not exceed 20 characters"
+			},
+			"bulkAction": {
+				"delete": "Bad request. Failed to delete selected positions",
+				"updateStatus": "Bad request. Failed to update status for selected positions"
 			}
 		},
 		"alert": {
 			"error": {
 				"create": "Failed to create position",
-				"getList": "Failed to load the position list. Click to try again"
+				"getList": "Failed to load the position list. Click to try again",
+				"notFoundForDelete": "Failed to delete position. Position does not exist",
+				"delete": "Failed to delete position. Please try again later",
+				"bulkDelete": "Failed to delete selected positions. Please try again later",
+				"bulkUpdateStatus": "Failed to update status for selected positions. Please try again later"
 			},
 			"success": {
-				"create": "Position created successfully"
+				"create": "Position created successfully",
+				"delete": "Position deleted successfully",
+				"bulkDelete": "Selected positions deleted successfully",
+				"bulkUpdateStatus": "Selected positions updated successfully"
 			}
 		}
 	},

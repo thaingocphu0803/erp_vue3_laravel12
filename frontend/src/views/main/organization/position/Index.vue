@@ -13,118 +13,233 @@ import { useTableModule } from '@/composables/useTableModule'
 import api from '@/services/api'
 import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
-import type { commonStatus } from '@/types/common'
+import type { bulkActionStatus, commonStatus } from '@/types/common'
 import SYSTEM from '@/config/system'
+import { usePositionStore } from '@/stores/position'
+import { storeToRefs } from 'pinia'
+import { useThrottleStore } from '@/stores/throttle'
+import type { PositionFilterParams } from '@/types/position'
+import { formatLaravelRetryAfter } from '@/utils/errorHandler'
+import BaseBtn from '@/components/BaseBtn.vue'
+import RetryBtn from '@/components/RetryBtn.vue'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import ListBulkAction from '@/components/list/ListBulkAction.vue'
 
-interface PositionItem {
-	id: number
-	name: string
-	description: string
-	status: commonStatus
-}
-
+// route
 const route = useRoute()
+
+// toast store
 const toast = useToastStore()
 
+// position store
+const { positionPaginate, positionBulkUpdateStatus, positionBulkDelete } = usePositionStore()
+const { positionIndex } = storeToRefs(usePositionStore())
+
+// throttle store
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
+const { initThrottle, startThrottle } = useThrottleStore()
+
+// loading index
 const loading = ref<boolean>(false)
 
-const positionStatus = ref(route.query.status as commonStatus | undefined)
+// is bulk proccessing
+const isBulkProccessing = ref<bulkActionStatus | null>(null)
 
+// error retrieve index
+const isError = ref<boolean>(false)
+
+// error message retrieve index
+const errorMessage = ref<string>('')
+
+// table pagination
 const tempSearch = ref((route.query.search as string) || '')
 
-const search = ref((route.query.search as string) || '')
-const itemsPerPage = ref(Number(route.query.itemsPerPage) || CONFIG.itemPerPage)
-const page = ref(Number(route.query.page) || CONFIG.page)
+// selected position ids
+const selectedPositionIds = ref<number[]>([])
 
-const positionItems = ref<PositionItem[]>()
+// filter params
+const filterParams = ref<PositionFilterParams>({
+	status: route.query.status as commonStatus | null,
+	search: route.query.search as string | '',
+	itemsPerPage: Number(route.query.itemsPerPage) | CONFIG.itemPerPage,
+	page: Number(route.query.page) | CONFIG.page,
+	sortKey: null,
+	sortOrder: null,
+})
+
+// total item length
 const totalItemLength = ref<number>(0)
+
+// total page
 const totalPage = ref<number>(0)
 
+// update query params
 const { updateQueryParams, replaceQueryParams } = useRouteQuery()
+
+// statuses
 const { statuses } = useFilterModule()
+
+// position headers
 const { positionHeaders } = useTableModule()
 
+// reset url to default
 const resetURLToDefault = () => {
-	page.value = CONFIG.page
-	itemsPerPage.value = CONFIG.itemPerPage
-	search.value = ''
-	tempSearch.value = ''
-	positionStatus.value = undefined
+	filterParams.value.page = CONFIG.page
+	filterParams.value.itemsPerPage = CONFIG.itemPerPage
+	filterParams.value.search = ''
+	filterParams.value.status = null
+	filterParams.value.sortKey = null
+	filterParams.value.sortOrder = null
 
 	replaceQueryParams({
-		page: page.value,
-		itemsPerPage: itemsPerPage.value,
+		page: filterParams.value.page,
+		itemsPerPage: filterParams.value.itemsPerPage,
 	})
 }
 
-watch(positionStatus, async () => {
-	let isPageChanged = false
+// watch filter status change
+watch(
+	() => filterParams.value.status,
+	async () => {
+		let isPageChanged = false
 
-	if (page.value !== CONFIG.page) {
-		page.value = CONFIG.page
-		isPageChanged = true
-	}
+		if (filterParams.value.page !== CONFIG.page) {
+			filterParams.value.page = CONFIG.page
+			isPageChanged = true
+		}
 
-	const params = {
-		page: page.value,
-		status: positionStatus.value,
-	}
+		updateQueryParams(filterParams.value)
 
-	const newQueryParams = updateQueryParams(params)
+		if (!isPageChanged) {
+			await fetchPositionIndex()
+		}
+	},
+)
 
-	if (!isPageChanged) {
-		await fetchPositionIndex(newQueryParams)
-	}
-})
 
+// handle update search value
 const handleUpdateSearchValue = debounce((val: string) => {
-	search.value = val
+	filterParams.value.search = val
 }, CONFIG.debounceTimeout)
 
+// handle position pagination
 const handlePositionPaginate = async (options: any) => {
 	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
 
-	const params = {
-		page: newPage,
-		search: newSearch,
-		itemsPerPage: newItemsPerPage,
-		sortKey: sortBy.length ? sortBy[0].key : undefined,
-		sortOrder: sortBy.length ? sortBy[0].order : undefined,
-	}
+	filterParams.value.page = newPage
+	filterParams.value.search = newSearch
+	filterParams.value.itemsPerPage = newItemsPerPage
+	filterParams.value.sortKey = sortBy.length ? sortBy[0].key : undefined
+	filterParams.value.sortOrder = sortBy.length ? sortBy[0].order : undefined
 
-	const newQueryParams = updateQueryParams(params)
+	updateQueryParams(filterParams.value)
 
-	await fetchPositionIndex(newQueryParams)
+	await fetchPositionIndex()
 }
 
-const fetchPositionIndex = async (params: object) => {
+// fetch position index
+const fetchPositionIndex = async () => {
 	try {
 		loading.value = true
-		const response = await api.get('position/index', { params })
+		const response = await positionPaginate(filterParams.value)
 
-		if (response.status === 200) {
-			const data = response?.data
-
-			positionItems.value = data.data
-			totalItemLength.value = data.meta.total
-			totalPage.value = data.meta.last_page
-		}
+		isError.value = false
+		totalItemLength.value = response?.data?.meta.total
+		totalPage.value = response?.data?.meta.last_page
 	} catch (error: any) {
+		isError.value = true
+
+		// handle unprocessable entity error
 		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
+			toast.show(errorMessage.value, 'error')
 			resetURLToDefault()
 		}
 
-		if (
-			error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY ||
-			error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR
-		) {
-			const errorMesssage = error.response.data.message
-			toast.show(errorMesssage, 'error')
+		// handle too many request error
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['positionPaginate'] = formatLaravelRetryAfter(error)
+			startThrottle('positionPaginate')
+		}
+
+		// handle internal server error
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			errorMessage.value = 'common.error.fetchDataFailed'
+			toast.show(errorMessage.value, 'error')
 		}
 	} finally {
 		loading.value = false
 	}
 }
+
+// handle bulk delete
+const handleBulkDelete = async () => {
+	try {
+		isBulkProccessing.value = CONFIG.delete
+		const response = await positionBulkDelete(selectedPositionIds.value)
+		const message = response?.data?.messageCode
+		toast.show(message, 'success')
+		selectedPositionIds.value = []
+		await fetchPositionIndex()
+	} catch (error: any) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			errorMessage.value = 'position.alert.error.bulkDelete'
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['positionBulkDelete'] = formatLaravelRetryAfter(error)
+			startThrottle('positionBulkDelete')
+
+			toast.show('common.throttle.tooManyRequestsAlert', 'error')
+		}
+	} finally {
+		isBulkProccessing.value = null
+	}
+}
+
+// handle bulk change status
+const handleBulkChangeStatus = async (status: commonStatus) => {
+	try {
+		isBulkProccessing.value = status
+		const response = await positionBulkUpdateStatus(selectedPositionIds.value, status)
+		const message = response?.data?.messageCode
+		toast.show(message, 'success')
+		await fetchPositionIndex()
+	} catch (error: any) {
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			errorMessage.value = 'position.alert.error.bulkUpdateStatus'
+			toast.show(errorMessage.value, 'error')
+		}
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value[`positionBulkUpdateStatus:${status}`] = formatLaravelRetryAfter(error)
+			startThrottle(`positionBulkUpdateStatus:${status}`)
+
+			toast.show('common.throttle.tooManyRequestsAlert', 'error')
+		}
+	} finally {
+		isBulkProccessing.value = null
+	}
+}
+
+// on mounted
+onMounted(async () => {
+	initThrottle('positionPaginate')
+	initThrottle(`positionBulkUpdateStatus:${CONFIG.active}`)
+	initThrottle(`positionBulkUpdateStatus:${CONFIG.inactive}`)
+	initThrottle('positionBulkDelete')
+})
 </script>
 
 <template>
@@ -152,22 +267,47 @@ const fetchPositionIndex = async (params: object) => {
 					</v-col>
 
 					<v-col cols="12" sm="6" lg="3">
-						<list-filter v-model="positionStatus" :items="statuses" item-title="name" item-value="id"
+						<list-filter v-model="filterParams.status" :items="statuses" item-title="name" item-value="id"
 							:label="$t('common.filter.status')"></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>
 		</v-card>
 
+		<!-- bulk action -->
+		<list-bulk-action :selected-items="selectedPositionIds" :is-bulk-proccessing="isBulkProccessing"
+			@bulk-delete="handleBulkDelete" @bulk-active="handleBulkChangeStatus"
+			@bulk-inactive="handleBulkChangeStatus"></list-bulk-action>
+
+
+		<!-- data table -->
 		<v-card class="elevation-1">
-			<v-data-table-server :page :headers="positionHeaders" :items="positionItems" :items-per-page="itemsPerPage"
-				item-value="id" :items-length="totalItemLength" :search :loading
-				@update:options="handlePositionPaginate">
+			<!-- error state -->
+			<v-col cols="12" align="center" justify="center" v-show="isError">
+				<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
+					{{ errorMessage.length ? $t(errorMessage) : '' }}
+				</div>
+
+				<!-- retry btn -->
+				<retry-btn :disabled="isDisabled('positionPaginate')" :loading="loading"
+					@click.stop="fetchPositionIndex"></retry-btn>
+
+				<!-- throttle alert -->
+				<throttle-alert :show="isDisabled('positionPaginate')"
+					:time="throttle['positionPaginate'] || 0"></throttle-alert>
+			</v-col>
+			<!-- data table -->
+			<v-data-table-server v-show="!isError" :page="filterParams.page" :headers="positionHeaders"
+				:items="positionIndex" :items-per-page="filterParams.itemsPerPage" item-value="id"
+				:items-length="totalItemLength" :search="filterParams.search" :loading show-select
+				v-model="selectedPositionIds" @update:options="handlePositionPaginate">
+
+				<!-- position name -->
 				<template v-slot:item.name="{ item }">
-					<v-btn variant="text" color="primary" class="text-none custom-link-btn">
-						{{ item.name }}</v-btn>
+					<base-btn :title="item.name" variant="plain" color="primary" class="text-none"></base-btn>
 				</template>
 
+				<!-- position status -->
 				<template v-slot:item.status="{ value }">
 					<base-status-chip :val="value"></base-status-chip>
 				</template>
@@ -175,25 +315,16 @@ const fetchPositionIndex = async (params: object) => {
 				<template v-slot:bottom>
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
-						<list-filter class="d-none d-sm-block" v-model="itemsPerPage" :items="CONFIG.perPage"
-							:label="$t('common.filter.itemPerPage')" max-width="200" min-width="200"
-							:clearable="false"></list-filter>
+						<list-filter class="d-none d-sm-block" v-model="filterParams.itemsPerPage"
+							:items="CONFIG.perPage" :label="$t('common.filter.itemPerPage')" max-width="200"
+							min-width="200" :clearable="false" @update:model-value="fetchPositionIndex"></list-filter>
 
-						<v-pagination v-if="totalPage > 1" v-model="page" :length="totalPage"
-							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"></v-pagination>
+						<v-pagination v-if="totalPage > 1" v-model="filterParams.page" :length="totalPage"
+							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"
+							@update:model-value="fetchPositionIndex"></v-pagination>
 					</div>
 				</template>
 			</v-data-table-server>
 		</v-card>
 	</v-container>
 </template>
-
-<style scoped>
-.custom-link-btn:deep(.v-btn__overlay) {
-	display: none;
-}
-
-.custom-link-btn:hover {
-	text-decoration: underline;
-}
-</style>

@@ -34,12 +34,9 @@ class PositionService
 
 	public function paginate(array $data)
 	{
-		try {
-			$positions = $this->positionRepositoryInterface->paginate($data);
-			return $positions;
-		} catch (\Exception $e) {
-			return false;
-		}
+		$relations = ['creator', 'department', 'parent'];
+		$positions = $this->positionRepositoryInterface->paginate($data, $relations);
+		return $positions;
 	}
 
 	public function list()
@@ -48,9 +45,34 @@ class PositionService
 		return $positions;
 	}
 
-	public function listByDepartment($departmentId)
+	public function listByDepartment(int $departmentId)
 	{
 		$positions = $this->positionRepositoryInterface->listByDepartment($departmentId);
 		return $positions;
+	}
+
+	public function delete(int $id)
+	{
+		return DB::transaction(function () use ($id) {
+			return $this->positionRepositoryInterface->delete($id);
+		});
+	}
+
+	public function bulkDelete(array $data)
+	{
+		$ids = $data['ids'];
+		return DB::transaction(function () use ($ids) {
+			return $this->positionRepositoryInterface->bulkDelete($ids);
+		});
+	}
+
+	public function bulkUpdateStatus(array $data)
+	{
+		$ids = $data['ids'];
+		$payload = ['status' => $data['status']];
+
+		return DB::transaction(function () use ($ids, $payload) {
+			return $this->positionRepositoryInterface->bulkUpdate($ids, $payload);
+		});
 	}
 }

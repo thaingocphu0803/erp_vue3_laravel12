@@ -285,7 +285,7 @@ onMounted(async () => {
 
 				<!-- retry btn -->
 				<retry-btn :disabled="isDisabled('departmentsPaginate')" :loading="loading"
-					@click="fetchDepartmentIndex"></retry-btn>
+					@click.stop="fetchDepartmentIndex"></retry-btn>
 
 				<!-- throttle alert -->
 				<throttle-alert :show="isDisabled('departmentsPaginate')"
@@ -298,11 +298,12 @@ onMounted(async () => {
 				:items-length="totalItemLength" :search="filterParams.search" :loading show-select
 				v-model="selectedDepartmentIds" @update:options="handleDepartmentPaginate">
 
-				<!-- data-table-server item action -->
+				<!-- department name -->
 				<template v-slot:item.name="{ item }">
 					<base-btn :title="item.name" variant="plain" color="primary" class="text-none"></base-btn>
 				</template>
 
+				<!-- department status -->
 				<template v-slot:item.status="{ value }">
 					<base-status-chip :val="value"></base-status-chip>
 				</template>

@@ -18,7 +18,11 @@ class PositionPagnateResource extends JsonResource
 		return [
 			'id'          => $this->id,
 			'name'        => $this->name,
-			'created_at'  	=> Carbon::parse($this->created_at)->format('Y/m/d'),
+			'code' => $this->code,
+			'department_name' => $this->department->name ?? config('system.n_a'),
+			'parent_name' => $this->parent->name ?? config('system.n_a'),
+			'created_by' => $this->creator->name ?? config('system.n_a'),
+			'users_count' => $this->users_count,
 			'status'      => $this->status,
 		];
 	}
