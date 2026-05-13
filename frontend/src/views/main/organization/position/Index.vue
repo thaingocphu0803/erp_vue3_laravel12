@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, reactive, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
@@ -10,7 +10,6 @@ import { debounce } from 'vuetify/lib/util/helpers.mjs'
 import { useRouteQuery } from '@/composables/useRouteQuery'
 import { useFilterModule } from '@/composables/useFilterModule'
 import { useTableModule } from '@/composables/useTableModule'
-import api from '@/services/api'
 import BaseStatusChip from '@/components/BaseStatusChip.vue'
 import { useToastStore } from '@/stores/toast'
 import type { bulkActionStatus, commonStatus } from '@/types/common'
@@ -24,6 +23,9 @@ import BaseBtn from '@/components/BaseBtn.vue'
 import RetryBtn from '@/components/RetryBtn.vue'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import ListBulkAction from '@/components/list/ListBulkAction.vue'
+import { useDepartmentStore } from '@/stores/department'
+import type { Department } from '@/types/department'
+import { t } from '@/plugins/vueI18n'
 
 // route
 const route = useRoute()
@@ -34,6 +36,10 @@ const toast = useToastStore()
 // position store
 const { positionPaginate, positionBulkUpdateStatus, positionBulkDelete } = usePositionStore()
 const { positionIndex } = storeToRefs(usePositionStore())
+
+// department store
+const { departments } = storeToRefs(useDepartmentStore())
+const { departmentsFetch } = useDepartmentStore()
 
 // throttle store
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
@@ -60,6 +66,7 @@ const selectedPositionIds = ref<number[]>([])
 // filter params
 const filterParams = ref<PositionFilterParams>({
 	status: route.query.status as commonStatus | null,
+	department: route.query.department ? Number(route.query.department) : null,
 	search: route.query.search as string | '',
 	itemsPerPage: Number(route.query.itemsPerPage) | CONFIG.itemPerPage,
 	page: Number(route.query.page) | CONFIG.page,
@@ -233,6 +240,35 @@ const handleBulkChangeStatus = async (status: commonStatus) => {
 	}
 }
 
+// department options with "All" option
+const departmentOptions = computed(() => {
+	const allOption: Department = {
+		id: 0,
+		name: t('common.table.position.allDepartmentsApply'),
+		leader_id: null,
+	}
+	return [allOption, ...departments.value]
+})
+
+// loading department in filter
+const loadingDepartment = ref<boolean>(false)
+
+// error message for department filter
+const errorMessageGetDepartmentList = ref<string>('')
+
+// get department list
+const getDepartmentList = async () => {
+	try {
+		loadingDepartment.value = true
+		await departmentsFetch()
+		errorMessageGetDepartmentList.value = ''
+	} catch (error: any) {
+		errorMessageGetDepartmentList.value = 'common.error.fetchDataFailed'
+	} finally {
+		loadingDepartment.value = false
+	}
+}
+
 // on mounted
 onMounted(async () => {
 	initThrottle('positionPaginate')
@@ -260,15 +296,21 @@ onMounted(async () => {
 		<v-card class="elevation-1 mb-4">
 			<v-card-text>
 				<v-row dense>
-					<v-col cols="12" sm="6" lg="4">
+					<v-col cols="12" sm="4" lg="3">
 						<base-search-btn v-model="tempSearch" :label="$t('common.filter.nameOrCode')"
 							@update:model-value="handleUpdateSearchValue">
 						</base-search-btn>
 					</v-col>
 
-					<v-col cols="12" sm="6" lg="3">
+					<v-col cols="12" sm="4" lg="3">
 						<list-filter v-model="filterParams.status" :items="statuses" item-title="name" item-value="id"
 							:label="$t('common.filter.status')"></list-filter>
+					</v-col>
+
+					<v-col cols="12" sm="4" lg="3">
+						<list-filter v-model="filterParams.department" :items="departmentOptions" item-title="name"
+							item-value="id" :label="$t('common.filter.department')"
+							@click.stop="getDepartmentList"></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>

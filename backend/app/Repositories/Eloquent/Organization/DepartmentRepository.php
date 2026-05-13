@@ -16,9 +16,4 @@ class DepartmentRepository extends BaseRepository implements DepartmentRepositor
 	{
 		parent::__construct($model);
 	}
-
-	protected function withAggregates(Builder $query)
-	{
-		return $query->withEmployeeCount();
-	}
 }

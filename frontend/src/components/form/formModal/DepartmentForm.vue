@@ -137,17 +137,10 @@ onMounted(() => {
 		<!-- Department Name -->
 		<v-row dense>
 			<v-col cols="12">
-				<Input
-					name="name"
-					:rules="departmentValidation.name"
-					v-model="departmentFormData.name"
-					:maxlength="CONFIG.maxLengthName"
-					counter
-				>
+				<Input name="name" :rules="departmentValidation.name" v-model="departmentFormData.name"
+					:maxlength="CONFIG.maxLengthName" counter>
 					<template #label>
-						<required-label
-							:label="$t('department.input.departmentName')"
-						></required-label>
+						<required-label :label="$t('department.input.departmentName')"></required-label>
 					</template>
 				</Input>
 			</v-col>
@@ -156,89 +149,52 @@ onMounted(() => {
 		<!-- Department Code & Parent -->
 		<v-row dense>
 			<v-col cols="12" md="6">
-				<Input
-					:label="$t('department.input.departmentCode')"
-					name="code"
-					v-model="departmentFormData.code"
-					:maxlength="CONFIG.maxLengthCode"
-					counter
-				>
+				<Input :label="$t('department.input.departmentCode')" name="code" v-model="departmentFormData.code"
+					:maxlength="CONFIG.maxLengthCode" counter>
 					<template #append-inner>
-						<annotation-tooltip
-							text="department.tooltip.codeAutoGenerate"
-						></annotation-tooltip>
+						<annotation-tooltip text="department.tooltip.codeAutoGenerate"></annotation-tooltip>
 					</template>
 				</Input>
 			</v-col>
 
 			<!-- Department Parent -->
 			<v-col cols="12" md="6">
-				<list-filter
-					:label="$t('department.input.departmentParent')"
-					v-model="departmentFormData.parent_id"
-					:error-messages="
-						isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
-					"
-					:items="departments"
-					searchable
-					item-title="name"
-					item-value="id"
-					:loading
-					@click="getDepartmentList"
-				>
+				<list-filter :label="$t('department.input.departmentParent')" v-model="departmentFormData.parent_id"
+					:error-messages="isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
+						" :items="departments" searchable item-title="name" item-value="id" :loading @click="getDepartmentList">
 					<template #append v-if="isError">
-						<retry-btn
-							@click.stop="getDepartmentList"
-							only-icon
-							:disabled="isDisabled('departmentFetch')"
-						></retry-btn>
+						<retry-btn @click.stop="getDepartmentList" only-icon
+							:disabled="isDisabled('departmentFetch')"></retry-btn>
 					</template>
 				</list-filter>
 
-				<throttle-alert
-					:show="isDisabled('departmentFetch')"
-					:time="throttle['departmentFetch'] || 0"
-				></throttle-alert>
+				<throttle-alert :show="isDisabled('departmentFetch')"
+					:time="throttle['departmentFetch'] || 0"></throttle-alert>
 			</v-col>
 		</v-row>
 
 		<!-- Department Description -->
 		<v-row dense>
 			<v-col cols="12">
-				<Textarea
-					:label="$t('department.input.departmentDesc')"
-					name="description"
-					v-model="departmentFormData.description"
-				></Textarea>
+				<Textarea :label="$t('department.input.departmentDesc')" name="description"
+					v-model="departmentFormData.description"></Textarea>
 			</v-col>
 		</v-row>
 
 		<!-- Throttle Alert -->
 		<v-row dense justify="center">
-			<throttle-alert
-				:time="throttle['departmentCreate'] || 0"
-				:show="isDisabled('departmentCreate')"
-			/>
+			<throttle-alert :time="throttle['departmentCreate'] || 0" :show="isDisabled('departmentCreate')" />
 		</v-row>
 
 		<!-- Actions -->
 		<v-row dense justify="space-between" class="mt-2">
 			<v-col cols="auto">
-				<BaseBtn
-					title="common.btn.cancel"
-					color="red-darken-1"
-					@click.prevent="handleCancel"
-				/>
+				<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="handleCancel" />
 			</v-col>
 			<v-col cols="auto">
-				<BaseBtn
-					title="common.btn.create"
-					color="primary"
-					type="submit"
-					:disabled="isDisabled('departmentCreate')"
-				/>
+				<BaseBtn title="common.btn.create" color="primary" type="submit"
+					:disabled="isDisabled('departmentCreate')" />
 			</v-col>
 		</v-row>
 	</Form>
 </template>
-

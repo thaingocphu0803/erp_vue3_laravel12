@@ -19,7 +19,7 @@ class DepartmentPaginateResource extends JsonResource
 			'id'          => $this->id,
 			'name'        => $this->name,
 			'code'        => $this->code,
-			'users_count' => $this->users_count,
+			'employees_count' => $this->employees_count,
 			'parent'      => $this->parent->name ?? config('system.n_a'),
 			'leader'      => $this->leader->name ?? config('system.n_a'),
 			'leader_id'   => $this->leader_id,

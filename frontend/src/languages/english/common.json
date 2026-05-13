@@ -108,7 +108,11 @@
 				"code": "Role code"
 			},
 			"position": {
-				"name": "Position name"
+				"name": "Position name",
+				"code": "Position code",
+				"parent": "Position in charge",
+				"departmentApply": "Department apply",
+				"allDepartmentsApply": "All departments apply"
 			},
 			"commonColumn": {
 				"createdAt": "Created at",
@@ -154,3 +158,4 @@
 		}
 	}
 }
+

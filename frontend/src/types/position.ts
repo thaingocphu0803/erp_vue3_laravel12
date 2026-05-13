@@ -29,12 +29,14 @@ export interface PositionFormError {
 
 export interface PositionItem extends Position {
 	code: string
-	users_count: number
+	employees_count: number
 	department_name: string
 	parent_name: string
 	created_by: string
 	status: commonStatus
 }
 
-export interface PositionFilterParams extends FilterParams {}
+export interface PositionFilterParams extends FilterParams {
+	department: number | null
+}
 

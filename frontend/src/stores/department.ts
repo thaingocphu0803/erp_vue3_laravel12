@@ -69,3 +69,4 @@ export const useDepartmentStore = defineStore('deparment', () => {
 		departmentBulkUpdateStatus,
 	}
 })
+

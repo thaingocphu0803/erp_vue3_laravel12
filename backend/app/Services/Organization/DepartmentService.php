@@ -34,7 +34,8 @@ class DepartmentService
 	public function paginate(array $data)
 	{
 		$relations = ['creator', 'leader', 'parent'];
-		$departments = $this->departmentRepositoryInterface->paginate($data, $relations);
+		$counts = ['employees'];
+		$departments = $this->departmentRepositoryInterface->paginate($data, $relations, $counts);
 		return $departments;
 	}
 

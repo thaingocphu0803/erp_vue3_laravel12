@@ -108,7 +108,11 @@
 				"code": "Mã vai trò"
 			},
 			"position": {
-				"name": "Tên chức vụ"
+				"name": "Tên chức vụ",
+				"code": "Mã chức vụ",
+				"parent": "Cấp trên",
+				"departmentApply": "Phòng ban áp dụng",
+				"allDepartmentsApply": "Áp dụng cho tất cả phòng ban"
 			},
 			"commonColumn": {
 				"createdAt": "Ngày tạo",
@@ -154,3 +158,4 @@
 		}
 	}
 }
+

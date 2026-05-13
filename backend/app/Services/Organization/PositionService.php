@@ -35,7 +35,8 @@ class PositionService
 	public function paginate(array $data)
 	{
 		$relations = ['creator', 'department', 'parent'];
-		$positions = $this->positionRepositoryInterface->paginate($data, $relations);
+		$counts = ['employees'];
+		$positions = $this->positionRepositoryInterface->paginate($data, $relations, $counts);
 		return $positions;
 	}
 

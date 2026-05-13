@@ -33,7 +33,7 @@ export const useTableModule = () => {
 		},
 		{
 			title: t('common.table.commonColumn.staffCount'),
-			key: 'users_count',
+			key: 'employees_count',
 			align: 'center',
 			headerProps: { class: 'font-weight-bold' },
 		},
@@ -75,14 +75,14 @@ export const useTableModule = () => {
 			headerProps: { class: 'font-weight-bold' },
 		},
 		{
-			title: t('common.table.position.name'),
-			key: 'name',
+			title: t('common.table.position.code'),
+			key: 'code',
 			align: 'center',
 			headerProps: { class: 'font-weight-bold' },
 		},
 		{
-			title: t('common.table.commonColumn.createdAt'),
-			key: 'created_at',
+			title: t('common.table.commonColumn.staffCount'),
+			key: 'employees_count',
 			align: 'center',
 			headerProps: { class: 'font-weight-bold' },
 		},
@@ -91,6 +91,27 @@ export const useTableModule = () => {
 			key: 'status',
 			align: 'center',
 			headerProps: { class: 'font-weight-bold' },
+		},
+		{
+			title: t('common.table.position.parent'),
+			key: 'parent_name',
+			align: 'center',
+			headerProps: { class: 'font-weight-bold' },
+			sortable: false,
+		},
+		{
+			title: t('common.table.position.departmentApply'),
+			key: 'department_name',
+			align: 'center',
+			headerProps: { class: 'font-weight-bold' },
+			sortable: false,
+		},
+		{
+			title: t('common.table.commonColumn.createdBy'),
+			key: 'created_by',
+			align: 'center',
+			headerProps: { class: 'font-weight-bold' },
+			sortable: false,
 		},
 	])
 

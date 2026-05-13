@@ -27,7 +27,7 @@ export interface DepartmentFormError {
 
 export interface DepartmentItem extends Department {
 	code: string
-	users_count: number
+	employees_count: number
 	parent_name: string
 	leader_name: string
 	created_by: string
