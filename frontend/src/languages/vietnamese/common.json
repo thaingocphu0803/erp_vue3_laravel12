@@ -48,7 +48,7 @@
 			"nameOrCode": "Tìm theo tên hoặc mã",
 			"position": "Chức vụ",
 			"status": "Trạng thái",
-			"department": "Phòng Ban",
+			"allDepartmentsApply": "Áp dụng cho tất cả phòng ban",
 			"itemPerPage": "Số dòng/trang"
 		},
 		"staffPosition": {
@@ -111,8 +111,12 @@
 				"name": "Tên chức vụ",
 				"code": "Mã chức vụ",
 				"parent": "Cấp trên",
-				"departmentApply": "Phòng ban áp dụng",
-				"allDepartmentsApply": "Áp dụng cho tất cả phòng ban"
+				"departmentApply": "Phòng ban áp dụng"
+			},
+			"employee": {
+				"email": "Email",
+				"name": "Tên nhân viên",
+				"code": "Mã nhân viên"
 			},
 			"commonColumn": {
 				"createdAt": "Ngày tạo",

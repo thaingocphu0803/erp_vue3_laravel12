@@ -24,6 +24,14 @@ class EmployeeService
 		protected FileService $fileService
 	) {}
 
+	public function paginate(array $data)
+	{
+		$relation = ['credential', 'department', 'position'];
+		$employeePaginate = $this->employeeRepository->paginate($data, $relation);
+
+		return $employeePaginate;
+	}
+
 	public function create(array $data)
 	{
 		$avatarPath = null;

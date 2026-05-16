@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use App\QueryScope\FilterableScope;
+use App\Trait\AuthorRelationTrait;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Employee extends Model
 {
+	use SoftDeletes, FilterableScope, AuthorRelationTrait;
 	protected $searchable = [
 		'name',
 		'code'

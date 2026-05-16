@@ -28,5 +28,14 @@ export const employeeService = {
 			},
 		})
 	},
+
+	/**
+	 * Get paginate employee data
+	 * @param params - Filter parameters
+	 */
+	getPaginate: async (params: object) => {
+		const response = await api.get('employee/index', { params })
+		return response
+	},
 }
 

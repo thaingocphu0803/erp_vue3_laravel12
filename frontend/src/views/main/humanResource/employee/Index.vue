@@ -1,57 +1,264 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
 import ListHeader from '@/components/list/ListHeader.vue'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import CONFIG from '@/config/constants'
+import { useTableModule } from '@/composables/useTableModule'
+import { useRoute } from 'vue-router'
+import { useFilterModule } from '@/composables/useFilterModule'
+import type { EmployeeFilterParams } from '@/types/employee'
+import type { commonStatus } from '@/types/common'
+import { useDepartmentStore } from '@/stores/department'
+import { usePositionStore } from '@/stores/position'
+import { storeToRefs } from 'pinia'
+import { debounce } from 'vuetify/lib/util/helpers.mjs'
+import { useRouteQuery } from '@/composables/useRouteQuery'
+import RetryBtn from '@/components/RetryBtn.vue'
+import ThrottleAlert from '@/components/ThrottleAlert.vue'
+import type { bulkActionStatus } from '@/types/common'
+import { useThrottleStore } from '@/stores/throttle'
+import ListBulkAction from '@/components/list/ListBulkAction.vue'
+import SYSTEM from '@/config/system'
+import { formatLaravelRetryAfter } from '@/utils/errorHandler'
+import { useToastStore } from '@/stores/toast'
+import { useEmployeeStore } from '@/stores/employee'
+import type { Department } from '@/types/department'
+import { t } from '@/plugins/vueI18n'
 
-const search = ref('')
-const itemsPerPage = ref(10)
-const page = ref(1)
+const route = useRoute()
 
-const filterDepartment = ref(null)
-const filterPosition = ref(null)
-const filterStatus = ref(null)
+// toast store
+const toast = useToastStore()
 
-const departments = ['IT', 'Khách hàng cá nhân', 'Khách hàng doanh nghiệp', 'Marketing', 'Kế toán']
-const positions = ['Nhân viên', 'Trưởng phòng', 'Phó phòng', 'Giám đốc', 'Thực tập sinh']
-const statuses = ['Active', 'Inactive']
+// department store
+const { departments } = storeToRefs(useDepartmentStore())
+const { departmentsFetch } = useDepartmentStore()
 
-const headers = [
-	{ title: 'Tên', key: 'name', align: 'start' },
-	{ title: 'Mã Nhân viên', key: 'code', align: 'start' },
-	{ title: 'Phòng ban', key: 'department' },
-	{ title: 'Chức vụ', key: 'position' },
-	{ title: 'Trạng thái', key: 'status' },
-]
+// position store
+const { positions } = storeToRefs(usePositionStore())
+const { positionFetch } = usePositionStore()
 
-// Tạo 150 nhân viên giả lập đềEcó đủ 15 trang
-const allEmployees = Array.from({ length: 150 }, (_, i) => ({
-	id: i + 1,
-	name: `NguyềE Văn ${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
-	code: `${String.fromCharCode(65 + (i % 26))} ${i + 1}`,
-	department: departments[i % 5],
-	position: positions[i % 5],
-	status: i % 4 === 0 ? 'Inactive' : 'Active',
-}))
+// throttle store
+const { throttle, isDisabled } = storeToRefs(useThrottleStore())
+const { initThrottle, startThrottle } = useThrottleStore()
 
-const employees = ref(allEmployees)
+// employee store
+const { employeePaginate } = useEmployeeStore()
+const { employeeIndex } = storeToRefs(useEmployeeStore())
 
-const filteredEmployees = computed(() => {
-	return employees.value.filter((emp) => {
-		const matchName = emp.name.toLowerCase().includes(search.value.toLowerCase())
-		const matchDept = !filterDepartment.value || emp.department === filterDepartment.value
-		const matchPos = !filterPosition.value || emp.position === filterPosition.value
-		const matchStatus = !filterStatus.value || emp.status === filterStatus.value
+// loading index
+const loading = ref<boolean>(false)
 
-		return matchName && matchDept && matchPos && matchStatus
+// is bulk proccessing
+const isBulkProccessing = ref<bulkActionStatus | null>(null)
+
+// error retrieve index
+const isError = ref<boolean>(false)
+
+// error message retrieve index
+const errorMessage = ref<string>('')
+
+// selected employee ids
+const selectedEmployeeIds = ref<number[]>([])
+
+// filter params
+const filterParams = ref<EmployeeFilterParams>({
+	status: route.query.status as commonStatus | null,
+	department_id: route.query.department ? Number(route.query.department) : null,
+	position_id: route.query.position ? Number(route.query.position) : null,
+	search: route.query.search as string | '',
+	itemsPerPage: Number(route.query.itemsPerPage) | CONFIG.itemPerPage,
+	page: Number(route.query.page) | CONFIG.page,
+	sortKey: null,
+	sortOrder: null,
+})
+
+// total item length
+const totalItemLength = ref<number>(0)
+
+// total page
+const totalPage = ref<number>(0)
+
+// update query params
+const { updateQueryParams, replaceQueryParams } = useRouteQuery()
+
+
+const { employeeHeaders } = useTableModule()
+
+// handle update search value
+const handleUpdateSearchValue = debounce((val: string) => {
+	filterParams.value.search = val
+}, CONFIG.debounceTimeout)
+
+// reset url to default
+const resetURLToDefault = () => {
+	filterParams.value.page = CONFIG.page
+	filterParams.value.itemsPerPage = CONFIG.itemPerPage
+	filterParams.value.search = ''
+	filterParams.value.status = null
+	filterParams.value.sortKey = null
+	filterParams.value.sortOrder = null
+
+	replaceQueryParams({
+		page: filterParams.value.page,
+		itemsPerPage: filterParams.value.itemsPerPage,
 	})
+}
+
+// watch filter status change
+watch(
+	[
+		() => filterParams.value.status,
+		() => filterParams.value.department_id,
+		() => filterParams.value.position_id
+	],
+	async () => {
+		let isPageChanged = false
+
+		if (filterParams.value.page !== CONFIG.page) {
+			filterParams.value.page = CONFIG.page
+			isPageChanged = true
+		}
+
+		updateQueryParams(filterParams.value)
+
+		if (!isPageChanged) {
+			await fetchEmployeeIndex()
+		}
+	},
+)
+
+// handle employee pagination
+const handleEmployeePaginate = async (options: any) => {
+	const { sortBy, itemsPerPage: newItemsPerPage, page: newPage, search: newSearch } = options
+
+	filterParams.value.page = newPage
+	filterParams.value.search = newSearch
+	filterParams.value.itemsPerPage = newItemsPerPage
+	filterParams.value.sortKey = sortBy.length ? sortBy[0].key : undefined
+	filterParams.value.sortOrder = sortBy.length ? sortBy[0].order : undefined
+
+	updateQueryParams(filterParams.value)
+
+	await fetchEmployeeIndex()
+}
+
+// fetch employee index
+const fetchEmployeeIndex = async () => {
+	try {
+		loading.value = true
+		const response = await employeePaginate(filterParams.value)
+
+		isError.value = false
+		totalItemLength.value = response?.data?.meta.total
+		totalPage.value = response?.data?.meta.last_page
+	} catch (error: any) {
+		isError.value = true
+
+		// handle unprocessable entity error
+		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+			errorMessage.value = error.response.data.messageCode
+			toast.show(errorMessage.value, 'error')
+			resetURLToDefault()
+		}
+
+		// handle too many request error
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['employeePaginate'] = formatLaravelRetryAfter(error)
+			startThrottle('employeePaginate')
+		}
+
+		// handle internal server error
+		if (error.status === SYSTEM.SERVER_ERROR.INTERNAL_SERVER_ERROR) {
+			errorMessage.value = 'common.error.fetchDataFailed'
+			toast.show(errorMessage.value, 'error')
+		}
+	} finally {
+		loading.value = false
+	}
+}
+
+// loading department in filter
+const loadingDepartment = ref<boolean>(false)
+
+// error message for department filter
+const errorMessageGetDepartmentList = ref<string>('')
+
+const isErrorGetDepartmentList = ref<boolean>(false)
+
+// get department list
+const getDepartmentList = async () => {
+	if (isDisabled.value('departmentFetch:index')) return
+
+	try {
+		loadingDepartment.value = true
+		await departmentsFetch()
+		isErrorGetDepartmentList.value = false
+		errorMessageGetDepartmentList.value = ''
+	} catch (error: any) {
+		isErrorGetDepartmentList.value = true
+
+		errorMessageGetDepartmentList.value = 'common.error.fetchDataFailed'
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['departmentFetch:index'] = formatLaravelRetryAfter(error)
+			startThrottle('departmentFetch:index')
+		}
+
+	} finally {
+		loadingDepartment.value = false
+	}
+}
+
+// loading position in filter
+const loadingPosition = ref<boolean>(false)
+
+// error message for position filter
+const errorMessageGetPositionList = ref<string>('')
+
+const isErrorGetPositionList = ref<boolean>(false)
+
+// get position list
+const getPositionList = async () => {
+	if (isDisabled.value('positionFetch:index')) return
+
+	try {
+		loadingPosition.value = true
+		await positionFetch()
+		isErrorGetPositionList.value = false
+		errorMessageGetPositionList.value = ''
+	} catch (error: any) {
+		isErrorGetPositionList.value = true
+
+		errorMessageGetPositionList.value = 'common.error.fetchDataFailed'
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['positionFetch:index'] = formatLaravelRetryAfter(error)
+			startThrottle('positionFetch:index')
+		}
+
+	} finally {
+		loadingPosition.value = false
+	}
+}
+
+// on mounted
+onMounted(async () => {
+	initThrottle('employeePaginate')
+	initThrottle('departmentFetch:index')
+	initThrottle('positionFetch:index')
+
+	if (isDisabled.value('departmentFetch:index')) {
+		isErrorGetDepartmentList.value = true
+	}
+
+	if (isDisabled.value('positionFetch:index')) {
+		isErrorGetPositionList.value = true
+	}
 })
 
-const pageCount = computed(() => {
-	return Math.ceil(filteredEmployees.value.length / itemsPerPage.value) || 1
-})
 </script>
 
 <template>
@@ -72,54 +279,89 @@ const pageCount = computed(() => {
 		<v-card class="elevation-1 mb-4">
 			<v-card-text>
 				<v-row dense>
-					<v-col cols="12" sm="6" md="3" lg="3">
-						<base-search-btn v-model="search" :label="$t('common.filter.nameOrCode')">
+					<v-col cols="12" sm="4" lg="3">
+						<base-search-btn :label="$t('common.filter.nameOrCode')"
+							@update:model-value="handleUpdateSearchValue">
 						</base-search-btn>
 					</v-col>
 
-					<v-col cols="12" sm="6" md="3" lg="2">
-						<list-filter v-model="filterDepartment" :items="departments"
-							:label="$t('common.filter.department')" searchable></list-filter>
+					<v-col cols="12" sm="4" lg="3">
+						<list-filter v-model="filterParams.department_id" :items="departments" item-title="name"
+							item-value="id" :label="$t('common.filter.department')"
+							:error-messages="isDisabled('departmentFetch:index') ? '' : errorMessageGetDepartmentList"
+							:loading="loadingDepartment" @click.stop="getDepartmentList" searchable>
+							<template #append-inner v-if="isErrorGetDepartmentList">
+								<retry-btn only-icon :disabled="isDisabled('departmentFetch:index')"
+									@click.stop="getDepartmentList"></retry-btn>
+							</template>
+						</list-filter>
+						<throttle-alert :show="isDisabled('departmentFetch:index')"
+							:time="throttle['departmentFetch:index'] || 0"></throttle-alert>
 					</v-col>
 
-					<v-col cols="12" sm="6" md="3" lg="2">
-						<list-filter v-model="filterPosition" :items="positions" :label="$t('common.filter.position')"
-							searchable></list-filter>
+					<v-col cols="12" sm="4" lg="3">
+						<list-filter v-model="filterParams.position_id" :items="positions" item-title="name"
+							item-value="id" :label="$t('common.filter.position')"
+							:error-messages="isDisabled('positionFetch:index') ? '' : errorMessageGetPositionList"
+							:loading="loadingDepartment" @click.stop="getPositionList" searchable>
+							<template #append-inner v-if="isErrorGetPositionList">
+								<retry-btn only-icon :disabled="isDisabled('positionFetch:index')"
+									@click.stop="getPositionList"></retry-btn>
+							</template>
+						</list-filter>
+						<throttle-alert :show="isDisabled('positionFetch:index')"
+							:time="throttle['positionFetch:index'] || 0"></throttle-alert>
 					</v-col>
 
-					<v-col cols="12" sm="6" md="3" lg="2">
-						<list-filter v-model="filterStatus" :items="statuses"
-							:label="$t('common.filter.status')"></list-filter>
-					</v-col>
 				</v-row>
 			</v-card-text>
 		</v-card>
 
+		<!-- data table -->
 		<v-card class="elevation-1">
-			<v-data-table v-model:page="page" :headers="headers" :items="filteredEmployees"
-				:items-per-page="itemsPerPage" item-value="id">
+			<!-- error state -->
+			<v-col cols="12" align="center" justify="center" v-show="isError">
+				<div class="text-body-1 text-grey-darken-1 font-weight-medium mb-5">
+					{{ errorMessage.length ? $t(errorMessage) : '' }}
+				</div>
+
+				<!-- retry btn -->
+				<retry-btn :disabled="isDisabled('employeePaginate')" :loading="loading"
+					@click.stop="fetchEmployeeIndex"></retry-btn>
+
+				<!-- throttle alert -->
+				<throttle-alert :show="isDisabled('employeePaginate')"
+					:time="throttle['employeePaginate'] || 0"></throttle-alert>
+			</v-col>
+			<!-- data table -->
+			<v-data-table-server v-show="!isError" :page="filterParams.page" :headers="employeeHeaders"
+				:items="employeeIndex" :items-per-page="filterParams.itemsPerPage" item-value="id"
+				:items-length="totalItemLength" :search="filterParams.search" :loading show-select
+				v-model="selectedEmployeeIds" @update:options="handleEmployeePaginate">
+
+				<!-- position name -->
 				<template v-slot:item.name="{ item }">
 					<v-btn density="compact" variant="plain" color="primary" class="text-none">{{ item.name }}</v-btn>
 				</template>
 
+				<!-- position status -->
 				<template v-slot:item.status="{ value }">
-					<v-chip :color="value === 'Active' ? 'success' : 'error'" size="small" variant="flat"
-						class="text-uppercase font-weight-bold">
-						{{ value }}
-					</v-chip>
+					<base-status-chip :val="value"></base-status-chip>
 				</template>
 
 				<template v-slot:bottom>
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
-						<list-filter class="d-none d-sm-block" v-model="itemsPerPage" :items="CONFIG.perPage"
-							:label="$t('common.filter.itemPerPage')" max-width="200" min-width="200"></list-filter>
+						<list-filter class="d-none d-sm-block" v-model="filterParams.itemsPerPage"
+							:items="CONFIG.perPage" :label="$t('common.filter.itemPerPage')" max-width="200"
+							min-width="200" :clearable="false" @update:model-value="fetchEmployeeIndex"></list-filter>
 
-						<v-pagination v-model="page" :length="pageCount" :total-visible="5" rounded="shape"
-							density="comfortable"></v-pagination>
+						<v-pagination v-if="totalPage > 1" v-model="filterParams.page" :length="totalPage"
+							:total-visible="CONFIG.pageVisible" rounded="shape" density="comfortable"
+							@update:model-value="fetchEmployeeIndex"></v-pagination>
 					</div>
 				</template>
-			</v-data-table>
+			</v-data-table-server>
 		</v-card>
 	</v-container>
 </template>

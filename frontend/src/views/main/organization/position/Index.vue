@@ -57,9 +57,6 @@ const isError = ref<boolean>(false)
 // error message retrieve index
 const errorMessage = ref<string>('')
 
-// table pagination
-const tempSearch = ref((route.query.search as string) || '')
-
 // selected position ids
 const selectedPositionIds = ref<number[]>([])
 
@@ -88,6 +85,12 @@ const { statuses } = useFilterModule()
 
 // position headers
 const { positionHeaders } = useTableModule()
+
+// handle update search value
+const handleUpdateSearchValue = debounce((val: string) => {
+	filterParams.value.search = val
+}, CONFIG.debounceTimeout)
+
 
 // reset url to default
 const resetURLToDefault = () => {
@@ -122,12 +125,6 @@ watch(
 		}
 	},
 )
-
-
-// handle update search value
-const handleUpdateSearchValue = debounce((val: string) => {
-	filterParams.value.search = val
-}, CONFIG.debounceTimeout)
 
 // handle position pagination
 const handlePositionPaginate = async (options: any) => {
@@ -244,7 +241,7 @@ const handleBulkChangeStatus = async (status: commonStatus) => {
 const departmentOptions = computed(() => {
 	const allOption: Department = {
 		id: 0,
-		name: t('common.table.position.allDepartmentsApply'),
+		name: t('common.filter.allDepartmentsApply'),
 		leader_id: null,
 	}
 	return [allOption, ...departments.value]
@@ -315,7 +312,7 @@ onMounted(async () => {
 			<v-card-text>
 				<v-row dense>
 					<v-col cols="12" sm="4" lg="3">
-						<base-search-btn v-model="tempSearch" :label="$t('common.filter.nameOrCode')"
+						<base-search-btn :label="$t('common.filter.nameOrCode')"
 							@update:model-value="handleUpdateSearchValue">
 						</base-search-btn>
 					</v-col>
@@ -329,7 +326,7 @@ onMounted(async () => {
 						<list-filter v-model="filterParams.department_id" :items="departmentOptions" item-title="name"
 							item-value="id" :label="$t('common.filter.department')"
 							:error-messages="isDisabled('departmentFetch:index') ? '' : errorMessageGetDepartmentList"
-							:loading="loadingDepartment" @click.stop="getDepartmentList">
+							:loading="loadingDepartment" @click.stop="getDepartmentList" searchable>
 							<template #append-inner v-if="isErrorGetDepartmentList">
 								<retry-btn only-icon :disabled="isDisabled('departmentFetch:index')"
 									@click.stop="getDepartmentList"></retry-btn>

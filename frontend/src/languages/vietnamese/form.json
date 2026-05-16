@@ -335,14 +335,26 @@
 			"locale": {
 				"required": "Vui lòng chọn ngôn ngữ",
 				"format": "Sai định dạng ngôn ngữ"
+			},
+			"bulkAction": {
+				"delete": "Yêu cầu không hợp lệ. Không thể xóa các nhân viên được chọn",
+				"updateStatus": "Yêu cầu không hợp lệ. Không thể cập nhật trạng thái cho các nhân viên được chọn"
 			}
 		},
 		"alert": {
 			"error": {
-				"create": "Tạo mới nhân viên thất bại"
+				"create": "Tạo mới nhân viên thất bại",
+				"getList": "Lấy danh sách nhân viên thất bại. Vui lòng thử lại",
+				"notFoundForDelete": "Không thể xóa nhân viên. Nhân viên không tồn tại",
+				"delete": "Xóa nhân viên thất bại. Vui lòng thử lại",
+				"bulkDelete": "Không thể xóa các nhân viên đã chọn. Vui lòng thử lại sau",
+				"bulkUpdateStatus": "Không thể cập nhật trạng thái cho các nhân viên đã chọn. Vui lòng thử lại sau"
 			},
 			"success": {
-				"create": "Tạo mới nhân viên thành công"
+				"create": "Tạo mới nhân viên thành công",
+				"delete": "Xóa nhân viên thành công",
+				"bulkDelete": "Xóa các nhân viên đã chọn thành công",
+				"bulkUpdateStatus": "Cập nhật trạng thái cho các nhân viên đã chọn thành công"
 			}
 		}
 	},

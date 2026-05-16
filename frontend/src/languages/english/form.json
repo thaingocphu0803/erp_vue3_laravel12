@@ -338,14 +338,26 @@
 			"locale": {
 				"required": "Language is required",
 				"format": "Invalid language format"
+			},
+			"bulkAction": {
+				"delete": "Bad request. Failed to delete selected employees",
+				"updateStatus": "Bad request. Failed to update status for selected employees"
 			}
 		},
 		"alert": {
 			"error": {
-				"create": "Failed to create employee"
+				"create": "Failed to create employee",
+				"getList": "Failed to load employee list. Click to try again",
+				"notFoundForDelete": "Failed to delete employee. Employee does not exist",
+				"delete": "Failed to delete employee. Please try again later",
+				"bulkDelete": "Failed to delete selected employees. Please try again later",
+				"bulkUpdateStatus": "Failed to update status for selected employees. Please try again later"
 			},
 			"success": {
-				"create": "Employee created successfully"
+				"create": "Employee created successfully",
+				"delete": "Employee deleted successfully",
+				"bulkDelete": "Selected employees deleted successfully",
+				"bulkUpdateStatus": "Selected employees updated successfully"
 			}
 		}
 	},

@@ -150,6 +150,54 @@ export const useTableModule = () => {
 		},
 	])
 
+	const employeeHeaders = computed<TableHeader[]>(() => [
+		{
+			title: t('common.table.employee.name'),
+			key: 'name',
+			align: 'start',
+			headerProps: { class: 'font-weight-bold' },
+		},
+		{
+			title: t('common.table.employee.code'),
+			key: 'code',
+			align: 'start',
+			headerProps: { class: 'font-weight-bold' },
+		},
+		{
+			title: t('common.table.employee.email'),
+			key: 'email',
+			align: 'start',
+			headerProps: { class: 'font-weight-bold' },
+		},
+		{
+			title: t('common.filter.position'),
+			key: 'position_name',
+			align: 'start',
+			headerProps: { class: 'font-weight-bold' },
+			sortable: false,
+		},
+		{
+			title: t('common.filter.status'),
+			key: 'status',
+			align: 'center',
+			headerProps: { class: 'font-weight-bold' },
+		},
+		{
+			title: t('common.filter.department'),
+			key: 'department_name',
+			align: 'start',
+			headerProps: { class: 'font-weight-bold' },
+			sortable: false,
+		},
+		{
+			title: t('common.table.commonColumn.createdBy'),
+			key: 'created_by',
+			align: 'start',
+			headerProps: { class: 'font-weight-bold' },
+			sortable: false,
+		},
+	])
+
 	//permission scope table header
 	const permissionScopeHeaders = computed<permissionScopeHeaders[]>(() => [
 		{ title: t('common.permission.scope.all'), key: 'ALL' },
@@ -158,6 +206,12 @@ export const useTableModule = () => {
 		{ title: t('common.permission.scope.none'), key: 'NONE' },
 	])
 
-	return { departmentHeaders, positionHeaders, roleHeaders, permissionScopeHeaders }
+	return {
+		departmentHeaders,
+		positionHeaders,
+		roleHeaders,
+		permissionScopeHeaders,
+		employeeHeaders,
+	}
 }
 

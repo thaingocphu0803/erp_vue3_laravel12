@@ -8,14 +8,8 @@ const props = defineProps<Props>()
 
 <template>
 	<!-- Searchable -->
-	<v-autocomplete
-		v-if="props.searchable"
-		v-bind="$attrs"
-		variant="outlined"
-		density="compact"
-		hide-details="auto"
-		clearable
-	>
+	<v-autocomplete v-if="props.searchable" v-bind="$attrs" variant="outlined" density="compact" hide-details="auto"
+		clearable>
 		<template v-slot:message="{ message }">{{ $t(message) }}</template>
 
 		<template v-for="(_, name) in $slots" #[name]="slotProps">
@@ -24,14 +18,7 @@ const props = defineProps<Props>()
 	</v-autocomplete>
 
 	<!-- Normal Select -->
-	<v-select
-		v-else
-		v-bind="$attrs"
-		variant="outlined"
-		density="compact"
-		hide-details="auto"
-		clearable
-	>
+	<v-select v-else v-bind="$attrs" variant="outlined" density="compact" hide-details="auto" clearable>
 		<template v-slot:message="{ message }">{{ $t(message) }}</template>
 
 		<template v-for="(_, name) in $slots" #[name]="slotProps">

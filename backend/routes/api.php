@@ -64,4 +64,5 @@ Route::controller(AdministrativeUnitController::class)->prefix('administrative-u
 // EmployeeController
 Route::controller(EmployeeController::class)->prefix('employee')->middleware(['auth:sanctum', 'verified'])->group(function () {
 	Route::post('create', 'create')->middleware(['throttle:retry']);
+	Route::get('index', 'index')->middleware(['throttle:index']);
 });

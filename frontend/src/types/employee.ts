@@ -1,8 +1,18 @@
-import type { commonGender, commonLocale } from './common'
+import type { commonGender, commonLocale, commonStatus, FilterParams } from './common'
 
 /**
  * Employee related types
  */
+export interface EmployeeItem {
+	id: number
+	name: string
+	avatar: string
+	email: string
+	code: string
+	department_name: string
+	position_name: string
+	created_by: string
+}
 
 export interface EmployeeFormData {
 	avatar: File | null
@@ -38,5 +48,10 @@ export interface EmployeeFormError {
 	is_leader: string
 	code: string
 	locale: string
+}
+
+export interface EmployeeFilterParams extends FilterParams {
+	department_id: number | null
+	position_id: number | null
 }
 
