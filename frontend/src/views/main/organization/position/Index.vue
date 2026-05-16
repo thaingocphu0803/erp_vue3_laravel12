@@ -66,7 +66,7 @@ const selectedPositionIds = ref<number[]>([])
 // filter params
 const filterParams = ref<PositionFilterParams>({
 	status: route.query.status as commonStatus | null,
-	department: route.query.department ? Number(route.query.department) : null,
+	department_id: route.query.department ? Number(route.query.department) : null,
 	search: route.query.search as string | '',
 	itemsPerPage: Number(route.query.itemsPerPage) | CONFIG.itemPerPage,
 	page: Number(route.query.page) | CONFIG.page,
@@ -106,7 +106,7 @@ const resetURLToDefault = () => {
 
 // watch filter status change
 watch(
-	() => filterParams.value.status,
+	[() => filterParams.value.status, () => filterParams.value.department_id],
 	async () => {
 		let isPageChanged = false
 
@@ -256,14 +256,27 @@ const loadingDepartment = ref<boolean>(false)
 // error message for department filter
 const errorMessageGetDepartmentList = ref<string>('')
 
+const isErrorGetDepartmentList = ref<boolean>(false)
+
 // get department list
 const getDepartmentList = async () => {
+	if (isDisabled.value('departmentFetch:index')) return
+
 	try {
 		loadingDepartment.value = true
 		await departmentsFetch()
+		isErrorGetDepartmentList.value = false
 		errorMessageGetDepartmentList.value = ''
 	} catch (error: any) {
+		isErrorGetDepartmentList.value = true
+
 		errorMessageGetDepartmentList.value = 'common.error.fetchDataFailed'
+
+		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
+			throttle.value['departmentFetch:index'] = formatLaravelRetryAfter(error)
+			startThrottle('departmentFetch:index')
+		}
+
 	} finally {
 		loadingDepartment.value = false
 	}
@@ -275,6 +288,11 @@ onMounted(async () => {
 	initThrottle(`positionBulkUpdateStatus:${CONFIG.active}`)
 	initThrottle(`positionBulkUpdateStatus:${CONFIG.inactive}`)
 	initThrottle('positionBulkDelete')
+	initThrottle('departmentFetch:index')
+
+	if (isDisabled.value('departmentFetch:index')) {
+		isErrorGetDepartmentList.value = true
+	}
 })
 </script>
 
@@ -308,9 +326,17 @@ onMounted(async () => {
 					</v-col>
 
 					<v-col cols="12" sm="4" lg="3">
-						<list-filter v-model="filterParams.department" :items="departmentOptions" item-title="name"
+						<list-filter v-model="filterParams.department_id" :items="departmentOptions" item-title="name"
 							item-value="id" :label="$t('common.filter.department')"
-							@click.stop="getDepartmentList"></list-filter>
+							:error-messages="isDisabled('departmentFetch:index') ? '' : errorMessageGetDepartmentList"
+							:loading="loadingDepartment" @click.stop="getDepartmentList">
+							<template #append-inner v-if="isErrorGetDepartmentList">
+								<retry-btn only-icon :disabled="isDisabled('departmentFetch:index')"
+									@click.stop="getDepartmentList"></retry-btn>
+							</template>
+						</list-filter>
+						<throttle-alert :show="isDisabled('departmentFetch:index')"
+							:time="throttle['departmentFetch:index'] || 0"></throttle-alert>
 					</v-col>
 				</v-row>
 			</v-card-text>
@@ -346,7 +372,7 @@ onMounted(async () => {
 
 				<!-- position name -->
 				<template v-slot:item.name="{ item }">
-					<base-btn :title="item.name" variant="plain" color="primary" class="text-none"></base-btn>
+					<v-btn density="compact" variant="plain" color="primary" class="text-none">{{ item.name }}</v-btn>
 				</template>
 
 				<!-- position status -->

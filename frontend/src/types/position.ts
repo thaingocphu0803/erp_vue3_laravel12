@@ -37,6 +37,6 @@ export interface PositionItem extends Position {
 }
 
 export interface PositionFilterParams extends FilterParams {
-	department: number | null
+	department_id: number | null
 }
 

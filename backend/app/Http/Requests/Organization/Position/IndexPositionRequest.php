@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Organization\Position;
 
 use App\Http\Requests\IndexCommonRequest;
+use Illuminate\Validation\Rule;
 
 class IndexPositionRequest extends IndexCommonRequest
 {
@@ -21,7 +22,17 @@ class IndexPositionRequest extends IndexCommonRequest
 	 */
 	public function rules(): array
 	{
-		return parent::rules();
+		$parent = parent::rules();
+
+		$department = ['bail', 'nullable', 'integer'];
+
+		if (intval($this->department_id) > 0) {
+			$department[] = Rule::exists('departments', 'id');
+		}
+
+		return array_merge($parent, [
+			'department_id' => $department
+		]);
 	}
 
 	public function messages(): array

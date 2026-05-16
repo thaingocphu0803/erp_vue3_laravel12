@@ -78,58 +78,33 @@ const pageCount = computed(() => {
 					</v-col>
 
 					<v-col cols="12" sm="6" md="3" lg="2">
-						<list-filter
-							v-model="filterDepartment"
-							:items="departments"
-							:label="$t('common.filter.department')"
-							searchable
-						></list-filter>
+						<list-filter v-model="filterDepartment" :items="departments"
+							:label="$t('common.filter.department')" searchable></list-filter>
 					</v-col>
 
 					<v-col cols="12" sm="6" md="3" lg="2">
-						<list-filter
-							v-model="filterPosition"
-							:items="positions"
-							:label="$t('common.filter.position')"
-							searchable
-						></list-filter>
+						<list-filter v-model="filterPosition" :items="positions" :label="$t('common.filter.position')"
+							searchable></list-filter>
 					</v-col>
 
 					<v-col cols="12" sm="6" md="3" lg="2">
-						<list-filter
-							v-model="filterStatus"
-							:items="statuses"
-							:label="$t('common.filter.status')"
-						></list-filter>
+						<list-filter v-model="filterStatus" :items="statuses"
+							:label="$t('common.filter.status')"></list-filter>
 					</v-col>
 				</v-row>
 			</v-card-text>
 		</v-card>
 
 		<v-card class="elevation-1">
-			<v-data-table
-				v-model:page="page"
-				:headers="headers"
-				:items="filteredEmployees"
-				:items-per-page="itemsPerPage"
-				item-value="id"
-			>
+			<v-data-table v-model:page="page" :headers="headers" :items="filteredEmployees"
+				:items-per-page="itemsPerPage" item-value="id">
 				<template v-slot:item.name="{ item }">
-					<a
-						href="#"
-						class="text-primary font-weight-medium text-decoration-none text-hover-underline"
-					>
-						{{ item.name }}
-					</a>
+					<v-btn density="compact" variant="plain" color="primary" class="text-none">{{ item.name }}</v-btn>
 				</template>
 
 				<template v-slot:item.status="{ value }">
-					<v-chip
-						:color="value === 'Active' ? 'success' : 'error'"
-						size="small"
-						variant="flat"
-						class="text-uppercase font-weight-bold"
-					>
+					<v-chip :color="value === 'Active' ? 'success' : 'error'" size="small" variant="flat"
+						class="text-uppercase font-weight-bold">
 						{{ value }}
 					</v-chip>
 				</template>
@@ -137,22 +112,11 @@ const pageCount = computed(() => {
 				<template v-slot:bottom>
 					<v-divider></v-divider>
 					<div class="d-flex justify-center justify-sm-space-between align-center pa-4">
-						<list-filter
-							class="d-none d-sm-block"
-							v-model="itemsPerPage"
-							:items="CONFIG.perPage"
-							:label="$t('common.filter.itemPerPage')"
-							max-width="200"
-							min-width="200"
-						></list-filter>
+						<list-filter class="d-none d-sm-block" v-model="itemsPerPage" :items="CONFIG.perPage"
+							:label="$t('common.filter.itemPerPage')" max-width="200" min-width="200"></list-filter>
 
-						<v-pagination
-							v-model="page"
-							:length="pageCount"
-							:total-visible="5"
-							rounded="shape"
-							density="comfortable"
-						></v-pagination>
+						<v-pagination v-model="page" :length="pageCount" :total-visible="5" rounded="shape"
+							density="comfortable"></v-pagination>
 					</div>
 				</template>
 			</v-data-table>

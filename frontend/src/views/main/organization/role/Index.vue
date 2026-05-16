@@ -300,7 +300,7 @@ onMounted(() => {
 				@update:options="handleRolePaginate">
 				<!-- data-table-server item action -->
 				<template v-slot:item.name="{ item }">
-					<base-btn :title="item.name" variant="plain" color="primary" class="text-none"></base-btn>
+					<v-btn density="compact" variant="plain" color="primary" class="text-none">{{ item.name }}</v-btn>
 				</template>
 
 				<template v-slot:item.status="{ value }">

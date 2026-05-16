@@ -35,7 +35,6 @@ class PositionController extends Controller
 	public function index(IndexPositionRequest $indexPositionRequest)
 	{
 		$data = $indexPositionRequest->validated();
-
 		$positions = $this->positionService->paginate($data);
 		return PositionPagnateResource::collection($positions)->response();
 	}
