@@ -131,29 +131,14 @@ onMounted(() => {
 			<!-- Avatar Upload (Centered) -->
 			<div class="d-flex flex-column align-center justify-center mb-6">
 				<!-- Avatar -->
-				<v-avatar
-					variant="plain"
-					color="primary"
-					size="150"
-					class="mb-3 text-h3 text-white font-weight-bold"
-					:image="avatarReview"
-				/>
+				<v-avatar variant="plain" color="primary" size="150" class="mb-3 text-h3 text-white font-weight-bold"
+					:image="avatarReview" />
 
 				<!-- Upload Avatar Button -->
-				<v-file-input
-					v-model="employeeFormData.avatar"
-					accept="image/png, image/jpeg, image/jpg"
-					:label="$t('employee.input.uploadAvatar')"
-					variant="solo-inverted"
-					density="compact"
-					prepend-icon="mdi-camera"
-					glow
-					icon-color="primary"
-					class="mt-2"
-					min-width="250px"
-					validate-on="blur"
-					:rules="employeeValidation.avatar"
-				>
+				<v-file-input v-model="employeeFormData.avatar" accept="image/png, image/jpeg, image/jpg"
+					:label="$t('employee.input.uploadAvatar')" variant="solo-inverted" density="compact"
+					prepend-icon="mdi-camera" glow icon-color="primary" class="mt-2" min-width="250px"
+					validate-on="blur" :rules="employeeValidation.avatar">
 					<template v-slot:message="{ message }">{{ $t(message) }}</template>
 				</v-file-input>
 
@@ -170,64 +155,39 @@ onMounted(() => {
 				<h4 class="text-h6 font-weight-bold mb-4 text-primary">{{ $t(section.title) }}</h4>
 
 				<!-- Account Section -->
-				<account-section
-					v-if="section.id === 1"
-					v-model:email="employeeFormData.email"
-					v-model:role_ids="employeeFormData.role_ids"
-				/>
+				<account-section v-if="section.id === 1" v-model:email="employeeFormData.email"
+					v-model:role_ids="employeeFormData.role_ids" />
 
 				<!-- Profile Section -->
-				<profile-section
-					v-else-if="section.id === 2"
-					v-model:name="employeeFormData.name"
-					v-model:code="employeeFormData.code"
-					v-model:gender="employeeFormData.gender"
+				<profile-section v-else-if="section.id === 2" v-model:name="employeeFormData.name"
+					v-model:code="employeeFormData.code" v-model:gender="employeeFormData.gender"
 					v-model:birth_date="employeeFormData.birth_date"
-					v-model:phone_number="employeeFormData.phone_number"
-					v-model:address="employeeFormData.address"
+					v-model:phone_number="employeeFormData.phone_number" v-model:address="employeeFormData.address"
 					v-model:ward_code="employeeFormData.ward_code"
-					v-model:province_code="employeeFormData.province_code"
-					v-model:locale="employeeFormData.locale"
-				/>
+					v-model:province_code="employeeFormData.province_code" v-model:locale="employeeFormData.locale" />
 
 				<!-- Organization Section -->
-				<organization-section
-					v-else
-					v-model:department_id="employeeFormData.department_id"
-					v-model:position_id="employeeFormData.position_id"
-					v-model:is_leader="employeeFormData.is_leader"
-				/>
+				<organization-section v-else v-model:department_id="employeeFormData.department_id"
+					v-model:position_id="employeeFormData.position_id" v-model:is_leader="employeeFormData.is_leader" />
 
 				<v-divider v-if="section.id !== sections.length" class="my-6"></v-divider>
 			</template>
 
 			<!-- Throttle Alert -->
 			<v-row dense justify="center">
-				<throttle-alert
-					:time="throttle['employeeCreate'] || 0"
-					:show="isDisabled('employeeCreate')"
-				/>
+				<throttle-alert :time="throttle['employeeCreate'] || 0" :show="isDisabled('employeeCreate')" />
 			</v-row>
 
 			<!-- Actions-->
 			<v-row dense justify="space-between" class="mt-8">
 				<v-col cols="auto">
-					<BaseBtn
-						title="common.btn.cancel"
-						color="red-darken-1"
-						@click.prevent="cancel"
-					/>
+					<BaseBtn title="common.btn.cancel" color="red-darken-1" @click.prevent="cancel" />
 				</v-col>
 				<v-col cols="auto">
-					<BaseBtn
-						title="common.btn.create"
-						color="primary"
-						type="submit"
-						:disabled="isDisabled('employeeCreate')"
-					/>
+					<BaseBtn title="common.btn.create" color="primary" type="submit"
+						:disabled="isDisabled('employeeCreate')" />
 				</v-col>
 			</v-row>
 		</Form>
 	</v-container>
 </template>
-

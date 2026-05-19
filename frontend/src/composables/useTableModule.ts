@@ -152,6 +152,13 @@ export const useTableModule = () => {
 
 	const employeeHeaders = computed<TableHeader[]>(() => [
 		{
+			title: '',
+			key: 'avatar',
+			align: 'start',
+			headerProps: { class: 'font-weight-bold' },
+			sortable: false,
+		},
+		{
 			title: t('common.table.employee.name'),
 			key: 'name',
 			align: 'start',
@@ -175,12 +182,6 @@ export const useTableModule = () => {
 			align: 'start',
 			headerProps: { class: 'font-weight-bold' },
 			sortable: false,
-		},
-		{
-			title: t('common.filter.status'),
-			key: 'status',
-			align: 'center',
-			headerProps: { class: 'font-weight-bold' },
 		},
 		{
 			title: t('common.filter.department'),

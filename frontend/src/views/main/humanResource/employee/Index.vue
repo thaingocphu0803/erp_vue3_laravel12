@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import AppBreadcrumb from '@/components/layout/AppBreadcrumb.vue'
-import ListHeader from '@/components/list/ListHeader.vue'
 import BaseSearchBtn from '@/components/BaseSearchBtn.vue'
 import ListFilter from '@/components/list/ListFilter.vue'
 import CONFIG from '@/config/constants'
 import { useTableModule } from '@/composables/useTableModule'
 import { useRoute } from 'vue-router'
-import { useFilterModule } from '@/composables/useFilterModule'
 import type { EmployeeFilterParams } from '@/types/employee'
 import type { commonStatus } from '@/types/common'
 import { useDepartmentStore } from '@/stores/department'
@@ -17,15 +15,11 @@ import { debounce } from 'vuetify/lib/util/helpers.mjs'
 import { useRouteQuery } from '@/composables/useRouteQuery'
 import RetryBtn from '@/components/RetryBtn.vue'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
-import type { bulkActionStatus } from '@/types/common'
 import { useThrottleStore } from '@/stores/throttle'
-import ListBulkAction from '@/components/list/ListBulkAction.vue'
 import SYSTEM from '@/config/system'
 import { formatLaravelRetryAfter } from '@/utils/errorHandler'
 import { useToastStore } from '@/stores/toast'
 import { useEmployeeStore } from '@/stores/employee'
-import type { Department } from '@/types/department'
-import { t } from '@/plugins/vueI18n'
 
 const route = useRoute()
 
@@ -50,9 +44,6 @@ const { employeeIndex } = storeToRefs(useEmployeeStore())
 
 // loading index
 const loading = ref<boolean>(false)
-
-// is bulk proccessing
-const isBulkProccessing = ref<bulkActionStatus | null>(null)
 
 // error retrieve index
 const isError = ref<boolean>(false)
@@ -336,15 +327,22 @@ onMounted(async () => {
 			<!-- data table -->
 			<v-data-table-server v-show="!isError" :page="filterParams.page" :headers="employeeHeaders"
 				:items="employeeIndex" :items-per-page="filterParams.itemsPerPage" item-value="id"
-				:items-length="totalItemLength" :search="filterParams.search" :loading show-select
-				v-model="selectedEmployeeIds" @update:options="handleEmployeePaginate">
+				:items-length="totalItemLength" :search="filterParams.search" v-model="selectedEmployeeIds"
+				@update:options="handleEmployeePaginate">
 
-				<!-- position name -->
-				<template v-slot:item.name="{ item }">
-					<v-btn density="compact" variant="plain" color="primary" class="text-none">{{ item.name }}</v-btn>
+				<!-- avatar -->
+				<template v-slot:item.avatar="{ item }">
+					<v-avatar :image="item.avatar ?? CONFIG.avatar" size="42" density="compact"></v-avatar>
 				</template>
 
-				<!-- position status -->
+				<!-- name -->
+				<template v-slot:item.name="{ item }">
+					<v-btn density="compact" variant="plain" color="primary" class="text-none text-truncate">{{
+						item.name
+					}}</v-btn>
+				</template>
+
+				<!-- status -->
 				<template v-slot:item.status="{ value }">
 					<base-status-chip :val="value"></base-status-chip>
 				</template>
