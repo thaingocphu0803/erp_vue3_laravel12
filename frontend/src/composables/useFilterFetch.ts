@@ -4,7 +4,10 @@ import { storeToRefs } from 'pinia'
 import SYSTEM from '@/config/system'
 import { formatLaravelRetryAfter } from '@/utils/errorHandler'
 
-export function useFilterFetch(fetchApiFunc: () => Promise<any>, throttleKey: string) {
+export function useFilterFetch<T extends any[]>(
+	fetchApiFunc: (...args: T) => Promise<any>,
+	throttleKey: string,
+) {
 	const throttleStore = useThrottleStore()
 	const { throttle, isDisabled } = storeToRefs(throttleStore)
 	const { startThrottle } = throttleStore
@@ -13,12 +16,12 @@ export function useFilterFetch(fetchApiFunc: () => Promise<any>, throttleKey: st
 	const isError = ref<boolean>(false)
 	const errorMessage = ref<string>('')
 
-	const fetchFilterData = async () => {
+	const fetchFilterData = async (...args: T) => {
 		if (isDisabled.value(throttleKey)) return
 
 		try {
 			loading.value = true
-			await fetchApiFunc()
+			await fetchApiFunc(...args)
 			isError.value = false
 			errorMessage.value = ''
 		} catch (error: any) {
@@ -49,4 +52,3 @@ export function useFilterFetch(fetchApiFunc: () => Promise<any>, throttleKey: st
 		checkDisabledError,
 	}
 }
-

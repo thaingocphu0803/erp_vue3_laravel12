@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Form from '@/components/Form.vue'
+import { useFilterFetch } from '@/composables/useFilterFetch'
 import Input from '@/components/form/Input.vue'
 import BaseBtn from '@/components/BaseBtn.vue'
 import AnnotationTooltip from '../AnnotationTooltip.vue'
@@ -43,11 +44,13 @@ const { departments } = storeToRefs(useDepartmentStore())
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 const { initThrottle, startThrottle } = useThrottleStore()
 
-// loading state
-const loading = ref<boolean>(false)
-
-// error state
-const isError = ref<boolean>(false)
+const {
+	loading,
+	isError,
+	errorMessage: errorMessageGetDepartmentList,
+	fetchFilterData: getDepartmentList,
+	checkDisabledError
+} = useFilterFetch(departmentsFetch, 'departmentFetch')
 
 // department form data
 const departmentFormData = reactive<DepartmentFormData>({
@@ -66,27 +69,7 @@ const errorMessage = reactive<DepartmentFormError>({
 	getDepartmentList: '',
 })
 
-// get department list
-const getDepartmentList = async () => {
-	if (isDisabled.value('departmentFetch')) return
 
-	try {
-		loading.value = true
-		await departmentsFetch()
-		errorMessage.getDepartmentList = ''
-		isError.value = false
-	} catch (error: any) {
-		errorMessage.getDepartmentList = 'common.error.fetchDataFailed'
-		isError.value = true
-
-		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['departmentFetch'] = formatLaravelRetryAfter(error)
-			startThrottle('departmentFetch')
-		}
-	} finally {
-		loading.value = false
-	}
-}
 
 // handle create department
 const handleCreate = async () => {
@@ -123,9 +106,7 @@ onMounted(() => {
 	initThrottle('departmentFetch')
 	initThrottle('departmentCreate')
 
-	if (isDisabled.value('departmentFetch')) {
-		isError.value = true
-	}
+	checkDisabledError()
 })
 </script>
 
@@ -160,7 +141,7 @@ onMounted(() => {
 			<!-- Department Parent -->
 			<v-col cols="12" md="6">
 				<list-filter :label="$t('department.input.departmentParent')" v-model="departmentFormData.parent_id"
-					:error-messages="isDisabled('departmentFetch') ? '' : errorMessage.getDepartmentList
+					:error-messages="isDisabled('departmentFetch') ? '' : errorMessageGetDepartmentList
 						" :items="departments" searchable item-title="name" item-value="id" :loading @click="getDepartmentList">
 					<template #append v-if="isError">
 						<retry-btn @click.stop="getDepartmentList" only-icon

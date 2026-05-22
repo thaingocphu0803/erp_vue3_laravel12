@@ -7,8 +7,9 @@ import { storeToRefs } from 'pinia'
 import CONFIG from '@/config/constants'
 import SYSTEM from '@/config/system'
 import { formatLaravelRetryAfter } from '@/utils/errorHandler'
+import type { FilterParams } from '@/types/common'
 
-export function useIndexTable<TFilterParams extends Record<string, any>>(
+export function useIndexTable<TFilterParams extends FilterParams & Record<string, any>>(
 	fetchApiFunc: (params: TFilterParams) => Promise<any>,
 	throttleKey: string,
 	defaultFilterParams: TFilterParams,
