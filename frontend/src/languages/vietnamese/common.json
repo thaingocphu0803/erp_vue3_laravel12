@@ -49,6 +49,7 @@
 			"position": "Chức vụ",
 			"status": "Trạng thái",
 			"allDepartmentsApply": "Áp dụng cho tất cả phòng ban",
+			"department": "Phòng ban",
 			"itemPerPage": "Số dòng/trang"
 		},
 		"staffPosition": {
@@ -162,4 +163,3 @@
 		}
 	}
 }
-

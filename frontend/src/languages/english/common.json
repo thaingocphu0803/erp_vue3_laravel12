@@ -48,6 +48,7 @@
 			"nameOrCode": "Search by name or code",
 			"position": "Position",
 			"status": "Status",
+			"allDepartmentsApply": "All departments apply",
 			"department": "Department",
 			"itemPerPage": "Rows per page"
 		},
@@ -158,4 +159,3 @@
 		}
 	}
 }
-
