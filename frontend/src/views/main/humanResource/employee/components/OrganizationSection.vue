@@ -16,11 +16,12 @@ import { useThrottleStore } from '@/stores/throttle'
 import RetryBtn from '@/components/RetryBtn.vue'
 import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import { formatLaravelRetryAfter } from '@/utils/errorHandler'
+import { useFilterFetch } from '@/composables/useFilterFetch'
 
-interface ErrorMessage {
-	getDepartmentList: string
-	getPositionList: string
-}
+// interface ErrorMessage {
+// 	getDepartmentList: string
+// 	getPositionList: string
+// }
 
 const department_id = defineModel<number | null>('department_id', {
 	default: null,
@@ -33,6 +34,7 @@ const position_id = defineModel<number | null>('position_id', {
 const is_leader = defineModel<boolean>('is_leader', {
 	default: false,
 })
+
 const disablePosition = ref<boolean>(true)
 
 const { departmentsFetch } = useDepartmentStore()
@@ -50,76 +52,28 @@ const showIsLeader = computed(() => {
 	return department ? department.leader_id === null : false
 })
 
-const loadingDepartments = ref<boolean>(false)
-const loadingPositions = ref<boolean>(false)
-
-const isDepartmentError = ref<boolean>(false)
-const isPositionError = ref<boolean>(false)
+const { 
+	loading: loadingDepartments,
+	isError: isDepartmentError,
+	errorMessage: errorMessageGetDepartmentList,
+	fetchFilterData: getDepartmentList,
+	checkDisabledError: checkDisabledDepartmentError,
+} = useFilterFetch(departmentsFetch, 'departmentFetch')
+const { 
+	loading: loadingPositions,
+	isError: isPositionError, 
+	errorMessage: errorMessageGetPositionList, 
+	fetchFilterData: getPositionList 
+} = useFilterFetch(() => positionsFetchByDepartmentId(department_id.value), 'positionFetch')
 
 const showPositionDialog = ref<boolean>(false)
 const showDepartmentDialog = ref<boolean>(false)
-
-const errorMessage = ref<ErrorMessage>({
-	getDepartmentList: '',
-	getPositionList: '',
-})
-
-const getDepartmentList = async () => {
-	if (isDisabled.value('departmentFetch')) return
-
-	try {
-		loadingDepartments.value = true
-		await departmentsFetch()
-		isDepartmentError.value = false
-		errorMessage.value.getDepartmentList = ''
-	} catch (error: any) {
-		isDepartmentError.value = true
-		errorMessage.value.getDepartmentList = 'common.error.fetchDataFailed'
-
-		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['departmentFetch'] = formatLaravelRetryAfter(error)
-			startThrottle('departmentFetch')
-		}
-	} finally {
-		loadingDepartments.value = false
-	}
-}
-
-const getPositionList = async (departmentId: number | null) => {
-	if (!departmentId) {
-		disablePosition.value = true
-		return
-	}
-
-	if (isDisabled.value('positionFetch')) return
-
-	try {
-		loadingPositions.value = true
-		await positionsFetchByDepartmentId(departmentId)
-		isPositionError.value = false
-		errorMessage.value.getPositionList = ''
-	} catch (error: any) {
-		isPositionError.value = true
-		errorMessage.value.getPositionList = 'common.error.fetchDataFailed'
-
-		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['positionFetch'] = formatLaravelRetryAfter(error)
-			startThrottle('positionFetch')
-		}
-
-		if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
-			errorMessage.value.getPositionList = error.response?.data?.message
-		}
-	} finally {
-		loadingPositions.value = false
-	}
-}
 
 onMounted(() => {
 	initThrottle('departmentFetch')
 	initThrottle('positionFetch')
 
-	if (isDisabled.value('departmentFetch')) isDepartmentError.value = true
+	checkDisabledDepartmentError()
 })
 
 watch(department_id, (newValue) => {
@@ -139,8 +93,8 @@ watch(department_id, (newValue) => {
 		<v-col cols="12" sm="6" class="mb-3">
 			<list-filter v-model="department_id" :items="departments" searchable item-title="name" item-value="id"
 				:loading="loadingDepartments" :rules="isDepartmentError ? [] : employeeValidation.department"
-				:error-messages="isDisabled('departmentFetch') ? errorMessage.getDepartmentList : ''
-					" @click="getDepartmentList" :clearable="false">
+				:error-messages="isDisabled('departmentFetch') ? '' : errorMessageGetDepartmentList"
+				@click="getDepartmentList" :clearable="false">
 				<template #prepend-item>
 					<create-prepend-item title="department.title.create" @open-model="showDepartmentDialog = true">
 					</create-prepend-item>
@@ -165,7 +119,7 @@ watch(department_id, (newValue) => {
 			<list-filter v-model="position_id" :items="positionByDepartment" searchable item-title="name"
 				item-value="id" :loading="loadingPositions" :disabled="disablePosition"
 				:rules="isPositionError ? [] : employeeValidation.position"
-				:error-messages="isDisabled('positionFetch') ? '' : errorMessage.getPositionList"
+				:error-messages="isDisabled('positionFetch') ? '' : errorMessageGetPositionList"
 				@click="getPositionList(department_id)" :clearable="false">
 				<template #prepend-item>
 					<create-prepend-item title="position.title.create" @open-model="showPositionDialog = true">

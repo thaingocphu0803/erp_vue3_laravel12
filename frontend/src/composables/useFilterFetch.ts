@@ -32,6 +32,9 @@ export function useFilterFetch<T extends any[]>(
 				throttle.value[throttleKey] = formatLaravelRetryAfter(error)
 				startThrottle(throttleKey)
 			}
+			if (error.status === SYSTEM.SERVER_ERROR.UNPROCESSABLE_ENTITY) {
+				errorMessage.value = error.response?.data?.message
+			}
 		} finally {
 			loading.value = false
 		}

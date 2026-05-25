@@ -14,6 +14,7 @@ import ThrottleAlert from '@/components/ThrottleAlert.vue'
 import RetryBtn from '@/components/RetryBtn.vue'
 import SYSTEM from '@/config/system'
 import { formatLaravelRetryAfter } from '@/utils/errorHandler'
+import { useFilterFetch } from '@/composables/useFilterFetch'
 
 const email = defineModel<string>('email')
 const role_ids = defineModel<number[]>('role_ids', { default: [] })
@@ -26,37 +27,19 @@ const { initThrottle, startThrottle } = useThrottleStore()
 const { throttle, isDisabled } = storeToRefs(useThrottleStore())
 
 const showRoleDialog = ref<boolean>(false)
-const loadingRole = ref<boolean>(false)
 
-const isError = ref<boolean>(false)
-
-const getRolesErrorMessage = ref<string>('')
-
-const getRoleList = async () => {
-	if (isDisabled.value('roleFetch')) return
-
-	try {
-		loadingRole.value = true
-		await rolesFetch()
-		isError.value = false
-		getRolesErrorMessage.value = ''
-	} catch (error: any) {
-		isError.value = true
-		getRolesErrorMessage.value = 'common.error.fetchDataFailed'
-
-		if (error.status === SYSTEM.SERVER_ERROR.TOO_MANY_REQUESTS) {
-			throttle.value['roleFetch'] = formatLaravelRetryAfter(error)
-			startThrottle('roleFetch')
-		}
-	} finally {
-		loadingRole.value = false
-	}
-}
+const {
+	loading: loadingRole,
+	isError,
+	errorMessage: getRolesErrorMessage,
+	fetchFilterData: getRoleList,
+	checkDisabledError,
+} = useFilterFetch(rolesFetch, 'roleFetch')
 
 onMounted(() => {
 	initThrottle('roleFetch')
 
-	if (isDisabled.value('roleFetch')) isError.value = true
+	checkDisabledError()
 })
 </script>
 
@@ -77,7 +60,7 @@ onMounted(() => {
 			<list-filter v-model="role_ids" :items="roles" searchable item-title="name" item-value="id"
 				:rules="isError ? [] : employeeValidation.role"
 				:error-messages="isDisabled('roleFetch') ? '' : getRolesErrorMessage" :loading="loadingRole"
-				:clearable="false" multiple @click="getRoleList">
+				:clearable="false" multiple @click.stop="getRoleList">
 				<template #prepend-item>
 					<create-prepend-item title="role.title.create" @open-model="showRoleDialog = true" />
 					<v-divider />
